@@ -16,9 +16,9 @@ class AcquaintancesServiceProvider extends ServiceProvider
     {
         $root = dirname(__DIR__);
 
-        if ( ! file_exists(config_path('acquaintance.php'))) {
+        if ( ! file_exists(config_path('acquaintances.php'))) {
             $this->publishes([
-                $root . '/config/acquaintance.php' => config_path('acquaintance.php'),
+                $root . '/config/acquaintances.php' => config_path('acquaintances.php'),
             ], 'config');
         }
 
@@ -52,6 +52,6 @@ class AcquaintancesServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->mergeConfigFrom(dirname(__DIR__) . '/config/acquaintance.php', 'acquaintance');
+        $this->mergeConfigFrom(dirname(__DIR__) . '/config/acquaintances.php', 'acquaintances');
     }
 }

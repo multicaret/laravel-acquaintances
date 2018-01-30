@@ -22,7 +22,7 @@ class Friendship extends Model
      */
     public function __construct(array $attributes = [])
     {
-        $this->table = config('acquaintance.tables.friendships');
+        $this->table = config('acquaintances.tables.friendships');
 
         parent::__construct($attributes);
     }
@@ -98,9 +98,9 @@ class Friendship extends Model
     public function scopeWhereGroup($query, $model, $groupSlug)
     {
 
-        $groupsPivotTable = config('acquaintance.tables.friendship_groups');
-        $friendsPivotTable = config('acquaintance.tables.friendships');
-        $groupsAvailable = config('acquaintance.friendships_groups', []);
+        $groupsPivotTable = config('acquaintances.tables.friendship_groups');
+        $friendsPivotTable = config('acquaintances.tables.friendships');
+        $groupsAvailable = config('acquaintances.friendships_groups', []);
 
         if ('' !== $groupSlug && isset($groupsAvailable[$groupSlug])) {
 

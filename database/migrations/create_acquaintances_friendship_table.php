@@ -9,7 +9,7 @@ class CreateAcquaintancesFriendshipTable extends Migration
     public function up()
     {
 
-        Schema::create(config('acquaintance.tables.friendships'), function (Blueprint $table) {
+        Schema::create(config('acquaintances.tables.friendships'), function (Blueprint $table) {
             $table->increments('id');
             $table->morphs('sender');
             $table->morphs('recipient');
@@ -21,7 +21,7 @@ class CreateAcquaintancesFriendshipTable extends Migration
 
     public function down()
     {
-        Schema::dropIfExists(config('acquaintance.tables.friendships'));
+        Schema::dropIfExists(config('acquaintances.tables.friendships'));
     }
 
 }

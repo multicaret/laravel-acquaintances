@@ -27,7 +27,7 @@ class Follow
      */
     public static function isRelationExists(Model $model, $relation, $target, $class = null)
     {
-        $target = self::formatTargets($target, $class ?: config('acquaintance.user_model'));
+        $target = self::formatTargets($target, $class ?: config('acquaintances.user_model'));
 
         return $model->{$relation}($target->classname)
                      ->where($class ? 'followable_id' : 'user_id', head($target->ids))->exists();
@@ -89,7 +89,7 @@ class Follow
     {
         return self::formatTargets($targets, $class, [
             'relation' => self::getRelationTypeFromRelation($morph),
-            'created_at' => Carbon::now()->format(config('acquaintance.date_format', 'Y-m-d H:i:s')),
+            'created_at' => Carbon::now()->format(config('acquaintances.date_format', 'Y-m-d H:i:s')),
         ]);
     }
 

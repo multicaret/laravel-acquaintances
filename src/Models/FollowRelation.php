@@ -27,7 +27,7 @@ class FollowRelation extends Model
      */
     public function followable()
     {
-        return $this->morphTo(config('acquaintance.morph_prefix', 'followable'));
+        return $this->morphTo(config('acquaintances.morph_prefix', 'followable'));
     }
 
     /**
@@ -55,7 +55,7 @@ class FollowRelation extends Model
     public function getTable()
     {
         if ( ! $this->table) {
-            $this->table = config('acquaintance.tables.followships', 'followships');
+            $this->table = config('acquaintances.tables.followships', 'followships');
         }
 
         return parent::getTable();
@@ -88,12 +88,12 @@ class FollowRelation extends Model
             return $type;
         }
 
-        $namespace = config('acquaintance.model_namespace', 'App');
+        $namespace = config('acquaintances.model_namespace', 'App');
 
         $modelName = $namespace . '\\' . studly_case($type);
 
         if ( ! class_exists($modelName)) {
-            throw new InvalidArgumentException("Model {$modelName} not exists. Please check your config 'acquaintance.model_namespace'.");
+            throw new InvalidArgumentException("Model {$modelName} not exists. Please check your config 'acquaintances.model_namespace'.");
         }
 
         return $modelName;

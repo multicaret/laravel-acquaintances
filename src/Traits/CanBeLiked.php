@@ -29,8 +29,8 @@ trait CanBeLiked
      */
     public function likers()
     {
-        return $this->morphToMany(config('acquaintance.user_model'), config('acquaintance.morph_prefix'),
-            config('acquaintance.tables.followships'))
+        return $this->morphToMany(config('acquaintances.user_model'), config('acquaintances.morph_prefix'),
+            config('acquaintances.tables.followships'))
                     ->wherePivot('relation', '=', Follow::RELATION_LIKE)
                     ->withPivot('followable_type', 'relation', 'created_at');
     }

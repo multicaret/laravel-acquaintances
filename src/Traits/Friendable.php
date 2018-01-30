@@ -120,7 +120,7 @@ trait Friendable
     {
 
         $friendship = $this->findFriendship($friend)->whereStatus(Status::ACCEPTED)->first();
-        $groupsAvailable = config('acquaintance.friendships_groups', []);
+        $groupsAvailable = config('acquaintances.friendships_groups', []);
 
         if ( ! isset($groupsAvailable[$groupSlug]) || empty($friendship)) {
             return false;
@@ -147,7 +147,7 @@ trait Friendable
     {
 
         $friendship = $this->findFriendship($friend)->first();
-        $groupsAvailable = config('acquaintance.friendships_groups', []);
+        $groupsAvailable = config('acquaintances.friendships_groups', []);
 
         if (empty($friendship)) {
             return false;
