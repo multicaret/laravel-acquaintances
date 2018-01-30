@@ -1,5 +1,5 @@
 {
-  "name": "liliom/laravel-acquaintance",
+  "name": "liliom/laravel-acquaintances",
   "description": "This package gives Eloquent models the ability to manage friendships (with groups), followships along with Likes, favorites..etc .",
   "keywords": [
     "laravel",
