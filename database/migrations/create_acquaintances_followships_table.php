@@ -4,7 +4,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateLaravelFollowshipsTable extends Migration
+class CreateAcquaintancesFollowshipsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,6 @@ class CreateLaravelFollowshipsTable extends Migration
     {
         Schema::create(config('acquaintance.tables.followships', 'followships'), function (Blueprint $table) {
             $table->unsignedInteger('user_id');
-//            $table->unsignedInteger('followable_id');
-//            $table->string('followable_type')->index();
             $table->morphs('followable');
             $table->string('relation')->default('follow')->comment('follow/like/subscribe/favorite/');
             $table->timestamp('created_at');

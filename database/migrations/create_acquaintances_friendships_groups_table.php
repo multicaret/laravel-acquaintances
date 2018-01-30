@@ -6,7 +6,7 @@ use Illuminate\Database\Schema\Blueprint;
 /**
  * Class CreateFriendshipsGroupsTable
  */
-class CreateLaravelFriendshipsGroupsTable extends Migration
+class CreateAcquaintancesFriendshipsGroupsTable extends Migration
 {
 
     public function up()

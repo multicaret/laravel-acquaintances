@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateLaravelFriendshipTable extends Migration
+class CreateAcquaintancesFriendshipTable extends Migration
 {
 
     public function up()
