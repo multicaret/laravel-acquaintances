@@ -22,24 +22,24 @@ class AcquaintancesServiceProvider extends ServiceProvider
             ], 'config');
         }
 
-        if ( ! class_exists('CreateLaravelFollowshipsTable')) {
+        if ( ! class_exists('CreateAcquaintancesFollowshipsTable')) {
             $datePrefix = date('Y_m_d_His');
             $this->publishes([
-                $root . '/database/migrations/create_laravel_followships_table.php' => database_path("/migrations/{$datePrefix}_create_laravel_followships_table.php"),
+                $root . '/database/migrations/create_acquaintances_followships_table.php' => database_path("/migrations/{$datePrefix}_create_acquaintances_followships_table.php"),
             ], 'migrations');
         }
 
-        if ( ! class_exists('CreateLaravelFriendshipTable')) {
+        if ( ! class_exists('CreateAcquaintancesFriendshipTable')) {
             $datePrefix = date('Y_m_d_His');
             $this->publishes([
-                $root . '/database/migrations/create_laravel_friendship_table.php' => database_path("/migrations/{$datePrefix}_create_laravel_friendship_table.php"),
+                $root . '/database/migrations/create_acquaintances_friendship_table.php' => database_path("/migrations/{$datePrefix}_create_acquaintances_friendship_table.php"),
             ], 'migrations');
         }
 
-        if ( ! class_exists('CreateLaravelFriendshipsGroupsTable')) {
+        if ( ! class_exists('CreateAcquaintancesFriendshipsGroupsTable')) {
             $datePrefix = date('Y_m_d_His');
             $this->publishes([
-                $root . '/database/migrations/create_laravel_friendships_groups_table.php' => database_path("/migrations/{$datePrefix}_create_laravel_friendships_groups_table.php"),
+                $root . '/database/migrations/create_acquaintances_friendships_groups_table.php' => database_path("/migrations/{$datePrefix}_create_acquaintances_friendships_groups_table.php"),
             ], 'migrations');
         }
 
