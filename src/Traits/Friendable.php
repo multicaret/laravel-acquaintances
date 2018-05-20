@@ -33,7 +33,7 @@ trait Friendable
 
         $this->friends()->save($friendship);
 
-        Event::fire('friendships.sent', [$this, $recipient]);
+        Event::fire('acq.friendships.sent', [$this, $recipient]);
 
         return $friendship;
 
@@ -46,7 +46,7 @@ trait Friendable
      */
     public function unfriend(Model $recipient)
     {
-        Event::fire('friendships.cancelled', [$this, $recipient]);
+        Event::fire('acq.friendships.cancelled', [$this, $recipient]);
 
         return $this->findFriendship($recipient)->delete();
     }
@@ -88,7 +88,7 @@ trait Friendable
      */
     public function acceptFriendRequest(Model $recipient)
     {
-        Event::fire('friendships.accepted', [$this, $recipient]);
+        Event::fire('acq.friendships.accepted', [$this, $recipient]);
 
         return $this->findFriendship($recipient)->whereRecipient($this)->update([
             'status' => Status::ACCEPTED,
@@ -102,7 +102,7 @@ trait Friendable
      */
     public function denyFriendRequest(Model $recipient)
     {
-        Event::fire('friendships.denied', [$this, $recipient]);
+        Event::fire('acq.friendships.denied', [$this, $recipient]);
 
         return $this->findFriendship($recipient)->whereRecipient($this)->update([
             'status' => Status::DENIED,
@@ -186,7 +186,7 @@ trait Friendable
             'status' => Status::BLOCKED,
         ]);
 
-        Event::fire('friendships.blocked', [$this, $recipient]);
+        Event::fire('acq.friendships.blocked', [$this, $recipient]);
 
         return $this->friends()->save($friendship);
     }
@@ -198,7 +198,7 @@ trait Friendable
      */
     public function unblockFriend(Model $recipient)
     {
-        Event::fire('friendships.unblocked', [$this, $recipient]);
+        Event::fire('acq.friendships.unblocked', [$this, $recipient]);
 
         return $this->findFriendship($recipient)->whereSender($this)->delete();
     }
@@ -299,24 +299,29 @@ trait Friendable
      * @param int    $perPage Number
      * @param string $groupSlug
      *
+     * @param array  $fields
+     *
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function getFriends($perPage = 0, $groupSlug = '')
+    public function getFriends($perPage = 0, $groupSlug = '', array $fields = ['*'])
     {
-        return $this->getOrPaginate($this->getFriendsQueryBuilder($groupSlug), $perPage);
+        return $this->getOrPaginate($this->getFriendsQueryBuilder($groupSlug), $perPage, $fields);
     }
 
     /**
      * This method will not return Friendship models
      * It will return the 'friends' models. ex: App\User
      *
-     * @param int $perPage Number
+     * @param Model $other
+     * @param int   $perPage Number
+     *
+     * @param array $fields
      *
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function getMutualFriends(Model $other, $perPage = 0)
+    public function getMutualFriends(Model $other, $perPage = 0, array $fields = ['*'])
     {
-        return $this->getOrPaginate($this->getMutualFriendsQueryBuilder($other), $perPage);
+        return $this->getOrPaginate($this->getMutualFriendsQueryBuilder($other), $perPage, $fields);
     }
 
     /**
@@ -333,13 +338,15 @@ trait Friendable
      * This method will not return Friendship models
      * It will return the 'friends' models. ex: App\User
      *
-     * @param int $perPage Number
+     * @param int   $perPage Number
+     *
+     * @param array $fields
      *
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function getFriendsOfFriends($perPage = 0)
+    public function getFriendsOfFriends($perPage = 0, array $fields = ['*'])
     {
-        return $this->getOrPaginate($this->friendsOfFriendsQueryBuilder(), $perPage);
+        return $this->getOrPaginate($this->friendsOfFriendsQueryBuilder(), $perPage, $fields);
     }
 
 
@@ -518,12 +525,12 @@ trait Friendable
         return $this->morphMany(FriendFriendshipGroups::class, 'friend');
     }
 
-    protected function getOrPaginate($builder, $perPage)
+    protected function getOrPaginate($builder, $perPage, array $fields = ['*'])
     {
         if ($perPage == 0) {
-            return $builder->get();
+            return $builder->get($fields);
         }
 
-        return $builder->paginate($perPage);
+        return $builder->paginate($perPage, $fields);
     }
 }

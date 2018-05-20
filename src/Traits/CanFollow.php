@@ -3,7 +3,8 @@
 
 namespace Liliom\Acquaintances\Traits;
 
-use Liliom\Acquaintances\Follow;
+use Illuminate\Support\Facades\Event;
+use Liliom\Acquaintances\Interaction;
 
 /**
  * Trait CanFollow.
@@ -11,16 +12,19 @@ use Liliom\Acquaintances\Follow;
 trait CanFollow
 {
     /**
-     * Follow an item or items.
+     * Interaction an item or items.
      *
      * @param int|array|\Illuminate\Database\Eloquent\Model $targets
      * @param string                                        $class
      *
      * @return array
+     *
+     * @throws \Exception
      */
     public function follow($targets, $class = __CLASS__)
     {
-        return Follow::attachRelations($this, 'followings', $targets, $class);
+        Event::fire('acq.followships.follow', [$this, $targets]);
+        return Interaction::attachRelations($this, 'followings', $targets, $class);
     }
 
     /**
@@ -33,7 +37,8 @@ trait CanFollow
      */
     public function unfollow($targets, $class = __CLASS__)
     {
-        return Follow::detachRelations($this, 'followings', $targets, $class);
+        Event::fire('acq.followships.unfollow', [$this, $targets]);
+        return Interaction::detachRelations($this, 'followings', $targets, $class);
     }
 
     /**
@@ -43,10 +48,12 @@ trait CanFollow
      * @param string                                        $class
      *
      * @return array
+     *
+     * @throws \Exception
      */
     public function toggleFollow($targets, $class = __CLASS__)
     {
-        return Follow::toggleRelations($this, 'followings', $targets, $class);
+        return Interaction::toggleRelations($this, 'followings', $targets, $class);
     }
 
     /**
@@ -59,7 +66,7 @@ trait CanFollow
      */
     public function isFollowing($target, $class = __CLASS__)
     {
-        return Follow::isRelationExists($this, 'followings', $target, $class);
+        return Interaction::isRelationExists($this, 'followings', $target, $class);
     }
 
     /**
@@ -72,8 +79,8 @@ trait CanFollow
     public function followings($class = __CLASS__)
     {
         return $this->morphedByMany($class, config('acquaintances.morph_prefix'),
-            config('acquaintances.tables.followships'))
-                    ->wherePivot('relation', '=', Follow::RELATION_FOLLOW)
+            config('acquaintances.tables.interactions'))
+                    ->wherePivot('relation', '=', Interaction::RELATION_FOLLOW)
                     ->withPivot('followable_type', 'relation', 'created_at');
     }
 }

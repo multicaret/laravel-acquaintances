@@ -3,7 +3,7 @@
 
 namespace Liliom\Acquaintances\Traits;
 
-use Liliom\Acquaintances\Follow;
+use Liliom\Acquaintances\Interaction;
 
 /**
  * Trait CanBeSubscribed.
@@ -19,7 +19,7 @@ trait CanBeSubscribed
      */
     public function isSubscribedBy($user)
     {
-        return Follow::isRelationExists($this, 'subscribers', $user);
+        return Interaction::isRelationExists($this, 'subscribers', $user);
     }
 
     /**
@@ -30,8 +30,8 @@ trait CanBeSubscribed
     public function subscribers()
     {
         return $this->morphToMany(config('acquaintances.user_model'), config('acquaintances.morph_prefix'),
-            config('acquaintances.tables.followships'))
-                    ->wherePivot('relation', '=', Follow::RELATION_SUBSCRIBE)
+            config('acquaintances.tables.interactions'))
+                    ->wherePivot('relation', '=', Interaction::RELATION_SUBSCRIBE)
                     ->withPivot('followable_type', 'relation', 'created_at');
     }
 }

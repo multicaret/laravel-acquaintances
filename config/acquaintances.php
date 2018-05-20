@@ -4,9 +4,9 @@ return [
 
     'tables' => [
         /*
-         * Table name of followships relations.
+         * Table name of interactions relations.
          */
-        'followships' => 'followships',
+        'interactions' => 'interactions',
         /*
          * Table name of friendships relations.
          */

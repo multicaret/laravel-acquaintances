@@ -3,7 +3,8 @@
 
 namespace Liliom\Acquaintances\Traits;
 
-use Liliom\Acquaintances\Follow;
+use Illuminate\Support\Facades\Event;
+use Liliom\Acquaintances\Interaction;
 
 /**
  * Trait CanFavorite.
@@ -20,7 +21,8 @@ trait CanFavorite
      */
     public function favorite($targets, $class = __CLASS__)
     {
-        return Follow::attachRelations($this, 'favorites', $targets, $class);
+        Event::fire('acq.favorites.favorite', [$this, $targets]);
+        return Interaction::attachRelations($this, 'favorites', $targets, $class);
     }
 
     /**
@@ -33,7 +35,8 @@ trait CanFavorite
      */
     public function unfavorite($targets, $class = __CLASS__)
     {
-        return Follow::detachRelations($this, 'favorites', $targets, $class);
+        Event::fire('acq.favorites.unfavorite', [$this, $targets]);
+        return Interaction::detachRelations($this, 'favorites', $targets, $class);
     }
 
     /**
@@ -46,7 +49,7 @@ trait CanFavorite
      */
     public function toggleFavorite($targets, $class = __CLASS__)
     {
-        return Follow::toggleRelations($this, 'favorites', $targets, $class);
+        return Interaction::toggleRelations($this, 'favorites', $targets, $class);
     }
 
     /**
@@ -59,7 +62,7 @@ trait CanFavorite
      */
     public function hasFavorited($target, $class = __CLASS__)
     {
-        return Follow::isRelationExists($this, 'favorites', $target, $class);
+        return Interaction::isRelationExists($this, 'favorites', $target, $class);
     }
 
     /**
@@ -72,8 +75,8 @@ trait CanFavorite
     public function favorites($class = __CLASS__)
     {
         return $this->morphedByMany($class, config('acquaintances.morph_prefix'),
-            config('acquaintances.tables.followships'))
-                    ->wherePivot('relation', '=', Follow::RELATION_FAVORITE)
+            config('acquaintances.tables.interactions'))
+                    ->wherePivot('relation', '=', Interaction::RELATION_FAVORITE)
                     ->withPivot('followable_type', 'relation', 'created_at');
     }
 }

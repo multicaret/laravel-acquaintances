@@ -5,13 +5,16 @@ namespace Liliom\Acquaintances\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use InvalidArgumentException;
 
 /**
- * Class FollowRelation.
+ * Class InteractionRelation.
  */
-class FollowRelation extends Model
+class InteractionRelation extends Model
 {
+    use SoftDeletes;
+
     /**
      * @var string
      */
@@ -55,7 +58,7 @@ class FollowRelation extends Model
     public function getTable()
     {
         if ( ! $this->table) {
-            $this->table = config('acquaintances.tables.followships', 'followships');
+            $this->table = config('acquaintances.tables.interactions', 'interactions');
         }
 
         return parent::getTable();

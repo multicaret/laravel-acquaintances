@@ -3,7 +3,8 @@
 
 namespace Liliom\Acquaintances\Traits;
 
-use Liliom\Acquaintances\Follow;
+use Illuminate\Support\Facades\Event;
+use Liliom\Acquaintances\Interaction;
 
 /**
  * Trait CanSubscribe.
@@ -17,10 +18,13 @@ trait CanSubscribe
      * @param string                                        $class
      *
      * @return array
+     *
+     * @throws \Exception
      */
     public function subscribe($targets, $class = __CLASS__)
     {
-        return Follow::attachRelations($this, 'subscriptions', $targets, $class);
+        Event::fire('acq.subscriptions.subscribe', [$this, $targets]);
+        return Interaction::attachRelations($this, 'subscriptions', $targets, $class);
     }
 
     /**
@@ -33,7 +37,8 @@ trait CanSubscribe
      */
     public function unsubscribe($targets, $class = __CLASS__)
     {
-        return Follow::detachRelations($this, 'subscriptions', $targets, $class);
+        Event::fire('acq.subscriptions.unsubscribe', [$this, $targets]);
+        return Interaction::detachRelations($this, 'subscriptions', $targets, $class);
     }
 
     /**
@@ -43,10 +48,12 @@ trait CanSubscribe
      * @param string                                        $class
      *
      * @return array
+     *
+     * @throws \Exception
      */
     public function toggleSubscribe($targets, $class = __CLASS__)
     {
-        return Follow::toggleRelations($this, 'subscriptions', $targets, $class);
+        return Interaction::toggleRelations($this, 'subscriptions', $targets, $class);
     }
 
     /**
@@ -59,7 +66,7 @@ trait CanSubscribe
      */
     public function hasSubscribed($target, $class = __CLASS__)
     {
-        return Follow::isRelationExists($this, 'subscriptions', $target, $class);
+        return Interaction::isRelationExists($this, 'subscriptions', $target, $class);
     }
 
     /**
@@ -72,8 +79,8 @@ trait CanSubscribe
     public function subscriptions($class = __CLASS__)
     {
         return $this->morphedByMany($class, config('acquaintances.morph_prefix'),
-            config('acquaintances.tables.followships'))
-                    ->wherePivot('relation', '=', Follow::RELATION_SUBSCRIBE)
+            config('acquaintances.tables.interactions'))
+                    ->wherePivot('relation', '=', Interaction::RELATION_SUBSCRIBE)
                     ->withPivot('followable_type', 'relation', 'created_at');
     }
 }

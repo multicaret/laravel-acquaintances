@@ -22,10 +22,10 @@ class AcquaintancesServiceProvider extends ServiceProvider
             ], 'config');
         }
 
-        if ( ! class_exists('CreateAcquaintancesFollowshipsTable')) {
+        if ( ! class_exists('CreateAcquaintancesInteractionsTable')) {
             $datePrefix = date('Y_m_d_His');
             $this->publishes([
-                $root . '/database/migrations/create_acquaintances_followships_table.php' => database_path("/migrations/{$datePrefix}_create_acquaintances_followships_table.php"),
+                $root . '/database/migrations/create_acquaintances_interactions_table.php' => database_path("/migrations/{$datePrefix}_create_acquaintances_interactions_table.php"),
             ], 'migrations');
         }
 

@@ -3,7 +3,7 @@
 
 namespace Liliom\Acquaintances\Traits;
 
-use Liliom\Acquaintances\Follow;
+use Liliom\Acquaintances\Interaction;
 
 
 /**
@@ -20,7 +20,7 @@ trait CanBeFollowed
      */
     public function isFollowedBy($user)
     {
-        return Follow::isRelationExists($this, 'followers', $user);
+        return Interaction::isRelationExists($this, 'followers', $user);
     }
 
     /**
@@ -31,8 +31,8 @@ trait CanBeFollowed
     public function followers()
     {
         return $this->morphToMany(config('acquaintances.user_model'), config('acquaintances.morph_prefix'),
-            config('acquaintances.tables.followships'))
-                    ->wherePivot('relation', '=', Follow::RELATION_FOLLOW)
+            config('acquaintances.tables.interactions'))
+                    ->wherePivot('relation', '=', Interaction::RELATION_FOLLOW)
                     ->withPivot('followable_type', 'relation', 'created_at');
     }
 }

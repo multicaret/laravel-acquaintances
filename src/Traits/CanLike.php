@@ -3,7 +3,8 @@
 
 namespace Liliom\Acquaintances\Traits;
 
-use Liliom\Acquaintances\Follow;
+use Illuminate\Support\Facades\Event;
+use Liliom\Acquaintances\Interaction;
 
 /**
  * Trait CanLike.
@@ -17,10 +18,13 @@ trait CanLike
      * @param string                                        $class
      *
      * @return array
+     *
+     * @throws \Exception
      */
     public function like($targets, $class = __CLASS__)
     {
-        return Follow::attachRelations($this, 'likes', $targets, $class);
+        Event::fire('acq.likes.like', [$this, $targets]);
+        return Interaction::attachRelations($this, 'likes', $targets, $class);
     }
 
     /**
@@ -33,7 +37,8 @@ trait CanLike
      */
     public function unlike($targets, $class = __CLASS__)
     {
-        return Follow::detachRelations($this, 'likes', $targets, $class);
+        Event::fire('acq.likes.unlike', [$this, $targets]);
+        return Interaction::detachRelations($this, 'likes', $targets, $class);
     }
 
     /**
@@ -43,10 +48,12 @@ trait CanLike
      * @param string                                        $class
      *
      * @return array
+     *
+     * @throws \Exception
      */
     public function toggleLike($targets, $class = __CLASS__)
     {
-        return Follow::toggleRelations($this, 'likes', $targets, $class);
+        return Interaction::toggleRelations($this, 'likes', $targets, $class);
     }
 
     /**
@@ -59,7 +66,7 @@ trait CanLike
      */
     public function hasLiked($target, $class = __CLASS__)
     {
-        return Follow::isRelationExists($this, 'likes', $target, $class);
+        return Interaction::isRelationExists($this, 'likes', $target, $class);
     }
 
     /**
@@ -72,8 +79,8 @@ trait CanLike
     public function likes($class = __CLASS__)
     {
         return $this->morphedByMany($class, config('acquaintances.morph_prefix'),
-            config('acquaintances.tables.followships'))
-                    ->wherePivot('relation', '=', Follow::RELATION_LIKE)
+            config('acquaintances.tables.interactions'))
+                    ->wherePivot('relation', '=', Interaction::RELATION_LIKE)
                     ->withPivot('followable_type', 'relation', 'created_at');
     }
 }
