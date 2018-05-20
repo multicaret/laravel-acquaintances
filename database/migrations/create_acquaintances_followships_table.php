@@ -12,12 +12,13 @@ class CreateAcquaintancesFollowshipsTable extends Migration
     public function up()
     {
         Schema::create(config('acquaintances.tables.followships', 'followships'), function (Blueprint $table) {
-            $table->unsignedInteger('user_id');
+            $userForeignKey = config('follow.users_table_foreign_key', 'user_id');
+            $table->unsignedInteger($userForeignKey);
             $table->morphs('followable');
-            $table->string('relation')->default('follow')->comment('follow/like/subscribe/favorite/');
+            $table->string('relation')->default('follow')->comment('follow/like/subscribe/favorite/upvote/downvote');
             $table->timestamp('created_at');
 
-            $table->foreign('user_id')
+            $table->foreign($userForeignKey)
                   ->references(config('acquaintances.users_table_primary_key', 'id'))
                   ->on(config('acquaintances.users_table_name', 'users'))
                   ->onUpdate('cascade')

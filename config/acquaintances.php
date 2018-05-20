@@ -38,7 +38,10 @@ return [
      */
     'users_table_primary_key' => 'id',
 
-
+    /*
+     * Foreign key of users table.
+     */
+    'users_table_foreign_key' => 'user_id',
     /*
      * Prefix of many-to-many relation fields.
      */
