@@ -501,13 +501,13 @@ use Liliom\Acquaintances\Models\InteractionRelation;
 // all types
 $relations = InteractionRelation::popular()->get();
 
-// followable_type = App\Post
+// subject_type = App\Post
 $relations = InteractionRelation::popular(App\Post::class)->get(); 
 
-// followable_type = App\User
+// subject_type = App\User
 $relations = InteractionRelation::popular('user')->get();
  
-// followable_type = App\Post
+// subject_type = App\Post
 $relations = InteractionRelation::popular('post')->get();
 
 // Pagination
@@ -541,6 +541,3 @@ This is the list of the events fired by default for each action
 
 ### Contributing
 See the [CONTRIBUTING](CONTRIBUTING.md) guide.
-
-Basically this package is a collective work of following libraries, so the credits are to [laravel-friendships](https://github.com/hootlex/laravel-friendships)
-& [laravel-follow](https://github.com/overtrue/laravel-follow).
