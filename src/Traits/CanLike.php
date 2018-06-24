@@ -24,6 +24,7 @@ trait CanLike
     public function like($targets, $class = __CLASS__)
     {
         Event::fire('acq.likes.like', [$this, $targets]);
+
         return Interaction::attachRelations($this, 'likes', $targets, $class);
     }
 
@@ -38,6 +39,7 @@ trait CanLike
     public function unlike($targets, $class = __CLASS__)
     {
         Event::fire('acq.likes.unlike', [$this, $targets]);
+
         return Interaction::detachRelations($this, 'likes', $targets, $class);
     }
 

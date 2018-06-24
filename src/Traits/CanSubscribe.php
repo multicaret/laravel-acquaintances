@@ -24,6 +24,7 @@ trait CanSubscribe
     public function subscribe($targets, $class = __CLASS__)
     {
         Event::fire('acq.subscriptions.subscribe', [$this, $targets]);
+
         return Interaction::attachRelations($this, 'subscriptions', $targets, $class);
     }
 
@@ -38,6 +39,7 @@ trait CanSubscribe
     public function unsubscribe($targets, $class = __CLASS__)
     {
         Event::fire('acq.subscriptions.unsubscribe', [$this, $targets]);
+
         return Interaction::detachRelations($this, 'subscriptions', $targets, $class);
     }
 
