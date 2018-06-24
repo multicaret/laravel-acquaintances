@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class FriendFriendshipGroups extends Model
 {
-
+    
     /**
      * @var array
      */

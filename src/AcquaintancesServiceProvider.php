@@ -14,35 +14,19 @@ class AcquaintancesServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $root = dirname(__DIR__);
+        $this->registerMigrations();
+    }
 
-        if ( ! file_exists(config_path('acquaintances.php'))) {
-            $this->publishes([
-                $root . '/config/acquaintances.php' => config_path('acquaintances.php'),
-            ], 'config');
+    /**
+     * Register Acquaintances's migration files.
+     *
+     * @return void
+     */
+    protected function registerMigrations()
+    {
+        if (count(\File::glob(database_path('migrations/*acquaintances*.php'))) === 0) {
+            $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
         }
-
-        if ( ! class_exists('CreateAcquaintancesInteractionsTable')) {
-            $datePrefix = date('Y_m_d_His');
-            $this->publishes([
-                $root . '/database/migrations/create_acquaintances_interactions_table.php' => database_path("/migrations/{$datePrefix}_create_acquaintances_interactions_table.php"),
-            ], 'migrations');
-        }
-
-        if ( ! class_exists('CreateAcquaintancesFriendshipTable')) {
-            $datePrefix = date('Y_m_d_His');
-            $this->publishes([
-                $root . '/database/migrations/create_acquaintances_friendship_table.php' => database_path("/migrations/{$datePrefix}_create_acquaintances_friendship_table.php"),
-            ], 'migrations');
-        }
-
-        if ( ! class_exists('CreateAcquaintancesFriendshipsGroupsTable')) {
-            $datePrefix = date('Y_m_d_His');
-            $this->publishes([
-                $root . '/database/migrations/create_acquaintances_friendships_groups_table.php' => database_path("/migrations/{$datePrefix}_create_acquaintances_friendships_groups_table.php"),
-            ], 'migrations');
-        }
-
     }
 
     /**
@@ -52,6 +36,38 @@ class AcquaintancesServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->mergeConfigFrom(dirname(__DIR__) . '/config/acquaintances.php', 'acquaintances');
+        $this->configure();
+        $this->offerPublishing();
+    }
+
+    /**
+     * Setup the configuration for Acquaintances.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this->mergeConfigFrom(
+            __DIR__ . '/../config/acquaintances.php', 'acquaintances'
+        );
+    }
+
+    /**
+     * Setup the resource publishing groups for Acquaintances.
+     *
+     * @return void
+     */
+    protected function offerPublishing()
+    {
+        if ($this->app->runningInConsole()) {
+
+            $this->publishes([
+                __DIR__ . '/../config/acquaintances.php' => config_path('acquaintances.php'),
+            ], 'acquaintances-config');
+
+            $this->publishes([
+                __DIR__ . '/../database/migrations' => database_path('migrations'),
+            ], 'acquaintances-migrations');
+        }
     }
 }

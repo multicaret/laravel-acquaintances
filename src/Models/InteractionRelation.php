@@ -23,14 +23,14 @@ class InteractionRelation extends Model
     /**
      * @var array
      */
-    protected $with = ['followable'];
+    protected $with = ['subject'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\MorphTo
      */
-    public function followable()
+    public function subject()
     {
-        return $this->morphTo(config('acquaintances.morph_prefix', 'followable'));
+        return $this->morphTo('subject');
     }
 
     /**
@@ -41,12 +41,12 @@ class InteractionRelation extends Model
      */
     public function scopePopular($query, $type = null)
     {
-        $query->select('followable_id', 'followable_type', \DB::raw('COUNT(*) AS count'))
-              ->groupBy('followable_id', 'followable_type')
+        $query->select('subject_id', 'subject_type', \DB::raw('COUNT(*) AS count'))
+              ->groupBy('subject_id', 'subject_type')
               ->orderByDesc('count');
 
         if ($type) {
-            $query->where('followable_type', $this->normalizeFollowableType($type));
+            $query->where('subject_type', $this->normalizeSubjectType($type));
         }
 
         return $query;
@@ -79,7 +79,7 @@ class InteractionRelation extends Model
      *
      * @return string
      */
-    protected function normalizeFollowableType($type)
+    protected function normalizeSubjectType($type)
     {
         $morphMap = Relation::morphMap();
 

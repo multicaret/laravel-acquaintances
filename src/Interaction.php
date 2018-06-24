@@ -2,7 +2,6 @@
 
 namespace Liliom\Acquaintances;
 
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -14,7 +13,6 @@ use stdClass;
 class Interaction
 {
     use SoftDeletes;
-
     const RELATION_LIKE = 'like';
     const RELATION_FOLLOW = 'follow';
     const RELATION_SUBSCRIBE = 'subscribe';
@@ -22,12 +20,15 @@ class Interaction
     const RELATION_UPVOTE = 'upvote';
     const RELATION_DOWNVOTE = 'downvote';
 
+
     /**
      * @var array
      */
     protected static $relationMap = [
         'followings' => 'follow',
         'followers' => 'follow',
+        'likes' => 'like',
+        'likers' => 'like',
         'favoriters' => 'favorite',
         'favorites' => 'favorite',
         'subscriptions' => 'subscribe',
@@ -48,10 +49,10 @@ class Interaction
      */
     public static function isRelationExists(Model $model, $relation, $target, $class = null)
     {
-        $target = self::formatTargets($target, $class ?: config('acquaintances.user_model'));
+        $target = self::formatTargets($target, $class ?: config('auth.providers.users.model'));
 
         return $model->{$relation}($target->classname)
-                     ->where($class ? 'followable_id' : config('follow.users_table_foreign_key', 'user_id'),
+                     ->where($class ? 'subject_id' : 'user_id',
                          head($target->ids))->exists();
     }
 
@@ -117,7 +118,7 @@ class Interaction
     {
         return self::formatTargets($targets, $class, [
             'relation' => self::getRelationTypeFromRelation($morph),
-            'created_at' => Carbon::now()->format(config('acquaintances.date_format', 'Y-m-d H:i:s')),
+//            'created_at' => Carbon::now(),
         ]);
     }
 

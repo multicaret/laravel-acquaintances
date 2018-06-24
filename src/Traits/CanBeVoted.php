@@ -53,10 +53,10 @@ trait CanBeVoted
      */
     public function voters()
     {
-        return $this->morphToMany(config('acquaintances.user_model'), config('acquaintances.morph_prefix'),
+        return $this->morphToMany(config('auth.providers.users.model'), 'subject',
             config('acquaintances.tables.interactions'))
                     ->wherePivotIn('relation', [Interaction::RELATION_UPVOTE, Interaction::RELATION_DOWNVOTE])
-                    ->withPivot('followable_type', 'relation', 'created_at');
+                    ->withPivot('subject_type', 'relation', 'created_at');
     }
 
     /**
@@ -66,10 +66,10 @@ trait CanBeVoted
      */
     public function upvoters()
     {
-        return $this->morphToMany(config('acquaintances.user_model'), config('acquaintances.morph_prefix'),
+        return $this->morphToMany(config('auth.providers.users.model'), 'subject',
             config('acquaintances.tables.interactions'))
                     ->wherePivot('relation', '=', Interaction::RELATION_UPVOTE)
-                    ->withPivot('followable_type', 'relation', 'created_at');
+                    ->withPivot('subject_type', 'relation', 'created_at');
     }
 
     /**
@@ -79,9 +79,9 @@ trait CanBeVoted
      */
     public function downvoters()
     {
-        return $this->morphToMany(config('acquaintances.user_model'), config('acquaintances.morph_prefix'),
+        return $this->morphToMany(config('auth.providers.users.model'), 'subject',
             config('acquaintances.tables.interactions'))
                     ->wherePivot('relation', '=', Interaction::RELATION_DOWNVOTE)
-                    ->withPivot('followable_type', 'relation', 'created_at');
+                    ->withPivot('subject_type', 'relation', 'created_at');
     }
 }

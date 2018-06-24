@@ -30,9 +30,13 @@ trait CanBeFollowed
      */
     public function followers()
     {
-        return $this->morphToMany(config('acquaintances.user_model'), config('acquaintances.morph_prefix'),
-            config('acquaintances.tables.interactions'))
-                    ->wherePivot('relation', '=', Interaction::RELATION_FOLLOW)
-                    ->withPivot('followable_type', 'relation', 'created_at');
+        return $this
+            ->morphToMany(
+                config('auth.providers.users.model'),
+                'subject',
+                config('acquaintances.tables.interactions')
+            )
+            ->wherePivot('relation', '=', Interaction::RELATION_FOLLOW)
+            ->withPivot('subject_type', 'relation', 'created_at');
     }
 }
