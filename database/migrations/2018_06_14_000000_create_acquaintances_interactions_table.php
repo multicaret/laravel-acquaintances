@@ -19,8 +19,8 @@ class CreateAcquaintancesInteractionsTable extends Migration
             $table->unsignedInteger('user_id')->index();
             $table->morphs('subject');
             $table->string('relation')->default('follow')->comment('follow/like/subscribe/favorite/upvote/downvote');
-            $table->softDeletes();
             $table->timestamps();
+	    $table->softDeletes();
 
 
             $table->foreign('user_id')
