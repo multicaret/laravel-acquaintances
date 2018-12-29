@@ -4,7 +4,6 @@ namespace Liliom\Acquaintances;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use stdClass;
 
 /**
@@ -12,14 +11,21 @@ use stdClass;
  */
 class Interaction
 {
-    use SoftDeletes;
     const RELATION_LIKE = 'like';
     const RELATION_FOLLOW = 'follow';
     const RELATION_SUBSCRIBE = 'subscribe';
     const RELATION_FAVORITE = 'favorite';
     const RELATION_UPVOTE = 'upvote';
     const RELATION_DOWNVOTE = 'downvote';
+    const RELATION_RATE = 'rating';
 
+    public static $pivotColumns = [
+        'subject_type',
+        'relation',
+        'relation_value',
+        'relation_type',
+        'created_at'
+    ];
 
     /**
      * @var array
@@ -37,6 +43,8 @@ class Interaction
         'upvoters' => 'upvote',
         'downvotes' => 'downvote',
         'downvoters' => 'downvote',
+        'ratings' => 'rating',
+        'raters' => 'rating',
     ];
 
     /**
@@ -45,15 +53,17 @@ class Interaction
      * @param array|string|\Illuminate\Database\Eloquent\Model $target
      * @param string                                           $class
      *
+     * @param array                                            $updates
+     *
      * @return bool
      */
-    public static function isRelationExists(Model $model, $relation, $target, $class = null)
+    public static function isRelationExists(Model $model, $relation, $target, $class = null, array $updates = [])
     {
-        $target = self::formatTargets($target, $class ?: config('auth.providers.users.model'));
+        $target = self::formatTargets($target, $class ?: config('auth.providers.users.model'), $updates);
 
         return $model->{$relation}($target->classname)
-                     ->where($class ? 'subject_id' : 'user_id',
-                         head($target->ids))->exists();
+                     ->where($class ? 'subject_id' : 'user_id', head($target->ids))
+                     ->exists();
     }
 
     /**
@@ -62,13 +72,14 @@ class Interaction
      * @param array|string|\Illuminate\Database\Eloquent\Model $targets
      * @param string                                           $class
      *
-     * @throws \Exception
+     * @param array                                            $updates
      *
      * @return array
+     * @throws \Exception
      */
-    public static function attachRelations(Model $model, $relation, $targets, $class)
+    public static function attachRelations(Model $model, $relation, $targets, $class, array $updates = [])
     {
-        $targets = self::attachPivotsFromRelation($model->{$relation}(), $targets, $class);
+        $targets = self::attachPivotsFromRelation($model->{$relation}(), $targets, $class, $updates);
 
         return $model->{$relation}($targets->classname)->sync($targets->targets, false);
     }
@@ -79,11 +90,13 @@ class Interaction
      * @param array|string|\Illuminate\Database\Eloquent\Model $targets
      * @param string                                           $class
      *
+     * @param array                                            $updates
+     *
      * @return array
      */
-    public static function detachRelations(Model $model, $relation, $targets, $class)
+    public static function detachRelations(Model $model, $relation, $targets, $class, array $updates = [])
     {
-        $targets = self::formatTargets($targets, $class);
+        $targets = self::formatTargets($targets, $class, $updates);
 
         return $model->{$relation}($targets->classname)->detach($targets->ids);
     }
@@ -94,14 +107,16 @@ class Interaction
      * @param array|string|\Illuminate\Database\Eloquent\Model $targets
      * @param string                                           $class
      *
-     * @throws \Exception
+     * @param array                                            $updates
      *
      * @return array
+     * @throws \Exception
      */
-    public static function toggleRelations(Model $model, $relation, $targets, $class)
+    public static function toggleRelations(Model $model, $relation, $targets, $class, array $updates = [])
     {
-        $targets = self::attachPivotsFromRelation($model->{$relation}(), $targets, $class);
+        $targets = self::attachPivotsFromRelation($model->{$relation}(), $targets, $class, $updates);
 
+//        dd($relation, $targets);
         return $model->{$relation}($targets->classname)->toggle($targets->targets);
     }
 
@@ -110,16 +125,19 @@ class Interaction
      * @param array|string|\Illuminate\Database\Eloquent\Model    $targets
      * @param string                                              $class
      *
-     * @throws \Exception
+     * @param array                                               $updates
      *
      * @return \stdClass
+     * @throws \Exception
      */
-    public static function attachPivotsFromRelation(MorphToMany $morph, $targets, $class)
+    public static function attachPivotsFromRelation(MorphToMany $morph, $targets, $class, array $updates = [])
     {
-        return self::formatTargets($targets, $class, [
+        $essentialUpdates = array_merge($updates, [
             'relation' => self::getRelationTypeFromRelation($morph),
 //            'created_at' => Carbon::now(),
         ]);
+
+        return self::formatTargets($targets, $class, $essentialUpdates);
     }
 
     /**
@@ -168,5 +186,29 @@ class Interaction
         }
 
         return self::$relationMap[$relation->getRelationName()];
+    }
+
+    static public function numberToReadable($number, $precision = 1, $divisors = null)
+    {
+        $shorthand = '';
+        $divisor = pow(1000, 0);
+        if ( ! isset($divisors)) {
+            $divisors = [
+                $divisor => $shorthand, // 1000^0 == 1
+                pow(1000, 1) => 'K', // Thousand
+                pow(1000, 2) => 'M', // Million
+                pow(1000, 3) => 'B', // Billion
+                pow(1000, 4) => 'T', // Trillion
+                pow(1000, 5) => 'Qa', // Quadrillion
+                pow(1000, 6) => 'Qi', // Quintillion
+            ];
+        }
+        foreach ($divisors as $divisor => $shorthand) {
+            if (abs($number) < ($divisor * 1000)) {
+                break;
+            }
+        }
+
+        return number_format($number / $divisor, $precision) . $shorthand;
     }
 }
