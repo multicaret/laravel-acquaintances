@@ -18,7 +18,7 @@
 3. [Interactions](#interactions)
     * [Traits Usage](#traits-usage)
     * [Follow](#follow)
-    * [Rate](#fate)
+    * [Rate](#rate)
     * [Like](#like)
     * [Favorite](#favorite)
     * [Subscribe](#subscribe)
