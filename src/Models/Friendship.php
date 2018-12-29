@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Friendship extends Model
 {
-
     /**
      * @var array
      */
