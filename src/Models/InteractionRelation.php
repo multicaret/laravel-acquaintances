@@ -5,7 +5,6 @@ namespace Liliom\Acquaintances\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use InvalidArgumentException;
 
 /**
@@ -13,8 +12,6 @@ use InvalidArgumentException;
  */
 class InteractionRelation extends Model
 {
-    use SoftDeletes;
-
     /**
      * @var string
      */
