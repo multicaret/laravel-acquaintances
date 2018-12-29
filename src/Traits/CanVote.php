@@ -118,7 +118,7 @@ trait CanVote
         return $this->morphedByMany($class, 'subject',
             config('acquaintances.tables.interactions'))
                     ->wherePivotIn('relation', [Interaction::RELATION_UPVOTE, Interaction::RELATION_DOWNVOTE])
-                    ->withPivot('subject_type', 'relation', 'created_at');
+                    ->withPivot(...Interaction::$pivotColumns);
     }
 
     /**
@@ -133,7 +133,7 @@ trait CanVote
         return $this->morphedByMany($class, 'subject',
             config('acquaintances.tables.interactions'))
                     ->wherePivot('relation', '=', Interaction::RELATION_UPVOTE)
-                    ->withPivot('subject_type', 'relation', 'created_at');
+                    ->withPivot(...Interaction::$pivotColumns);
     }
 
     /**
@@ -148,6 +148,6 @@ trait CanVote
         return $this->morphedByMany($class, 'subject',
             config('acquaintances.tables.interactions'))
                     ->wherePivot('relation', '=', Interaction::RELATION_DOWNVOTE)
-                    ->withPivot('subject_type', 'relation', 'created_at');
+                    ->withPivot(...Interaction::$pivotColumns);
     }
 }

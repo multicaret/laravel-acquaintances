@@ -23,7 +23,7 @@ trait CanBeSubscribed
     }
 
     /**
-     * Return followers.
+     * Return subscribers.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
@@ -32,6 +32,21 @@ trait CanBeSubscribed
         return $this->morphToMany(config('auth.providers.users.model'), 'subject',
             config('acquaintances.tables.interactions'))
                     ->wherePivot('relation', '=', Interaction::RELATION_SUBSCRIBE)
-                    ->withPivot('subject_type', 'relation', 'created_at');
+                    ->withPivot(...Interaction::$pivotColumns);
+    }
+
+    public function subscribersCount()
+    {
+        return $this->subscribers()->count();
+    }
+
+    public function getSubscribersCountAttribute()
+    {
+        return $this->subscribersCount();
+    }
+
+    public function subscribersCountReadable($precision = 1, $divisors = null)
+    {
+        return Interaction::numberToReadable($this->subscribersCount(), $precision, $divisors);
     }
 }

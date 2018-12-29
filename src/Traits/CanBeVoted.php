@@ -56,7 +56,7 @@ trait CanBeVoted
         return $this->morphToMany(config('auth.providers.users.model'), 'subject',
             config('acquaintances.tables.interactions'))
                     ->wherePivotIn('relation', [Interaction::RELATION_UPVOTE, Interaction::RELATION_DOWNVOTE])
-                    ->withPivot('subject_type', 'relation', 'created_at');
+                    ->withPivot(...Interaction::$pivotColumns);
     }
 
     /**
@@ -69,7 +69,7 @@ trait CanBeVoted
         return $this->morphToMany(config('auth.providers.users.model'), 'subject',
             config('acquaintances.tables.interactions'))
                     ->wherePivot('relation', '=', Interaction::RELATION_UPVOTE)
-                    ->withPivot('subject_type', 'relation', 'created_at');
+                    ->withPivot(...Interaction::$pivotColumns);
     }
 
     /**
@@ -82,6 +82,51 @@ trait CanBeVoted
         return $this->morphToMany(config('auth.providers.users.model'), 'subject',
             config('acquaintances.tables.interactions'))
                     ->wherePivot('relation', '=', Interaction::RELATION_DOWNVOTE)
-                    ->withPivot('subject_type', 'relation', 'created_at');
+                    ->withPivot(...Interaction::$pivotColumns);
+    }
+
+    public function upvotersCount()
+    {
+        return $this->upvoters()->count();
+    }
+
+    public function getUpvotersCountAttribute()
+    {
+        return $this->upvotersCount();
+    }
+
+    public function upvotersCountReadable($precision = 1, $divisors = null)
+    {
+        return Interaction::numberToReadable($this->upvotersCount(), $precision, $divisors);
+    }
+
+    public function downvotersCount()
+    {
+        return $this->downvoters()->count();
+    }
+
+    public function getDownvotersCountAttribute()
+    {
+        return $this->downvotersCount();
+    }
+
+    public function downvotersCountReadable($precision = 1, $divisors = null)
+    {
+        return Interaction::numberToReadable($this->downvotersCount(), $precision, $divisors);
+    }
+
+    public function votersCount()
+    {
+        return $this->voters()->count();
+    }
+
+    public function getVotersCountAttribute()
+    {
+        return $this->votersCount();
+    }
+
+    public function votersCountReadable($precision = 1, $divisors = null)
+    {
+        return Interaction::numberToReadable($this->votersCount(), $precision, $divisors);
     }
 }

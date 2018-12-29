@@ -30,13 +30,24 @@ trait CanBeFollowed
      */
     public function followers()
     {
-        return $this
-            ->morphToMany(
-                config('auth.providers.users.model'),
-                'subject',
-                config('acquaintances.tables.interactions')
-            )
-            ->wherePivot('relation', '=', Interaction::RELATION_FOLLOW)
-            ->withPivot('subject_type', 'relation', 'created_at');
+        return $this->morphToMany(config('auth.providers.users.model'), 'subject',
+            config('acquaintances.tables.interactions'))
+                    ->wherePivot('relation', '=', Interaction::RELATION_FOLLOW)
+                    ->withPivot(...Interaction::$pivotColumns);
+    }
+
+    public function followersCount()
+    {
+        return $this->followers()->count();
+    }
+
+    public function getFollowersCountAttribute()
+    {
+        return $this->followersCount();
+    }
+
+    public function followersCountReadable($precision = 1, $divisors = null)
+    {
+        return Interaction::numberToReadable($this->followersCount(), $precision, $divisors);
     }
 }

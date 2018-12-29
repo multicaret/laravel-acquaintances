@@ -83,6 +83,6 @@ trait CanFollow
         return $this->morphedByMany($class, 'subject',
             config('acquaintances.tables.interactions'))
                     ->wherePivot('relation', '=', Interaction::RELATION_FOLLOW)
-                    ->withPivot('subject_type', 'relation', 'created_at');
+                    ->withPivot(...Interaction::$pivotColumns);
     }
 }
