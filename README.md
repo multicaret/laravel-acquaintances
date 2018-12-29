@@ -387,7 +387,7 @@ $user->rateings(App\Post::class)->get()
 $user->hasRated($target)
 ```
 
-#### `\Liliom\Acquaintances\Traits\CanBeFollowed`
+#### `\Liliom\Acquaintances\Traits\CanBeRated`
 
 ```php
 $object->raters()->get()
