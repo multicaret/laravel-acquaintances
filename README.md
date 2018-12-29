@@ -1,5 +1,5 @@
 # Laravel 5 Acquaintances
-<p align="center"><img src="http://liliom.co/packages/assets/img/laravel-acquaintances.svg"></p>
+<p align="center"><img src="http://cdn.liliomlab.com/packages/assets/img/laravel-acquaintances.svg"></p>
 
 <p align="center">
 <a href="https://packagist.org/packages/liliom/laravel-acquaintances"><img src="https://poser.pugx.org/liliom/laravel-acquaintances/d/total.svg" alt="Total Downloads"></a>
