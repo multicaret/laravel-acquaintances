@@ -18,6 +18,7 @@
 3. [Interactions](#interactions)
     * [Traits Usage](#traits-usage)
     * [Follow](#follow)
+    * [Rate](#fate)
     * [Like](#like)
     * [Favorite](#favorite)
     * [Subscribe](#subscribe)
@@ -30,7 +31,7 @@
 
 
 ## Introduction
-This package gives Eloquent models the ability to manage their acquaintances.
+This light package gives Eloquent models the ability to manage their acquaintances and other cool useful stuff.
 You can easily design your social-like System (Facebook, Twitter, Foursquare...etc).
 ##### Acquaintances includes:
 - Send Friend Requests
@@ -38,6 +39,7 @@ You can easily design your social-like System (Facebook, Twitter, Foursquare...e
 - Deny Friend Requests
 - Block a User
 - Group Friends
+- Rate a User or a Model, supporting multiple aspects
 - Follow a User or a Model
 - Like a User or a Model
 - Subscribe a User or a Model
@@ -100,6 +102,7 @@ class User extends Model
     use Friendable;
     use CanLike;
     use CanFollow, CanBeFollowed;
+    use CanRate, CanBeRated;
     //...
 }
 ```
@@ -339,10 +342,11 @@ Add `CanBeXXX` Trait to target model, such as 'Post' or 'Book' ...:
 use Liliom\Acquaintances\Traits\CanBeLiked;
 use Liliom\Acquaintances\Traits\CanBeFavorited;
 use Liliom\Acquaintances\Traits\CanBeVoted;
+use Liliom\Acquaintances\Traits\CanBeRated;
 
 class Post extends Model
 {
-    use CanBeLiked, CanBeFavorited, CanBeVoted;
+    use CanBeLiked, CanBeFavorited, CanBeVoted, CanBeRated;
 }
 ```
 
@@ -366,6 +370,35 @@ $user->isFollowing($target)
 ```php
 $object->followers()->get()
 $object->isFollowedBy($user)
+$object->followersCount() // or as attribute $object->followers_count
+$object->followersCountReadable() // return readable number with precision, i.e: 5.2K
+```
+
+### Rate
+
+#### `\Liliom\Acquaintances\Traits\CanRate`
+
+```php
+$user->rate($targets)
+$user->unrate($targets)
+$user->toggleRate($targets)
+$user->ratings()->get() // App\User:class
+$user->rateings(App\Post::class)->get()
+$user->hasRated($target)
+```
+
+#### `\Liliom\Acquaintances\Traits\CanBeFollowed`
+
+```php
+$object->raters()->get()
+$object->isRatedBy($user)
+$object->averageRating() // or as attribute $object->average_rating
+$object->sumRating() // or as attribute $object->sum_rating
+$object->sumRatingReadable()
+$object->userAverageRating() // or as attribute $object->user_average_rating
+$object->userSumRating() // or as attribute $object->user_sum_rating
+$object->userSumRatingReadable() // return readable number with precision, i.e: 5.2K
+$object->ratingPercent($max = 5) // calculating the percentage based on the passed coefficient
 ```
 
 ### Like
@@ -384,9 +417,11 @@ $user->likes(App\Post::class)->get()
 #### `\Liliom\Acquaintances\Traits\CanBeLiked`
 
 ```php
-$object->likers()->get() // or $object->likers
-$object->fans()->get() // or $object->fans
+$object->likers()->get() //
+$object->fans()->get() // or $object->fans. it's an alias of likers()
 $object->isLikedBy($user)
+$object->likersCount() // or as attribute $object->likers_count
+$object->likersCountReadable() // return readable number with precision, i.e: 5.2K
 ```
 
 ### Favorite
@@ -407,6 +442,8 @@ $user->favorites(App\Post::class)->get()
 ```php
 $object->favoriters()->get() // or $object->favoriters 
 $object->isFavoritedBy($user)
+$object->favoritersCount() // or as attribute $object->favoriters_count
+$object->favoritersCountReadable() // return readable number with precision, i.e: 5.2K
 ```
 
 ### Subscribe
@@ -427,6 +464,8 @@ $user->subscriptions(App\Post::class)->get()
 ```php
 $object->subscribers() // or $object->subscribers 
 $object->isSubscribedBy($user)
+$object->subscribersCount() // or as attribute $object->subscribers_count
+$object->subscribersCountReadable() // return readable number with precision, i.e: 5.2K
 ```
 
 ### Vote
@@ -449,11 +488,19 @@ $user->downvotes(App\Post::class)->get()
 
 ```php
 $object->voters()->get()
-$object->upvoters()->get()
-$object->downvoters()->get()
 $object->isVotedBy($user)
+$object->votersCount() // or as attribute $object->voters_count
+$object->votersCountReadable() // return readable number with precision, i.e: 5.2K
+
+$object->upvoters()->get()
 $object->isUpvotedBy($user)
+$object->upvotersCount() // or as attribute $object->upvoters_count
+$object->upvotersCountReadable() // return readable number with precision, i.e: 5.2K
+
+$object->downvoters()->get()
 $object->isDownvotedBy($user)
+$object->downvotersCount() // or as attribute $object->downvoters_count
+$object->downvotersCountReadable() // return readable number with precision, i.e: 5.2K
 ```
 
 ### Parameters
@@ -467,7 +514,7 @@ follow(array|int|\Illuminate\Database\Eloquent\Model $targets, $class = __CLASS_
 So you can call them like this:
 
 ```php
-// Id / Id array
+// id / int|array
 $user->follow(1); // targets: 1, $class = App\User
 $user->follow(1, App\Post::class); // targets: 1, $class = App\Post
 $user->follow([1, 2, 3]); // targets: [1, 2, 3], $class = App\User
@@ -489,34 +536,33 @@ $followers = $user->followers()->where('id', '>', 10)->get()
 $followers = $user->followers()->orderByDesc('id')->get()
 ```
 
-The other is the same usage.
+You may use the others in the same way.
 
 ### Working with model
 
 ```php
 use Liliom\Acquaintances\Models\InteractionRelation;
 
-// get most popular object
-
-// all types
+// Get most popular object
+// 1- All types
 $relations = InteractionRelation::popular()->get();
 
-// subject_type = App\Post
+// 2- subject_type = App\Post
 $relations = InteractionRelation::popular(App\Post::class)->get(); 
 
-// subject_type = App\User
+// 3- subject_type = App\User
 $relations = InteractionRelation::popular('user')->get();
  
-// subject_type = App\Post
+// 4- subject_type = App\Post
 $relations = InteractionRelation::popular('post')->get();
 
-// Pagination
+// 5- Pagination
 $relations = InteractionRelation::popular(App\Post::class)->paginate(15); 
 
 ```
 
 ## Events
-This is the list of the events fired by default for each action
+This is the list of the events fired by default for each action:
 
 |Event name                     |Fired                                          |
 |---------------------------    |-----------------------------------------------|
@@ -526,17 +572,19 @@ This is the list of the events fired by default for each action
 |acq.friendships.blocked        |When a friend is blocked                       |
 |acq.friendships.unblocked      |When a friend is unblocked                     |
 |acq.friendships.cancelled      |When a friendship is cancelled                 |
-|acq.vote.up                    |When a an item or items got upvoted            |
-|acq.vote.down                  |When a an item or items got downvoted          |
-|acq.vote.cancel                |When a an item or items got vote cancellation  |
-|acq.likes.like                 |When a an item or items got liked              |
-|acq.likes.unlike               |When a an item or items got unliked            |
-|acq.followships.follow         |When a an item or items got followed           |
-|acq.followships.unfollow       |When a an item or items got unfollowed         |
-|acq.favorites.favorite         |When a an item or items got favored            |
-|acq.favorites.unfavorite       |When a an item or items got unfavored          |
-|acq.subscriptions.subscribe    |When a an item or items got subscribed         |                 
-|acq.subscriptions.unsubscribe  |When a an item or items got unsubscribed       |                 
+|acq.ratings.rate               |When a an item or items get Rated              |
+|acq.ratings.unrate             |When a an item or items get unRated            |
+|acq.vote.up                    |When a an item or items get upvoted            |
+|acq.vote.down                  |When a an item or items get downvoted          |
+|acq.vote.cancel                |When a an item or items get vote cancellation  |
+|acq.likes.like                 |When a an item or items get liked              |
+|acq.likes.unlike               |When a an item or items get unliked            |
+|acq.followships.follow         |When a an item or items get followed           |
+|acq.followships.unfollow       |When a an item or items get unfollowed         |
+|acq.favorites.favorite         |When a an item or items get favored            |
+|acq.favorites.unfavorite       |When a an item or items get unfavored          |
+|acq.subscriptions.subscribe    |When a an item or items get subscribed         |                 
+|acq.subscriptions.unsubscribe  |When a an item or items get unsubscribed       |                 
 
 
 ### Contributing

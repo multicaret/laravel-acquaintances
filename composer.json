@@ -1,6 +1,6 @@
 {
   "name": "liliom/laravel-acquaintances",
-  "description": "This package gives Eloquent models the ability to manage friendships (with groups), interactions along with Likes, favorites..etc .",
+  "description": "This light package, with no dependencies, gives Eloquent models the ability to manage friendships (with groups), interactions Likes, favorites, votes, subscribe, follow, ..etc including advanced rating system.",
   "keywords": [
     "laravel",
     "friendships",
@@ -8,6 +8,8 @@
     "interactions",
     "wish-list",
     "like",
+    "rate",
+    "rating",
     "social-media",
     "friend-system",
     "friends",
@@ -28,7 +30,7 @@
   "license": "MIT",
   "authors": [
     {
-      "name": "Mohamed Kawsara",
+      "name": "Mohammad Kawsara",
       "email": "mkwsra@gmail.com"
     },
     {
