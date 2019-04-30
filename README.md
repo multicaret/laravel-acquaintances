@@ -1,5 +1,5 @@
 # Laravel 5 Acquaintances
-<p align="center"><img src="http://cdn.liliomlab.com/packages/assets/img/laravel-acquaintances.svg"></p>
+<p align="center"><img src="https://cdn.liliomlab.com/packages/assets/img/laravel-acquaintances.svg"></p>
 
 <p align="center">
 <a href="https://packagist.org/packages/liliom/laravel-acquaintances"><img src="https://poser.pugx.org/liliom/laravel-acquaintances/d/total.svg" alt="Total Downloads"></a>
@@ -589,3 +589,6 @@ This is the list of the events fired by default for each action:
 
 ### Contributing
 See the [CONTRIBUTING](CONTRIBUTING.md) guide.
+
+### Change Log
+See the [log](CHANGELOG.md) file.
