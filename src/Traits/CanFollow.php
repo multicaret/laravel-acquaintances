@@ -23,7 +23,7 @@ trait CanFollow
      */
     public function follow($targets, $class = __CLASS__)
     {
-        Event::fire('acq.followships.follow', [$this, $targets]);
+        Event::dispatch('acq.followships.follow', [$this, $targets]);
 
         return Interaction::attachRelations($this, 'followings', $targets, $class);
     }
@@ -38,7 +38,7 @@ trait CanFollow
      */
     public function unfollow($targets, $class = __CLASS__)
     {
-        Event::fire('acq.followships.unfollow', [$this, $targets]);
+        Event::dispatch('acq.followships.unfollow', [$this, $targets]);
 
         return Interaction::detachRelations($this, 'followings', $targets, $class);
     }
