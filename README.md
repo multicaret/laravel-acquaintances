@@ -1,5 +1,6 @@
-# Laravel 5 Acquaintances
 <p align="center"><img src="https://cdn.liliomlab.com/packages/assets/img/laravel-acquaintances.svg"></p>
+
+# Laravel 5 Acquaintances
 
 <p align="center">
 <a href="https://packagist.org/packages/liliom/laravel-acquaintances"><img src="https://poser.pugx.org/liliom/laravel-acquaintances/d/total.svg" alt="Total Downloads"></a>
@@ -54,6 +55,11 @@ First, install the package through Composer.
 ```sh
 $ composer require liliom/laravel-acquaintances
 ```
+Laravel 5.8 => version 2.x (branch master)
+
+Laravel 5.7 and below => version 1.x (branch v1)
+
+
 
 #### Laravel 5.5 and up
 
