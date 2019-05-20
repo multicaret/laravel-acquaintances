@@ -16,7 +16,7 @@ class CreateAcquaintancesInteractionsTable extends Migration
             $userModel = config('auth.providers.users.model');
             $userModel = (new $userModel);
 
-            $table->unsignedBigInteger('user_id')->index();
+            $table->unsignedInteger('user_id')->index();
             $table->morphs('subject');
             $table->string('relation')->default('follow')->comment('follow/like/subscribe/favorite/upvote/downvote');
             $table->integer('relation_value')->nullable();
