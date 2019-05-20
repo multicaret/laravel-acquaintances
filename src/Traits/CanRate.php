@@ -56,7 +56,7 @@ trait CanRate
      */
     public function rate($targets, float $amount, $ratingType = null, $class = __CLASS__): array
     {
-        Event::fire('acq.ratings.rate', [$this, $targets]);
+        Event::dispatch('acq.ratings.rate', [$this, $targets]);
 
         return Interaction::attachRelations($this, 'ratings', $targets, $class, [
             'relation_value' => $amount,
@@ -76,7 +76,7 @@ trait CanRate
      */
     public function unrate($targets, $ratingType = null, $class = __CLASS__)
     {
-        Event::fire('acq.ratings.unrate', [$this, $targets]);
+        Event::dispatch('acq.ratings.unrate', [$this, $targets]);
 
         return Interaction::detachRelations($this, 'ratings', $targets, $class, [
             'relation_type' => $this->rateType($ratingType),

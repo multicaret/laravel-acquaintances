@@ -33,7 +33,7 @@ trait Friendable
 
         $this->friends()->save($friendship);
 
-        Event::fire('acq.friendships.sent', [$this, $recipient]);
+        Event::dispatch('acq.friendships.sent', [$this, $recipient]);
 
         return $friendship;
 
@@ -46,7 +46,7 @@ trait Friendable
      */
     public function unfriend(Model $recipient)
     {
-        Event::fire('acq.friendships.cancelled', [$this, $recipient]);
+        Event::dispatch('acq.friendships.cancelled', [$this, $recipient]);
 
         return $this->findFriendship($recipient)->delete();
     }
@@ -88,7 +88,7 @@ trait Friendable
      */
     public function acceptFriendRequest(Model $recipient)
     {
-        Event::fire('acq.friendships.accepted', [$this, $recipient]);
+        Event::dispatch('acq.friendships.accepted', [$this, $recipient]);
 
         return $this->findFriendship($recipient)->whereRecipient($this)->update([
             'status' => Status::ACCEPTED,
@@ -102,7 +102,7 @@ trait Friendable
      */
     public function denyFriendRequest(Model $recipient)
     {
-        Event::fire('acq.friendships.denied', [$this, $recipient]);
+        Event::dispatch('acq.friendships.denied', [$this, $recipient]);
 
         return $this->findFriendship($recipient)->whereRecipient($this)->update([
             'status' => Status::DENIED,
@@ -186,7 +186,7 @@ trait Friendable
             'status' => Status::BLOCKED,
         ]);
 
-        Event::fire('acq.friendships.blocked', [$this, $recipient]);
+        Event::dispatch('acq.friendships.blocked', [$this, $recipient]);
 
         return $this->friends()->save($friendship);
     }
@@ -198,7 +198,7 @@ trait Friendable
      */
     public function unblockFriend(Model $recipient)
     {
-        Event::fire('acq.friendships.unblocked', [$this, $recipient]);
+        Event::dispatch('acq.friendships.unblocked', [$this, $recipient]);
 
         return $this->findFriendship($recipient)->whereSender($this)->delete();
     }

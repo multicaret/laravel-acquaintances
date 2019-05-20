@@ -21,7 +21,7 @@ trait CanFavorite
      */
     public function favorite($targets, $class = __CLASS__)
     {
-        Event::fire('acq.favorites.favorite', [$this, $targets]);
+        Event::dispatch('acq.favorites.favorite', [$this, $targets]);
 
         return Interaction::attachRelations($this, 'favorites', $targets, $class);
     }
@@ -36,7 +36,7 @@ trait CanFavorite
      */
     public function unfavorite($targets, $class = __CLASS__)
     {
-        Event::fire('acq.favorites.unfavorite', [$this, $targets]);
+        Event::dispatch('acq.favorites.unfavorite', [$this, $targets]);
 
         return Interaction::detachRelations($this, 'favorites', $targets, $class);
     }

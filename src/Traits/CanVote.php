@@ -41,7 +41,7 @@ trait CanVote
      */
     public function upvote($targets, $class = __CLASS__)
     {
-        Event::fire('acq.vote.up', [$this, $targets]);
+        Event::dispatch('acq.vote.up', [$this, $targets]);
 
         return $this->vote($targets, 'upvote', $class);
     }
@@ -58,7 +58,7 @@ trait CanVote
      */
     public function downvote($targets, $class = __CLASS__)
     {
-        Event::fire('acq.vote.down', [$this, $targets]);
+        Event::dispatch('acq.vote.down', [$this, $targets]);
 
         return $this->vote($targets, 'downvote', $class);
     }
@@ -75,7 +75,7 @@ trait CanVote
     {
         Interaction::detachRelations($this, 'upvotes', $targets, $class);
         Interaction::detachRelations($this, 'downvotes', $targets, $class);
-        Event::fire('acq.vote.cancel', [$this, $targets]);
+        Event::dispatch('acq.vote.cancel', [$this, $targets]);
 
         return $this;
     }
