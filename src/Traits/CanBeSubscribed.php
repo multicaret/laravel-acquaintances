@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Liliom\Acquaintances\Traits;
 
 use Liliom\Acquaintances\Interaction;
@@ -13,7 +12,7 @@ trait CanBeSubscribed
     /**
      * Check if user is subscribed by given user.
      *
-     * @param int $user
+     * @param Model $user
      *
      * @return bool
      */
