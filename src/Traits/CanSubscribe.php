@@ -1,10 +1,10 @@
 <?php
 
 
-namespace Liliom\Acquaintances\Traits;
+namespace Multicaret\Acquaintances\Traits;
 
 use Illuminate\Support\Facades\Event;
-use Liliom\Acquaintances\Interaction;
+use Multicaret\Acquaintances\Interaction;
 
 /**
  * Trait CanSubscribe.

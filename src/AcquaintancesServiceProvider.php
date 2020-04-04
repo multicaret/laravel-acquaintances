@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Liliom\Acquaintances;
+namespace Multicaret\Acquaintances;
 
 use Illuminate\Support\ServiceProvider;
 

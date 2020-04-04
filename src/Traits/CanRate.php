@@ -1,14 +1,14 @@
 <?php
 
 
-namespace Liliom\Acquaintances\Traits;
+namespace Multicaret\Acquaintances\Traits;
 
 use Illuminate\Support\Facades\Event;
-use Liliom\Acquaintances\Interaction;
+use Multicaret\Acquaintances\Interaction;
 
 /**
  * Class CanRate
- * @package Liliom\Acquaintances\Traits
+ * @package Multicaret\Acquaintances\Traits
  */
 trait CanRate
 {

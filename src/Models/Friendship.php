@@ -1,13 +1,13 @@
 <?php
 
 
-namespace Liliom\Acquaintances\Models;
+namespace Multicaret\Acquaintances\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Friendship
- * @package Liliom\Acquaintances\Models
+ * @package Multicaret\Acquaintances\Models
  */
 class Friendship extends Model
 {

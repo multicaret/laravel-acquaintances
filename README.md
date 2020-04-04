@@ -1,13 +1,37 @@
-<p align="center"><img src="https://cdn.liliomlab.com/packages/assets/img/laravel-acquaintances.svg"></p>
+<p align="center"><img src="https://cdn.multicaret.com/packages/assets/img/laravel-acquaintances.svg"></p>
 
-# Laravel 5 Acquaintances
+# Laravel 7 Acquaintances
 
 <p align="center">
-<a href="https://packagist.org/packages/liliom/laravel-acquaintances"><img src="https://poser.pugx.org/liliom/laravel-acquaintances/d/total.svg" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/liliom/laravel-acquaintances"><img src="https://poser.pugx.org/liliom/laravel-acquaintances/v/stable.svg" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/liliom/laravel-acquaintances"><img src="https://poser.pugx.org/liliom/laravel-acquaintances/license.svg" alt="License"></a>
+<a href="https://packagist.org/packages/multicaret/laravel-acquaintances"><img src="https://poser.pugx.org/multicaret/laravel-acquaintances/d/total.svg" alt="Total Downloads"></a>
+<a href="https://packagist.org/packages/multicaret/laravel-acquaintances"><img src="https://poser.pugx.org/multicaret/laravel-acquaintances/v/stable.svg" alt="Latest Stable Version"></a>
+<a href="https://packagist.org/packages/multicaret/laravel-acquaintances"><img src="https://poser.pugx.org/multicaret/laravel-acquaintances/license.svg" alt="License"></a>
 </p>
 
+
+## TL;DR
+
+Gives eloquent models:
+- Friendships & Groups ability
+- Interactions ability such as:
+    - Likes
+    - Favorites
+    - Votes (up/down)
+    - Subscribe
+    - Follow
+    
+Take this example:
+```php
+$user1 = User::find(1);
+$user2 = User::find(2);
+
+$user1->befriend($user2);
+$user2->acceptFriendRequest($user1);
+
+// $user2: I just found out that $user1 is not into Laravel, thus:
+$user2->unfriend($user1);
+
+```
 1. [Introduction](#introduction)
 1. [Installation](#installation)
 2. [Friendships:](#friendships)
@@ -53,7 +77,7 @@ You can easily design your social-like System (Facebook, Twitter, Foursquare...e
 First, install the package through Composer.
 
 ```sh
-$ composer require liliom/laravel-acquaintances
+$ composer require multicaret/laravel-acquaintances
 ```
 Laravel 5.8 => version 2.x (branch master)
 
@@ -67,14 +91,14 @@ Then include the service provider inside `config/app.php`.
 ```php
 'providers' => [
     ...
-    Liliom\Acquaintances\AcquaintancesServiceProvider::class,
+    Multicaret\Acquaintances\AcquaintancesServiceProvider::class,
     ...
 ];
 ```
 
 Publish config and migrations:
 ```sh
-$ php artisan vendor:publish --provider="Liliom\Acquaintances\AcquaintancesServiceProvider"
+$ php artisan vendor:publish --provider="Multicaret\Acquaintances\AcquaintancesServiceProvider"
 ```
 
 Configure the published config in:
@@ -92,10 +116,10 @@ $ php artisan migrate
 
 Example:
 ```php
-use Liliom\Acquaintances\Traits\CanBeFollowed;
-use Liliom\Acquaintances\Traits\CanFollow;
-use Liliom\Acquaintances\Traits\CanLike;
-use Liliom\Acquaintances\Traits\Friendable;
+use Multicaret\Acquaintances\Traits\CanBeFollowed;
+use Multicaret\Acquaintances\Traits\CanFollow;
+use Multicaret\Acquaintances\Traits\CanLike;
+use Multicaret\Acquaintances\Traits\Friendable;
 //...
 
 class User extends Model
@@ -116,7 +140,7 @@ All available APIs are listed below for Friendships & Interactions.
 Add `Friendable` Trait to User model.
 
 ```php
-use Liliom\Acquaintances\Traits\Friendable;
+use Multicaret\Acquaintances\Traits\Friendable;
 
 class User extends Model
 {
@@ -325,11 +349,11 @@ $user->getPendingFriendships($group_name);
 Add `CanXXX` Traits to User model.
 
 ```php
-use Liliom\Acquaintances\Traits\CanFollow;
-use Liliom\Acquaintances\Traits\CanLike;
-use Liliom\Acquaintances\Traits\CanFavorite;
-use Liliom\Acquaintances\Traits\CanSubscribe;
-use Liliom\Acquaintances\Traits\CanVote;
+use Multicaret\Acquaintances\Traits\CanFollow;
+use Multicaret\Acquaintances\Traits\CanLike;
+use Multicaret\Acquaintances\Traits\CanFavorite;
+use Multicaret\Acquaintances\Traits\CanSubscribe;
+use Multicaret\Acquaintances\Traits\CanVote;
 
 class User extends Model
 {
@@ -340,10 +364,10 @@ class User extends Model
 Add `CanBeXXX` Trait to target model, such as 'Post' or 'Book' ...:
 
 ```php
-use Liliom\Acquaintances\Traits\CanBeLiked;
-use Liliom\Acquaintances\Traits\CanBeFavorited;
-use Liliom\Acquaintances\Traits\CanBeVoted;
-use Liliom\Acquaintances\Traits\CanBeRated;
+use Multicaret\Acquaintances\Traits\CanBeLiked;
+use Multicaret\Acquaintances\Traits\CanBeFavorited;
+use Multicaret\Acquaintances\Traits\CanBeVoted;
+use Multicaret\Acquaintances\Traits\CanBeRated;
 
 class Post extends Model
 {
@@ -355,7 +379,7 @@ All available APIs are listed below.
 
 ### Follow
 
-#### `\Liliom\Acquaintances\Traits\CanFollow`
+#### `\Multicaret\Acquaintances\Traits\CanFollow`
 
 ```php
 $user->follow($targets)
@@ -366,7 +390,7 @@ $user->followings(App\Post::class)->get()
 $user->isFollowing($target)
 ```
 
-#### `\Liliom\Acquaintances\Traits\CanBeFollowed`
+#### `\Multicaret\Acquaintances\Traits\CanBeFollowed`
 
 ```php
 $object->followers()->get()
@@ -377,7 +401,7 @@ $object->followersCountReadable() // return readable number with precision, i.e:
 
 ### Rate
 
-#### `\Liliom\Acquaintances\Traits\CanRate`
+#### `\Multicaret\Acquaintances\Traits\CanRate`
 
 ```php
 $user->rate($targets)
@@ -388,7 +412,7 @@ $user->rateings(App\Post::class)->get()
 $user->hasRated($target)
 ```
 
-#### `\Liliom\Acquaintances\Traits\CanBeRated`
+#### `\Multicaret\Acquaintances\Traits\CanBeRated`
 
 ```php
 $object->raters()->get()
@@ -404,7 +428,7 @@ $object->ratingPercent($max = 5) // calculating the percentage based on the pass
 
 ### Like
 
-#### `\Liliom\Acquaintances\Traits\CanLike`
+#### `\Multicaret\Acquaintances\Traits\CanLike`
 
 ```php
 $user->like($targets)
@@ -415,7 +439,7 @@ $user->likes()->get() // default object: App\User:class
 $user->likes(App\Post::class)->get()
 ```
 
-#### `\Liliom\Acquaintances\Traits\CanBeLiked`
+#### `\Multicaret\Acquaintances\Traits\CanBeLiked`
 
 ```php
 $object->likers()->get() //
@@ -427,7 +451,7 @@ $object->likersCountReadable() // return readable number with precision, i.e: 5.
 
 ### Favorite
 
-#### `\Liliom\Acquaintances\Traits\CanFavorite`
+#### `\Multicaret\Acquaintances\Traits\CanFavorite`
 
 ```php
 $user->favorite($targets)
@@ -438,7 +462,7 @@ $user->favorites()->get() // App\User:class
 $user->favorites(App\Post::class)->get()
 ```
 
-#### `\Liliom\Acquaintances\Traits\CanBeFavorited`
+#### `\Multicaret\Acquaintances\Traits\CanBeFavorited`
 
 ```php
 $object->favoriters()->get() // or $object->favoriters 
@@ -449,7 +473,7 @@ $object->favoritersCountReadable() // return readable number with precision, i.e
 
 ### Subscribe
 
-#### `\Liliom\Acquaintances\Traits\CanSubscribe`
+#### `\Multicaret\Acquaintances\Traits\CanSubscribe`
 
 ```php
 $user->subscribe($targets)
@@ -460,7 +484,7 @@ $user->subscriptions()->get() // default object: App\User:class
 $user->subscriptions(App\Post::class)->get()
 ```
 
-#### `Liliom\Acquaintances\Traits\CanBeSubscribed`
+#### `Multicaret\Acquaintances\Traits\CanBeSubscribed`
 
 ```php
 $object->subscribers() // or $object->subscribers 
@@ -471,7 +495,7 @@ $object->subscribersCountReadable() // return readable number with precision, i.
 
 ### Vote
 
-#### `\Liliom\Acquaintances\Traits\CanVote`
+#### `\Multicaret\Acquaintances\Traits\CanVote`
 
 ```php
 $user->vote($target) // Vote with 'upvote' for default
@@ -485,7 +509,7 @@ $user->upvotes(App\Post::class)->get()
 $user->downvotes(App\Post::class)->get()
 ```
 
-#### `\Liliom\Acquaintances\Traits\CanBeVoted`
+#### `\Multicaret\Acquaintances\Traits\CanBeVoted`
 
 ```php
 $object->voters()->get()
@@ -542,7 +566,7 @@ You may use the others in the same way.
 ### Working with model
 
 ```php
-use Liliom\Acquaintances\Models\InteractionRelation;
+use Multicaret\Acquaintances\Models\InteractionRelation;
 
 // Get most popular object
 // 1- All types

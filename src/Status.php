@@ -1,6 +1,6 @@
 <?php
 
-namespace Liliom\Acquaintances;
+namespace Multicaret\Acquaintances;
 
 /**
  * Class Status.

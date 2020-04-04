@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Liliom\Acquaintances\Models;
+namespace Multicaret\Acquaintances\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;

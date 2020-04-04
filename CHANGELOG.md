@@ -1,3 +1,6 @@
+## v3.0.0
+* changed the package company - since I renamed my brand
+
 ## v2.0.0
 * PHP 7.1 is the minimum requirement now
 * Supporting Laravel 5.8 by replacing `Event::fire` with `Event::dispatch`

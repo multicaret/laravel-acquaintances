@@ -1,6 +1,6 @@
 {
-  "name": "liliom/laravel-acquaintances",
-  "description": "This light package, with no dependencies, gives Eloquent models the ability to manage friendships (with groups), interactions Likes, favorites, votes, subscribe, follow, ..etc including advanced rating system.",
+  "name": "multicaret/laravel-acquaintances",
+  "description": "This light package, with no dependencies, gives Eloquent models the ability to manage friendships (with groups). And interactions such as: Likes, favorites, votes, subscribe, follow, ..etc. And it includes advanced rating system.",
   "keywords": [
     "laravel",
     "friendships",
@@ -36,7 +36,7 @@
   ],
   "autoload": {
     "psr-4": {
-      "Liliom\\Acquaintances\\": "src/"
+      "Multicaret\\Acquaintances\\": "src/"
     }
   },
   "autoload-dev": {
@@ -53,7 +53,7 @@
   "extra": {
     "laravel": {
       "providers": [
-        "Liliom\\Acquaintances\\AcquaintancesServiceProvider"
+        "Multicaret\\Acquaintances\\AcquaintancesServiceProvider"
       ]
     }
   },

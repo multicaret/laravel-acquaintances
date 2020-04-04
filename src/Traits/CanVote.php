@@ -1,10 +1,10 @@
 <?php
 
 
-namespace Liliom\Acquaintances\Traits;
+namespace Multicaret\Acquaintances\Traits;
 
 use Illuminate\Support\Facades\Event;
-use Liliom\Acquaintances\Interaction;
+use Multicaret\Acquaintances\Interaction;
 
 /**
  * Trait CanVote.
@@ -69,7 +69,7 @@ trait CanVote
      * @param int|array|\Illuminate\Database\Eloquent\Model $targets
      * @param string                                        $class
      *
-     * @return Liliom\Acquaintances\Traits\CanVote
+     * @return Multicaret\Acquaintances\Traits\CanVote
      */
     public function cancelVote($targets, $class = __CLASS__)
     {

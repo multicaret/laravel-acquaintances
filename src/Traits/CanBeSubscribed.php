@@ -1,9 +1,9 @@
 <?php
 
 
-namespace Liliom\Acquaintances\Traits;
+namespace Multicaret\Acquaintances\Traits;
 
-use Liliom\Acquaintances\Interaction;
+use Multicaret\Acquaintances\Interaction;
 
 /**
  * Trait CanBeSubscribed.

@@ -1,24 +1,24 @@
 <?php
 
 
-namespace Liliom\Acquaintances\Traits;
+namespace Multicaret\Acquaintances\Traits;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Event;
-use Liliom\Acquaintances\Models\FriendFriendshipGroups;
-use Liliom\Acquaintances\Models\Friendship;
-use Liliom\Acquaintances\Status;
+use Multicaret\Acquaintances\Models\FriendFriendshipGroups;
+use Multicaret\Acquaintances\Models\Friendship;
+use Multicaret\Acquaintances\Status;
 
 /**
  * Class Friendable
- * @package Liliom\Acquaintances\Traits
+ * @package Multicaret\Acquaintances\Traits
  */
 trait Friendable
 {
     /**
      * @param Model $recipient
      *
-     * @return \Liliom\Acquaintances\Models\Friendship|false
+     * @return \Multicaret\Acquaintances\Models\Friendship|false
      */
     public function befriend(Model $recipient)
     {
@@ -172,7 +172,7 @@ trait Friendable
     /**
      * @param Model $recipient
      *
-     * @return \Liliom\Acquaintances\Models\Friendship
+     * @return \Multicaret\Acquaintances\Models\Friendship
      */
     public function blockFriend(Model $recipient)
     {
@@ -206,7 +206,7 @@ trait Friendable
     /**
      * @param Model $recipient
      *
-     * @return \Liliom\Acquaintances\Models\Friendship
+     * @return \Multicaret\Acquaintances\Models\Friendship
      */
     public function getFriendship(Model $recipient)
     {

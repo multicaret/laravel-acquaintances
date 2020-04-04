@@ -1,6 +1,6 @@
 <?php
 
-namespace Liliom\Acquaintances;
+namespace Multicaret\Acquaintances;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
