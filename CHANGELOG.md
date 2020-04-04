@@ -1,5 +1,5 @@
 ## v3.0.0
-* changed the package company - since I renamed my brand
+* changed the package's company - since I renamed my brand
 
 ## v2.0.0
 * PHP 7.1 is the minimum requirement now
