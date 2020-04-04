@@ -30,7 +30,7 @@ trait CanRate
     {
         if (empty($type) && empty(self::$rateType)) {
             $this->setRateType(config('acquaintances.rating.defaults.type'));
-        } else if ( ! empty($type)) {
+        } elseif ( ! empty($type)) {
             $this->setRateType($type);
         }
 
@@ -45,10 +45,10 @@ trait CanRate
     /**
      * Rate an item or items.
      *
-     * @param int|array|\Illuminate\Database\Eloquent\Model $targets
-     * @param float                                         $amount
-     * @param null                                          $ratingType
-     * @param string                                        $class
+     * @param  int|array|\Illuminate\Database\Eloquent\Model  $targets
+     * @param  float  $amount
+     * @param  null  $ratingType
+     * @param  string  $class
      *
      * @return array
      *
@@ -67,9 +67,9 @@ trait CanRate
     /**
      * UnRate an item or items.
      *
-     * @param int|array|\Illuminate\Database\Eloquent\Model $targets
-     * @param null                                          $ratingType
-     * @param string                                        $class
+     * @param  int|array|\Illuminate\Database\Eloquent\Model  $targets
+     * @param  null  $ratingType
+     * @param  string  $class
      *
      * @return array
      * @throws \Exception
@@ -86,10 +86,10 @@ trait CanRate
     /**
      * Toggle Rate an item or items.
      *
-     * @param int|array|\Illuminate\Database\Eloquent\Model $targets
-     * @param float                                         $amount
-     * @param null                                          $ratingType
-     * @param string                                        $class
+     * @param  int|array|\Illuminate\Database\Eloquent\Model  $targets
+     * @param  float  $amount
+     * @param  null  $ratingType
+     * @param  string  $class
      *
      * @return array
      *
@@ -106,9 +106,9 @@ trait CanRate
     /**
      * Check if user is Rated given item.
      *
-     * @param int|array|\Illuminate\Database\Eloquent\Model $target
-     * @param null                                          $ratingType
-     * @param string                                        $class
+     * @param  int|array|\Illuminate\Database\Eloquent\Model  $target
+     * @param  null  $ratingType
+     * @param  string  $class
      *
      * @return bool
      */
@@ -123,7 +123,7 @@ trait CanRate
     /**
      * Return item likes.
      *
-     * @param string $class
+     * @param  string  $class
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
@@ -132,7 +132,7 @@ trait CanRate
         $relation = $this->morphedByMany($class, 'subject',
             config('acquaintances.tables.interactions'))
                          ->wherePivot('relation', '=', Interaction::RELATION_RATE);
-        
+
         if ($this->rateType() != 'overall') {
             $relation = $relation->wherePivot('relation_type', '=', $this->rateType());
         }

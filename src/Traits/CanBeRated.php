@@ -29,7 +29,7 @@ trait CanBeRated
     {
         if (empty($type) && empty(self::$ratedType)) {
             $this->setRatedType(config('acquaintances.rating.defaults.type'));
-        } else if ( ! empty($type)) {
+        } elseif ( ! empty($type)) {
             $this->setRatedType($type);
         }
 
@@ -44,7 +44,7 @@ trait CanBeRated
     /**
      * Check if user is isRatedBy by given user.
      *
-     * @param int $user
+     * @param  int  $user
      *
      * @return bool
      */
@@ -113,9 +113,9 @@ trait CanBeRated
      * Calculating the percentage based on the passed coefficient
      * Taking the default value of $max from within the config file
      *
-     * @param null $max
+     * @param  null  $max
      *
-     * @param null $ratingType
+     * @param  null  $ratingType
      *
      * @return float|int
      */

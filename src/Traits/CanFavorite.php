@@ -14,8 +14,8 @@ trait CanFavorite
     /**
      * Favorite an item or items.
      *
-     * @param int|array|\Illuminate\Database\Eloquent\Model $targets
-     * @param string                                        $class
+     * @param  int|array|\Illuminate\Database\Eloquent\Model  $targets
+     * @param  string  $class
      *
      * @return array
      */
@@ -29,8 +29,8 @@ trait CanFavorite
     /**
      * Unfavorite an item or items.
      *
-     * @param int|array|\Illuminate\Database\Eloquent\Model $targets
-     * @param string                                        $class
+     * @param  int|array|\Illuminate\Database\Eloquent\Model  $targets
+     * @param  string  $class
      *
      * @return array
      */
@@ -44,8 +44,8 @@ trait CanFavorite
     /**
      * Toggle favorite an item or items.
      *
-     * @param int|array|\Illuminate\Database\Eloquent\Model $targets
-     * @param string                                        $class
+     * @param  int|array|\Illuminate\Database\Eloquent\Model  $targets
+     * @param  string  $class
      *
      * @return array
      */
@@ -57,8 +57,8 @@ trait CanFavorite
     /**
      * Check if user is favorited given item.
      *
-     * @param int|array|\Illuminate\Database\Eloquent\Model $target
-     * @param string                                        $class
+     * @param  int|array|\Illuminate\Database\Eloquent\Model  $target
+     * @param  string  $class
      *
      * @return bool
      */
@@ -70,7 +70,7 @@ trait CanFavorite
     /**
      * Return item favorites.
      *
-     * @param string $class
+     * @param  string  $class
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */

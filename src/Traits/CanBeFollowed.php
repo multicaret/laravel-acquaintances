@@ -14,7 +14,7 @@ trait CanBeFollowed
     /**
      * Check if user is followed by given user.
      *
-     * @param int $user
+     * @param  int  $user
      *
      * @return bool
      */

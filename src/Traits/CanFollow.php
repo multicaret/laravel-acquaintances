@@ -14,8 +14,8 @@ trait CanFollow
     /**
      * Interaction an item or items.
      *
-     * @param int|array|\Illuminate\Database\Eloquent\Model $targets
-     * @param string                                        $class
+     * @param  int|array|\Illuminate\Database\Eloquent\Model  $targets
+     * @param  string  $class
      *
      * @return array
      *
@@ -31,8 +31,8 @@ trait CanFollow
     /**
      * Unfollow an item or items.
      *
-     * @param int|array|\Illuminate\Database\Eloquent\Model $targets
-     * @param string                                        $class
+     * @param  int|array|\Illuminate\Database\Eloquent\Model  $targets
+     * @param  string  $class
      *
      * @return array
      */
@@ -46,8 +46,8 @@ trait CanFollow
     /**
      * Toggle follow an item or items.
      *
-     * @param int|array|\Illuminate\Database\Eloquent\Model $targets
-     * @param string                                        $class
+     * @param  int|array|\Illuminate\Database\Eloquent\Model  $targets
+     * @param  string  $class
      *
      * @return array
      *
@@ -61,8 +61,8 @@ trait CanFollow
     /**
      * Check if user is following given item.
      *
-     * @param int|array|\Illuminate\Database\Eloquent\Model $target
-     * @param string                                        $class
+     * @param  int|array|\Illuminate\Database\Eloquent\Model  $target
+     * @param  string  $class
      *
      * @return bool
      */
@@ -74,7 +74,7 @@ trait CanFollow
     /**
      * Return item followings.
      *
-     * @param string $class
+     * @param  string  $class
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */

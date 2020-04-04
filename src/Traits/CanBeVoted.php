@@ -13,7 +13,7 @@ trait CanBeVoted
     /**
      * Check if item is voted by given user.
      *
-     * @param int $user
+     * @param  int  $user
      *
      * @return bool
      */
@@ -25,7 +25,7 @@ trait CanBeVoted
     /**
      * Check if item is upvoted by given user.
      *
-     * @param int $user
+     * @param  int  $user
      *
      * @return bool
      */
@@ -37,7 +37,7 @@ trait CanBeVoted
     /**
      * Check if item is downvoted by given user.
      *
-     * @param int $user
+     * @param  int  $user
      *
      * @return bool
      */

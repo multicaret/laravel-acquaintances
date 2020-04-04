@@ -23,7 +23,7 @@ class FriendFriendshipGroups extends Model
     public $timestamps = false;
 
     /**
-     * @param array $attributes
+     * @param  array  $attributes
      */
     public function __construct(array $attributes = [])
     {

@@ -38,7 +38,7 @@ class CreateAcquaintancesInteractionsTable extends Migration
     public function down()
     {
         Schema::table(config('acquaintances.tables.interactions', 'interactions'), function ($table) {
-            $table->dropForeign(config('acquaintances.tables.interactions', 'interactions') . '_user_id_foreign');
+            $table->dropForeign(config('acquaintances.tables.interactions', 'interactions').'_user_id_foreign');
         });
 
         Schema::drop(config('acquaintances.tables.interactions', 'interactions'));

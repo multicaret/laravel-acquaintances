@@ -13,7 +13,7 @@ trait CanBeLiked
     /**
      * Check if user is isLikedBy by given user.
      *
-     * @param int $user
+     * @param  int  $user
      *
      * @return bool
      */
@@ -63,8 +63,8 @@ trait CanBeLiked
     /**
      * Alias of likersCountFormatted.
      *
-     * @param int  $precision
-     * @param null $divisors
+     * @param  int  $precision
+     * @param  null  $divisors
      *
      * @return string
      */

@@ -14,9 +14,9 @@ trait CanVote
     /**
      * Vote an item or items.
      *
-     * @param int|array|\Illuminate\Database\Eloquent\Model $targets
-     * @param string                                        $type
-     * @param string                                        $class
+     * @param  int|array|\Illuminate\Database\Eloquent\Model  $targets
+     * @param  string  $type
+     * @param  string  $class
      *
      * @return array
      *
@@ -32,8 +32,8 @@ trait CanVote
     /**
      * Upvote an item or items.
      *
-     * @param int|array|\Illuminate\Database\Eloquent\Model $targets
-     * @param string                                        $class
+     * @param  int|array|\Illuminate\Database\Eloquent\Model  $targets
+     * @param  string  $class
      *
      * @return array
      *
@@ -49,8 +49,8 @@ trait CanVote
     /**
      * Downvote an item or items.
      *
-     * @param int|array|\Illuminate\Database\Eloquent\Model $targets
-     * @param string                                        $class
+     * @param  int|array|\Illuminate\Database\Eloquent\Model  $targets
+     * @param  string  $class
      *
      * @return array
      *
@@ -66,8 +66,8 @@ trait CanVote
     /**
      * Cancel vote for an item or items.
      *
-     * @param int|array|\Illuminate\Database\Eloquent\Model $targets
-     * @param string                                        $class
+     * @param  int|array|\Illuminate\Database\Eloquent\Model  $targets
+     * @param  string  $class
      *
      * @return Multicaret\Acquaintances\Traits\CanVote
      */
@@ -83,8 +83,8 @@ trait CanVote
     /**
      * Check if user is upvoted given item.
      *
-     * @param int|array|\Illuminate\Database\Eloquent\Model $target
-     * @param string                                        $class
+     * @param  int|array|\Illuminate\Database\Eloquent\Model  $target
+     * @param  string  $class
      *
      * @return bool
      */
@@ -96,8 +96,8 @@ trait CanVote
     /**
      * Check if user is downvoted given item.
      *
-     * @param int|array|\Illuminate\Database\Eloquent\Model $target
-     * @param string                                        $class
+     * @param  int|array|\Illuminate\Database\Eloquent\Model  $target
+     * @param  string  $class
      *
      * @return bool
      */
@@ -109,7 +109,7 @@ trait CanVote
     /**
      * Return item votes.
      *
-     * @param string $class
+     * @param  string  $class
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
@@ -124,7 +124,7 @@ trait CanVote
     /**
      * Return item upvotes.
      *
-     * @param string $class
+     * @param  string  $class
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
@@ -139,7 +139,7 @@ trait CanVote
     /**
      * Return item downvotes.
      *
-     * @param string $class
+     * @param  string  $class
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */

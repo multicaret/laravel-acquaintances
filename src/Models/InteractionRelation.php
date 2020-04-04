@@ -31,8 +31,8 @@ class InteractionRelation extends Model
     }
 
     /**
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param string|null                           $type
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  string|null  $type
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
@@ -70,11 +70,11 @@ class InteractionRelation extends Model
     }
 
     /**
-     * @param string $type
-     *
-     * @throws \InvalidArgumentException
+     * @param  string  $type
      *
      * @return string
+     * @throws \InvalidArgumentException
+     *
      */
     protected function normalizeSubjectType($type)
     {
@@ -90,7 +90,7 @@ class InteractionRelation extends Model
 
         $namespace = config('acquaintances.model_namespace', 'App');
 
-        $modelName = $namespace . '\\' . studly_case($type);
+        $modelName = $namespace.'\\'.studly_case($type);
 
         if ( ! class_exists($modelName)) {
             throw new InvalidArgumentException("Model {$modelName} not exists. Please check your config 'acquaintances.model_namespace'.");

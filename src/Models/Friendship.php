@@ -17,7 +17,7 @@ class Friendship extends Model
     protected $guarded = ['id', 'created_at', 'updated_at'];
 
     /**
-     * @param array $attributes
+     * @param  array  $attributes
      */
     public function __construct(array $attributes = [])
     {
@@ -51,7 +51,7 @@ class Friendship extends Model
     }
 
     /**
-     * @param Model $recipient
+     * @param  Model  $recipient
      *
      * @return $this
      */
@@ -65,7 +65,7 @@ class Friendship extends Model
 
     /**
      * @param       $query
-     * @param Model $model
+     * @param  Model  $model
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
@@ -77,7 +77,7 @@ class Friendship extends Model
 
     /**
      * @param       $query
-     * @param Model $model
+     * @param  Model  $model
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
@@ -89,8 +89,8 @@ class Friendship extends Model
 
     /**
      * @param        $query
-     * @param Model  $model
-     * @param string $groupSlug
+     * @param  Model  $model
+     * @param  string  $groupSlug
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
@@ -107,13 +107,13 @@ class Friendship extends Model
 
             $query->join($groupsPivotTable,
                 function ($join) use ($groupsPivotTable, $friendsPivotTable, $groupId, $model) {
-                    $join->on($groupsPivotTable . '.friendship_id', '=', $friendsPivotTable . '.id')
-                         ->where($groupsPivotTable . '.group_id', '=', $groupId)
+                    $join->on($groupsPivotTable.'.friendship_id', '=', $friendsPivotTable.'.id')
+                         ->where($groupsPivotTable.'.group_id', '=', $groupId)
                          ->where(function ($query) use ($groupsPivotTable, $friendsPivotTable, $model) {
-                             $query->where($groupsPivotTable . '.friend_id', '!=', $model->getKey())
-                                   ->where($groupsPivotTable . '.friend_type', '=', $model->getMorphClass());
+                             $query->where($groupsPivotTable.'.friend_id', '!=', $model->getKey())
+                                   ->where($groupsPivotTable.'.friend_type', '=', $model->getMorphClass());
                          })
-                         ->orWhere($groupsPivotTable . '.friend_type', '!=', $model->getMorphClass());
+                         ->orWhere($groupsPivotTable.'.friend_type', '!=', $model->getMorphClass());
                 });
 
         }
@@ -124,8 +124,8 @@ class Friendship extends Model
 
     /**
      * @param       $query
-     * @param Model $sender
-     * @param Model $recipient
+     * @param  Model  $sender
+     * @param  Model  $recipient
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */

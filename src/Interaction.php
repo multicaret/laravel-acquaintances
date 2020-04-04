@@ -48,12 +48,12 @@ class Interaction
     ];
 
     /**
-     * @param \Illuminate\Database\Eloquent\Model              $model
-     * @param string                                           $relation
-     * @param array|string|\Illuminate\Database\Eloquent\Model $target
-     * @param string                                           $class
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  string  $relation
+     * @param  array|string|\Illuminate\Database\Eloquent\Model  $target
+     * @param  string  $class
      *
-     * @param array                                            $updates
+     * @param  array  $updates
      *
      * @return bool
      */
@@ -67,12 +67,12 @@ class Interaction
     }
 
     /**
-     * @param \Illuminate\Database\Eloquent\Model              $model
-     * @param string                                           $relation
-     * @param array|string|\Illuminate\Database\Eloquent\Model $targets
-     * @param string                                           $class
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  string  $relation
+     * @param  array|string|\Illuminate\Database\Eloquent\Model  $targets
+     * @param  string  $class
      *
-     * @param array                                            $updates
+     * @param  array  $updates
      *
      * @return array
      * @throws \Exception
@@ -85,12 +85,12 @@ class Interaction
     }
 
     /**
-     * @param \Illuminate\Database\Eloquent\Model              $model
-     * @param string                                           $relation
-     * @param array|string|\Illuminate\Database\Eloquent\Model $targets
-     * @param string                                           $class
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  string  $relation
+     * @param  array|string|\Illuminate\Database\Eloquent\Model  $targets
+     * @param  string  $class
      *
-     * @param array                                            $updates
+     * @param  array  $updates
      *
      * @return array
      */
@@ -102,12 +102,12 @@ class Interaction
     }
 
     /**
-     * @param \Illuminate\Database\Eloquent\Model              $model
-     * @param string                                           $relation
-     * @param array|string|\Illuminate\Database\Eloquent\Model $targets
-     * @param string                                           $class
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  string  $relation
+     * @param  array|string|\Illuminate\Database\Eloquent\Model  $targets
+     * @param  string  $class
      *
-     * @param array                                            $updates
+     * @param  array  $updates
      *
      * @return array
      * @throws \Exception
@@ -121,11 +121,11 @@ class Interaction
     }
 
     /**
-     * @param \Illuminate\Database\Eloquent\Relations\MorphToMany $morph
-     * @param array|string|\Illuminate\Database\Eloquent\Model    $targets
-     * @param string                                              $class
+     * @param  \Illuminate\Database\Eloquent\Relations\MorphToMany  $morph
+     * @param  array|string|\Illuminate\Database\Eloquent\Model  $targets
+     * @param  string  $class
      *
-     * @param array                                               $updates
+     * @param  array  $updates
      *
      * @return \stdClass
      * @throws \Exception
@@ -141,9 +141,9 @@ class Interaction
     }
 
     /**
-     * @param array|string|\Illuminate\Database\Eloquent\Model $targets
-     * @param string                                           $classname
-     * @param array                                            $update
+     * @param  array|string|\Illuminate\Database\Eloquent\Model  $targets
+     * @param  string  $classname
+     * @param  array  $update
      *
      * @return \stdClass
      */
@@ -173,11 +173,11 @@ class Interaction
     }
 
     /**
-     * @param \Illuminate\Database\Eloquent\Relations\MorphToMany $relation
-     *
-     * @throws \Exception
+     * @param  \Illuminate\Database\Eloquent\Relations\MorphToMany  $relation
      *
      * @return array
+     * @throws \Exception
+     *
      */
     protected static function getRelationTypeFromRelation(MorphToMany $relation)
     {
@@ -209,6 +209,6 @@ class Interaction
             }
         }
 
-        return number_format($number / $divisor, $precision) . $shorthand;
+        return number_format($number / $divisor, $precision).$shorthand;
     }
 }

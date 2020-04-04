@@ -16,7 +16,7 @@ use Multicaret\Acquaintances\Status;
 trait Friendable
 {
     /**
-     * @param Model $recipient
+     * @param  Model  $recipient
      *
      * @return \Multicaret\Acquaintances\Models\Friendship|false
      */
@@ -40,7 +40,7 @@ trait Friendable
     }
 
     /**
-     * @param Model $recipient
+     * @param  Model  $recipient
      *
      * @return bool
      */
@@ -52,7 +52,7 @@ trait Friendable
     }
 
     /**
-     * @param Model $recipient
+     * @param  Model  $recipient
      *
      * @return bool
      */
@@ -62,7 +62,7 @@ trait Friendable
     }
 
     /**
-     * @param Model $recipient
+     * @param  Model  $recipient
      *
      * @return bool
      */
@@ -72,7 +72,7 @@ trait Friendable
     }
 
     /**
-     * @param Model $recipient
+     * @param  Model  $recipient
      *
      * @return bool
      */
@@ -82,7 +82,7 @@ trait Friendable
     }
 
     /**
-     * @param Model $recipient
+     * @param  Model  $recipient
      *
      * @return bool|int
      */
@@ -96,7 +96,7 @@ trait Friendable
     }
 
     /**
-     * @param Model $recipient
+     * @param  Model  $recipient
      *
      * @return bool|int
      */
@@ -111,7 +111,7 @@ trait Friendable
 
 
     /**
-     * @param Model $friend
+     * @param  Model  $friend
      * @param       $groupSlug
      *
      * @return bool
@@ -138,7 +138,7 @@ trait Friendable
     }
 
     /**
-     * @param Model $friend
+     * @param  Model  $friend
      * @param       $groupSlug
      *
      * @return bool
@@ -170,7 +170,7 @@ trait Friendable
     }
 
     /**
-     * @param Model $recipient
+     * @param  Model  $recipient
      *
      * @return \Multicaret\Acquaintances\Models\Friendship
      */
@@ -192,7 +192,7 @@ trait Friendable
     }
 
     /**
-     * @param Model $recipient
+     * @param  Model  $recipient
      *
      * @return mixed
      */
@@ -204,7 +204,7 @@ trait Friendable
     }
 
     /**
-     * @param Model $recipient
+     * @param  Model  $recipient
      *
      * @return \Multicaret\Acquaintances\Models\Friendship
      */
@@ -214,9 +214,9 @@ trait Friendable
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Collection|Friendship[]
+     * @param  string  $groupSlug
      *
-     * @param string $groupSlug
+     * @return \Illuminate\Database\Eloquent\Collection|Friendship[]
      *
      */
     public function getAllFriendships($groupSlug = '')
@@ -225,9 +225,9 @@ trait Friendable
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Collection|Friendship[]
+     * @param  string  $groupSlug
      *
-     * @param string $groupSlug
+     * @return \Illuminate\Database\Eloquent\Collection|Friendship[]
      *
      */
     public function getPendingFriendships($groupSlug = '')
@@ -236,9 +236,9 @@ trait Friendable
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Collection|Friendship[]
+     * @param  string  $groupSlug
      *
-     * @param string $groupSlug
+     * @return \Illuminate\Database\Eloquent\Collection|Friendship[]
      *
      */
     public function getAcceptedFriendships($groupSlug = '')
@@ -265,7 +265,7 @@ trait Friendable
     }
 
     /**
-     * @param Model $recipient
+     * @param  Model  $recipient
      *
      * @return bool
      */
@@ -275,7 +275,7 @@ trait Friendable
     }
 
     /**
-     * @param Model $recipient
+     * @param  Model  $recipient
      *
      * @return bool
      */
@@ -296,10 +296,10 @@ trait Friendable
      * This method will not return Friendship models
      * It will return the 'friends' models. ex: App\User
      *
-     * @param int    $perPage Number
-     * @param string $groupSlug
+     * @param  int  $perPage  Number
+     * @param  string  $groupSlug
      *
-     * @param array  $fields
+     * @param  array  $fields
      *
      * @return \Illuminate\Database\Eloquent\Collection
      */
@@ -312,10 +312,10 @@ trait Friendable
      * This method will not return Friendship models
      * It will return the 'friends' models. ex: App\User
      *
-     * @param Model $other
-     * @param int   $perPage Number
+     * @param  Model  $other
+     * @param  int  $perPage  Number
      *
-     * @param array $fields
+     * @param  array  $fields
      *
      * @return \Illuminate\Database\Eloquent\Collection
      */
@@ -338,9 +338,9 @@ trait Friendable
      * This method will not return Friendship models
      * It will return the 'friends' models. ex: App\User
      *
-     * @param int   $perPage Number
+     * @param  int  $perPage  Number
      *
-     * @param array $fields
+     * @param  array  $fields
      *
      * @return \Illuminate\Database\Eloquent\Collection
      */
@@ -353,7 +353,7 @@ trait Friendable
     /**
      * Get the number of friends
      *
-     * @param string $groupSlug
+     * @param  string  $groupSlug
      *
      * @return integer
      */
@@ -365,7 +365,7 @@ trait Friendable
     }
 
     /**
-     * @param Model $recipient
+     * @param  Model  $recipient
      *
      * @return bool
      */
@@ -391,7 +391,7 @@ trait Friendable
     }
 
     /**
-     * @param Model $recipient
+     * @param  Model  $recipient
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
@@ -402,7 +402,7 @@ trait Friendable
 
     /**
      * @param        $status
-     * @param string $groupSlug
+     * @param  string  $groupSlug
      *
      * @return \Illuminate\Database\Eloquent\Collection
      */
@@ -428,7 +428,7 @@ trait Friendable
     /**
      * Get the query builder of the 'friend' model
      *
-     * @param string $groupSlug
+     * @param  string  $groupSlug
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
@@ -470,7 +470,7 @@ trait Friendable
     /**
      * Get the query builder for friendsOfFriends ('friend' model)
      *
-     * @param string $groupSlug
+     * @param  string  $groupSlug
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */

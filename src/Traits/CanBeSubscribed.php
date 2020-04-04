@@ -13,7 +13,7 @@ trait CanBeSubscribed
     /**
      * Check if user is subscribed by given user.
      *
-     * @param Model $user
+     * @param  Model  $user
      *
      * @return bool
      */

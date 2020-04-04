@@ -14,8 +14,8 @@ trait CanSubscribe
     /**
      * Subscribe an item or items.
      *
-     * @param int|array|\Illuminate\Database\Eloquent\Model $targets
-     * @param string                                        $class
+     * @param  int|array|\Illuminate\Database\Eloquent\Model  $targets
+     * @param  string  $class
      *
      * @return array
      *
@@ -31,8 +31,8 @@ trait CanSubscribe
     /**
      * Unsubscribe an item or items.
      *
-     * @param int|array|\Illuminate\Database\Eloquent\Model $targets
-     * @param string                                        $class
+     * @param  int|array|\Illuminate\Database\Eloquent\Model  $targets
+     * @param  string  $class
      *
      * @return array
      */
@@ -46,8 +46,8 @@ trait CanSubscribe
     /**
      * Toggle subscribe an item or items.
      *
-     * @param int|array|\Illuminate\Database\Eloquent\Model $targets
-     * @param string                                        $class
+     * @param  int|array|\Illuminate\Database\Eloquent\Model  $targets
+     * @param  string  $class
      *
      * @return array
      *
@@ -61,8 +61,8 @@ trait CanSubscribe
     /**
      * Check if user is subscribed given item.
      *
-     * @param int|array|\Illuminate\Database\Eloquent\Model $target
-     * @param string                                        $class
+     * @param  int|array|\Illuminate\Database\Eloquent\Model  $target
+     * @param  string  $class
      *
      * @return bool
      */
@@ -74,7 +74,7 @@ trait CanSubscribe
     /**
      * Return user subscriptions.
      *
-     * @param string $class
+     * @param  string  $class
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */

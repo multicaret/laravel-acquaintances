@@ -14,7 +14,7 @@ trait CanBeFavorited
     /**
      * Check if user is favorited by given user.
      *
-     * @param int $user
+     * @param  int  $user
      *
      * @return bool
      */

@@ -14,8 +14,8 @@ trait CanLike
     /**
      * Like an item or items.
      *
-     * @param int|array|\Illuminate\Database\Eloquent\Model $targets
-     * @param string                                        $class
+     * @param  int|array|\Illuminate\Database\Eloquent\Model  $targets
+     * @param  string  $class
      *
      * @return array
      *
@@ -31,8 +31,8 @@ trait CanLike
     /**
      * Unlike an item or items.
      *
-     * @param int|array|\Illuminate\Database\Eloquent\Model $targets
-     * @param string                                        $class
+     * @param  int|array|\Illuminate\Database\Eloquent\Model  $targets
+     * @param  string  $class
      *
      * @return array
      */
@@ -46,8 +46,8 @@ trait CanLike
     /**
      * Toggle like an item or items.
      *
-     * @param int|array|\Illuminate\Database\Eloquent\Model $targets
-     * @param string                                        $class
+     * @param  int|array|\Illuminate\Database\Eloquent\Model  $targets
+     * @param  string  $class
      *
      * @return array
      *
@@ -61,8 +61,8 @@ trait CanLike
     /**
      * Check if user is liked given item.
      *
-     * @param int|array|\Illuminate\Database\Eloquent\Model $target
-     * @param string                                        $class
+     * @param  int|array|\Illuminate\Database\Eloquent\Model  $target
+     * @param  string  $class
      *
      * @return bool
      */
@@ -74,7 +74,7 @@ trait CanLike
     /**
      * Return item likes.
      *
-     * @param string $class
+     * @param  string  $class
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
