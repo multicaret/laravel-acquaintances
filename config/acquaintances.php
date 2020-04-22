@@ -12,6 +12,10 @@ return [
          */
         'interactions' => 'interactions',
         /*
+         * `user_id` foreign key column type within interactions table.
+         */
+        'interactions_user_id_fk_column_type' => 'unsignedBigInteger',
+        /*
          * Table name of friendships relations.
          */
         'friendships' => 'friendships',
