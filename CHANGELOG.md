@@ -1,3 +1,6 @@
+## v3.1.0
+* made the `user_id` FK type dynamic and part of configurations
+
 ## v3.0.0
 * changed the package's company - since I renamed my brand
 
