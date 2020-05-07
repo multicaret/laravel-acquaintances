@@ -1,8 +1,39 @@
+## v3.2.0
+* Removed avoiding querying ratings when the type is set to *overall* 
+* Fixed the value of `userSumRatingReadable()` function in CanBeRated trait.
+* Fixed `userSumRatingReadable()` function in `CanBeRated` trait.
+* Add new functions to `CanBeRated` trait:
+    * averageRatingAllTypes()
+    * sumRatingAllTypes()
+    * sumRatingAllTypesReadable()
+    * userAverageRatingAllTypes()
+    * userSumRatingAllTypes()
+    * userSumRatingAllTypesReadable()
+    * ratingPercentAllTypes()
+    * getAverageRatingAllTypesAttribute()
+    * getSumRatingAllTypesAttribute()
+    * getUserAverageRatingAllTypesAttribute()
+    * getUserSumRatingAllTypesAttribute()
+
+* Added a proper param type hint for the $target param in the following traits
+    * CanBeFavorited
+    * CanBeFollowed
+    * CanBeLiked
+    * CanBeRated
+    * CanBeSubscribed
+    * CanBeVoted
+    * CanFavorite
+    * CanFollow
+    * CanLike
+    * CanRate
+    * CanSubscribe
+    * CanVote
+
 ## v3.1.0
-* made the `user_id` FK type dynamic and part of configurations
+* Made the `user_id` FK type dynamic and part of configurations
 
 ## v3.0.0
-* changed the package's company - since I renamed my brand
+* Changed the package's company - since I renamed my brand
 
 ## v2.0.0
 * PHP 7.1 is the minimum requirement now
