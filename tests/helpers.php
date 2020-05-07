@@ -2,8 +2,8 @@
 /**
  * Create a user
  *
- * @param array $overrides
- * @param int   $amount
+ * @param  array  $overrides
+ * @param  int  $amount
  *
  * @return \Illuminate\Database\Eloquent\Collection|\App\User[]|\App\User
  */

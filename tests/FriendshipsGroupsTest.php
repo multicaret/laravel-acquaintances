@@ -23,11 +23,11 @@ class FriendshipsGroupsTest extends TestCase
         $sender->befriend($recipient);
         $recipient->acceptFriendRequest($sender);
 
-        $this->assertTrue((boolean)$recipient->groupFriend($sender, 'acquaintances'));
-        $this->assertTrue((boolean)$sender->groupFriend($recipient, 'family'));
+        $this->assertTrue((boolean) $recipient->groupFriend($sender, 'acquaintances'));
+        $this->assertTrue((boolean) $sender->groupFriend($recipient, 'family'));
 
         // it only adds a friend to a group once
-        $this->assertFalse((boolean)$sender->groupFriend($recipient, 'family'));
+        $this->assertFalse((boolean) $sender->groupFriend($recipient, 'family'));
 
         // expect that users have been attached to specified groups
         $this->assertCount(1, $sender->getFriends(0, 'family'));
@@ -44,7 +44,7 @@ class FriendshipsGroupsTest extends TestCase
         $sender = createUser();
         $stranger = createUser();
 
-        $this->assertFalse((boolean)$sender->groupFriend($stranger, 'family'));
+        $this->assertFalse((boolean) $sender->groupFriend($stranger, 'family'));
         $this->assertCount(0, $sender->getFriends(0, 'family'));
     }
 

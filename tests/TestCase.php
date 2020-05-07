@@ -2,7 +2,7 @@
 
 namespace Tests;
 
-require __DIR__ . '/helpers.php';
+require __DIR__.'/helpers.php';
 
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
