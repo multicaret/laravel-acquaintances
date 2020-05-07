@@ -29,16 +29,20 @@ return [
         'defaults' => [
             'amount' => 5,
             /*
-            * Overall is meant to hold the normal type of rating to be stored, think of it
-            * as normal, general, or essential rating, use it if your application is
-            * using one rating only
-            *
-            */
+             * Default type here is 'general', as longs as you have one criteria of rating a model
+             * you can ignore this setting.
+             * It will be the default type of rating of null is provided, if you wish to tweak this type name
+             * use the value below as you wish.
+             *
+             */
             'type' => 'general',
         ],
         'types' => [
-            'general',
-            /* Add any other type that your website/application have, the followings are for demonstration purposes */
+            /* Add any other type that your website/application have here,
+             * the following added rating types are for demonstration purposes only.
+             * There is no effect on deleting them nor adding to them, however, its a good practice
+             * to not hard code your rating types, hence, pleas use this simple array
+             */
             'delivery-time',
             'quality',
             'communication',
