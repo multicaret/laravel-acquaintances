@@ -11,9 +11,9 @@ use Multicaret\Acquaintances\Interaction;
 trait CanBeSubscribed
 {
     /**
-     * Check if user is subscribed by given user.
+     * Check if a model is subscribed by given model.
      *
-     * @param  Model  $user
+     * @param  int|array|\Illuminate\Database\Eloquent\Model  $user
      *
      * @return bool
      */

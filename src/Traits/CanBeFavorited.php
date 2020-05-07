@@ -12,9 +12,9 @@ use Multicaret\Acquaintances\Interaction;
 trait CanBeFavorited
 {
     /**
-     * Check if user is favorited by given user.
+     * Check if a model is favorited by given model.
      *
-     * @param  int  $user
+     * @param  int|array|\Illuminate\Database\Eloquent\Model  $user
      *
      * @return bool
      */

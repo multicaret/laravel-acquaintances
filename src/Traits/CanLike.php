@@ -59,7 +59,7 @@ trait CanLike
     }
 
     /**
-     * Check if user is liked given item.
+     * Check if a model is liked by a given model.
      *
      * @param  int|array|\Illuminate\Database\Eloquent\Model  $target
      * @param  string  $class

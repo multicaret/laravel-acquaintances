@@ -81,7 +81,7 @@ trait CanVote
     }
 
     /**
-     * Check if user is upvoted given item.
+     * Check if a model is upvoted a given model.
      *
      * @param  int|array|\Illuminate\Database\Eloquent\Model  $target
      * @param  string  $class

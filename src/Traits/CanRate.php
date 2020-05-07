@@ -35,9 +35,9 @@ trait CanRate
         }
 
         /*
-         * todo: Check if the passed type exists in types array
-        *  config('acquaintances.rating.types')
-        */
+         * Todo: [minor feature] Check if the passed type exists in types array
+         *  config('acquaintances.rating.types')
+         */
 
         return self::$rateType;
     }
@@ -104,7 +104,7 @@ trait CanRate
     }
 
     /**
-     * Check if user is Rated given item.
+     * Check if a model is rated by given model.
      *
      * @param  int|array|\Illuminate\Database\Eloquent\Model  $target
      * @param  null  $ratingType
@@ -133,9 +133,7 @@ trait CanRate
             config('acquaintances.tables.interactions'))
                          ->wherePivot('relation', '=', Interaction::RELATION_RATE);
 
-        if ($this->rateType() != 'overall') {
-            $relation = $relation->wherePivot('relation_type', '=', $this->rateType());
-        }
+        $relation = $relation->wherePivot('relation_type', '=', $this->rateType());
 
         return $relation->withPivot(...Interaction::$pivotColumns);
     }

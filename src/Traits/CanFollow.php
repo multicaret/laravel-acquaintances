@@ -59,7 +59,7 @@ trait CanFollow
     }
 
     /**
-     * Check if user is following given item.
+     * Check if a model is following given model.
      *
      * @param  int|array|\Illuminate\Database\Eloquent\Model  $target
      * @param  string  $class

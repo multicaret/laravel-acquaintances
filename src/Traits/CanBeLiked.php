@@ -11,9 +11,9 @@ use Multicaret\Acquaintances\Interaction;
 trait CanBeLiked
 {
     /**
-     * Check if user is isLikedBy by given user.
+     * Check if a model is is liked by by given model.
      *
-     * @param  int  $user
+     * @param  int|array|\Illuminate\Database\Eloquent\Model  $user
      *
      * @return bool
      */

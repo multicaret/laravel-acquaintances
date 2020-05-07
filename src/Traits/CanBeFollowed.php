@@ -12,9 +12,9 @@ use Multicaret\Acquaintances\Interaction;
 trait CanBeFollowed
 {
     /**
-     * Check if user is followed by given user.
+     * Check if a model is followed by given model.
      *
-     * @param  int  $user
+     * @param  int|array|\Illuminate\Database\Eloquent\Model  $user
      *
      * @return bool
      */
