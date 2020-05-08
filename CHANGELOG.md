@@ -1,3 +1,6 @@
+## v3.2.1
+* Fixed the logic of allTypes post-fixed functions.
+
 ## v3.2.0
 * Removed avoiding querying ratings when the type is set to *overall* 
 * Fixed the value of `userSumRatingReadable()` function in CanBeRated trait.
