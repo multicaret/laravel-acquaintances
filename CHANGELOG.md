@@ -1,4 +1,4 @@
-## v3.2.1
+## v3.3.0
 * Fixed the logic of allTypes post-fixed functions.
 
 ## v3.2.0
