@@ -56,15 +56,18 @@ trait CanBeRated
     /**
      * Return Raters.
      *
+     * @param  bool  $isAllTypes
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function raters()
+    public function raters($isAllTypes = false)
     {
         $relation = $this->morphToMany(config('auth.providers.users.model'), 'subject',
             config('acquaintances.tables.interactions'))
                          ->wherePivot('relation', '=', Interaction::RELATION_RATE);
 
-        $relation = $relation->wherePivot('relation_type', '=', $this->ratedType());
+        if ( ! $isAllTypes) {
+            $relation = $relation->wherePivot('relation_type', '=', $this->ratedType());
+        }
 
         return $relation->withPivot(...Interaction::$pivotColumns);
     }
@@ -76,9 +79,9 @@ trait CanBeRated
         return $this->raters()->avg('relation_value');
     }
 
-    public function averageRatingAllTypes($ratingType = null)
+    public function averageRatingAllTypes()
     {
-        return $this->raters()->avg('relation_value');
+        return $this->raters(true)->avg('relation_value');
     }
 
     public function sumRating($ratingType = null)
@@ -90,7 +93,7 @@ trait CanBeRated
 
     public function sumRatingAllTypes()
     {
-        return $this->raters()->sum('relation_value');
+        return $this->raters(true)->sum('relation_value');
     }
 
     public function sumRatingReadable($ratingType = null, $precision = 1, $divisors = null)
@@ -112,7 +115,7 @@ trait CanBeRated
 
     public function userAverageRatingAllTypes()
     {
-        return $this->raters()->where('user_id', \Auth::id())->avg('relation_value');
+        return $this->raters(true)->where('user_id', \Auth::id())->avg('relation_value');
     }
 
     public function userSumRating($ratingType = null)
@@ -124,7 +127,7 @@ trait CanBeRated
 
     public function userSumRatingAllTypes()
     {
-        return $this->raters()->where('user_id', \Auth::id())->sum('relation_value');
+        return $this->raters(true)->where('user_id', \Auth::id())->sum('relation_value');
     }
 
     public function userSumRatingReadable($ratingType = null, $precision = 1, $divisors = null)
@@ -175,7 +178,7 @@ trait CanBeRated
         if (empty($max)) {
             $max = config('acquaintances.rating.defaults.amount');
         }
-        $quantity = $this->raters()->count();
+        $quantity = $this->raters(true)->count();
         $total = $this->sumRating();
 
         return ($quantity * $max) > 0 ? $total / (($quantity * $max) / 100) : 0;
