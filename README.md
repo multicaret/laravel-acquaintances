@@ -1,12 +1,11 @@
-<p align="center"><img src="https://cdn.multicaret.com/packages/assets/img/laravel-acquaintances.svg"></p>
-
 # Laravel 7 Acquaintances
 
-<p align="center">
-<a href="https://packagist.org/packages/multicaret/laravel-acquaintances"><img src="https://poser.pugx.org/multicaret/laravel-acquaintances/d/total.svg" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/multicaret/laravel-acquaintances"><img src="https://poser.pugx.org/multicaret/laravel-acquaintances/v/stable.svg" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/multicaret/laravel-acquaintances"><img src="https://poser.pugx.org/multicaret/laravel-acquaintances/license.svg" alt="License"></a>
-</p>
+[![Latest Version](https://img.shields.io/github/release/multicaret/laravel-acquaintances.svg?style=flat-square)](https://github.com/multicaret/laravel-acquaintances/releases)
+[![Total Downloads](https://img.shields.io/packagist/dt/multicaret/laravel-acquaintances.svg?style=flat-square)](https://packagist.org/packages/multicaret/laravel-acquaintances)
+[![License](https://poser.pugx.org/multicaret/laravel-acquaintances/license.svg?style=flat-square)](https://packagist.org/packages/multicaret/laravel-acquaintances)
+
+
+<p align="center"><img src="https://cdn.multicaret.com/packages/assets/img/laravel-acquaintances.svg?updated=1"></p>
 
 
 ## TL;DR
@@ -19,6 +18,7 @@ Gives eloquent models:
     - Votes (up/down)
     - Subscribe
     - Follow
+    - Ratings
     
 Take this example:
 ```php
@@ -417,13 +417,30 @@ $user->hasRated($target)
 ```php
 $object->raters()->get()
 $object->isRatedBy($user)
+
 $object->averageRating() // or as attribute $object->average_rating
+$object->averageRatingAllTypes() // or as attribute $object->average_rating_all_types
+
 $object->sumRating() // or as attribute $object->sum_rating
-$object->sumRatingReadable()
-$object->userAverageRating() // or as attribute $object->user_average_rating
-$object->userSumRating() // or as attribute $object->user_sum_rating
-$object->userSumRatingReadable() // return readable number with precision, i.e: 5.2K
+$object->sumRatingAllTypes() // or as attribute $object->sum_rating_all_types_all_types
+
+$object->sumRatingReadable() // return readable number with precision, i.e: 5.2K
+$object->sumRatingAllTypesReadable() // return readable number with precision, i.e: 5.2K
+
+
 $object->ratingPercent($max = 5) // calculating the percentage based on the passed coefficient
+$object->ratingPercentAllTypes($max = 5) // calculating the percentage based on the passed coefficient
+
+// User Related: 
+
+$object->userAverageRatingAllTypes() // or as attribute $object->user_average_rating_all_types
+
+$object->userSumRatingAllTypes() // or as attribute $object->user_sum_rating_all_types
+
+$object->userSumRatingReadable() // return readable number with precision, i.e: 5.2K
+$object->userSumRatingAllTypesReadable() // return readable number with precision, i.e: 5.2K
+
+
 ```
 
 ### Like
