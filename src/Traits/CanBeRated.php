@@ -4,6 +4,7 @@
 namespace Multicaret\Acquaintances\Traits;
 
 use Multicaret\Acquaintances\Interaction;
+use Multicaret\Acquaintances\Models\InteractionRelation;
 
 /**
  * Trait CanBeLiked.
@@ -70,6 +71,27 @@ trait CanBeRated
         }
 
         return $relation->withPivot(...Interaction::$pivotColumns);
+    }
+
+    /**
+     * Return ratings as interaction items with lazy loading `user` relation
+     * for a specific type or for the default type.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function ratings()
+    {
+        return $this->hasMany(InteractionRelation::class, 'subject_id')->with('user');
+    }
+
+    /**
+     * Return ratings as interaction items without lazy loading `user` relation
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function ratingsPure()
+    {
+        return $this->hasMany(InteractionRelation::class, 'subject_id');
     }
 
     public function averageRating($ratingType = null)
