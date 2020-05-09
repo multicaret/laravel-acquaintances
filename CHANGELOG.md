@@ -1,3 +1,8 @@
+## v3.3.1
+* Added `ratings()` & `ratingsPure()` to CanBeRated model
+* Added user model name to configs `user_model_class_name`
+* Added user relation to InteractionRelation model
+
 ## v3.3.0
 * Fixed the logic of allTypes post-fixed functions.
 
