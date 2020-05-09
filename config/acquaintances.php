@@ -2,9 +2,10 @@
 
 return [
     /*
-     * Models Namespace.
+     * Models Related.
      */
     'model_namespace' => 'App',
+    'user_model_class_name' => 'User',
 
     'tables' => [
         /*
