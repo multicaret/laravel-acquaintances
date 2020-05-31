@@ -7,6 +7,7 @@
 
 <p align="center"><img src="https://cdn.multicaret.com/packages/assets/img/laravel-acquaintances.svg?updated=1"></p>
 
+[Laravel News Article](https://laravel-news.com/manage-friendships-likes-and-more-with-the-acquaintances-laravel-package)
 
 ## TL;DR
 
@@ -28,7 +29,7 @@ $user2 = User::find(2);
 $user1->befriend($user2);
 $user2->acceptFriendRequest($user1);
 
-// $user2: I just found out that $user1 is not into Laravel, thus:
+// The messy breakup :(
 $user2->unfriend($user1);
 
 ```
