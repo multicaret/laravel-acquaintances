@@ -4,6 +4,7 @@
 namespace Multicaret\Acquaintances\Traits;
 
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Str;
 use Multicaret\Acquaintances\Interaction;
 
 /**
@@ -26,7 +27,7 @@ trait CanVote
     {
         $this->cancelVote($targets);
 
-        return Interaction::attachRelations($this, str_plural($type), $targets, $class);
+        return Interaction::attachRelations($this, Str::plural($type), $targets, $class);
     }
 
     /**
