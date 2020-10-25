@@ -1,3 +1,6 @@
+## v3.4.0
+* minor fix. Replaced `str_plural` with `Str::plural`.
+
 ## v3.3.1
 * Added `ratings()` & `ratingsPure()` to CanBeRated model
 * Added user model name to configs `user_model_class_name`
