@@ -635,5 +635,8 @@ This is the list of the events fired by default for each action:
 ### Contributing
 See the [CONTRIBUTING](CONTRIBUTING.md) guide.
 
+The initial version of this library was assisted by the following repos [laravel-friendships](https://github.com/hootlex/laravel-friendships)
+& [laravel-follow](https://github.com/overtrue/laravel-follow).
+
 ### Change Log
 See the [log](CHANGELOG.md) file.
