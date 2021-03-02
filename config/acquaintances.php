@@ -42,7 +42,7 @@ return [
             /* Add any other type that your website/application have here,
              * the following added rating types are for demonstration purposes only.
              * There is no effect on deleting them nor adding to them, however, its a good practice
-             * to not hard code your rating types, hence, pleas use this simple array
+             * to not hard code your rating types, hence, please use this simple array
              */
             'delivery-time',
             'quality',
