@@ -1,3 +1,19 @@
+## v3.4.1
+* fix: add option for custom column name
+* feat: add helper method to get user model name
+* fix: use helper method to get user model name
+* fix: remove obsolete imports
+* fix: add Str import
+* fix: fix comments in config
+* fix: use helper method to get user model name
+* fix: use new helper method to get user model name
+* fix: use new helper method get user model name
+* fix: use new helper method get user model name
+* fix: use new helper method get user model name
+* fix: use new helper method get user model name
+
+
+
 ## v3.4.0
 * minor fix. Replaced `str_plural` with `Str::plural`.
 
