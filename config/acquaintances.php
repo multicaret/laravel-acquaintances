@@ -13,6 +13,10 @@ return [
          */
         'interactions' => 'interactions',
         /*
+         * `user_id` foreign key column name within interactions table.
+         */
+        'interactions_user_id_fk_column_name' => 'profile_id',
+        /*
          * `user_id` foreign key column type within interactions table.
          */
         'interactions_user_id_fk_column_type' => 'unsignedBigInteger',
