@@ -4,7 +4,7 @@ return [
     /*
      * Models Related.
      */
-    'model_namespace' => 'App',
+    'model_namespace' => 'App\Models',
     'user_model_class_name' => 'User',
 
     'tables' => [
@@ -13,7 +13,11 @@ return [
          */
         'interactions' => 'interactions',
         /*
-         * `user_id` foreign key column type within interactions table.
+         * user foreign key column name within interactions table.
+         */
+        'interactions_user_id_fk_column_name' => 'user_id',
+        /*
+         * user foreign key column type within interactions table.
          */
         'interactions_user_id_fk_column_type' => 'unsignedBigInteger',
         /*

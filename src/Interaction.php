@@ -3,6 +3,7 @@
 namespace Multicaret\Acquaintances;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use stdClass;
 
@@ -210,5 +211,12 @@ class Interaction
         }
 
         return number_format($number / $divisor, $precision).$shorthand;
+    }
+
+    static public function getUserModelName() {
+        $namespace = config('acquaintances.model_namespace', 'App');
+        $userClassName = config('acquaintances.user_model_class_name', 'User');
+
+        return $namespace.'\\'.Str::studly($userClassName);
     }
 }
