@@ -3,6 +3,7 @@
 namespace Multicaret\Acquaintances;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use stdClass;
 
