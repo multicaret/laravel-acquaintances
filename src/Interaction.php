@@ -211,4 +211,11 @@ class Interaction
 
         return number_format($number / $divisor, $precision).$shorthand;
     }
+
+    static public function getUserModelName() {
+        $namespace = config('acquaintances.model_namespace', 'App');
+        $userClassName = config('acquaintances.user_model_class_name', 'User');
+
+        return $namespace.'\\'.Str::studly($userClassName);
+    }
 }
