@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
+use Multicaret\Acquaintances\Interaction;
 
 /**
  * Class InteractionRelation.
@@ -36,12 +37,7 @@ class InteractionRelation extends Model
      */
     public function user()
     {
-        $namespace = config('acquaintances.model_namespace', 'App');
-        $userClassName = config('acquaintances.user_model_class_name', 'User');
-
-        $modelName = $namespace.'\\'.Str::studly($userClassName);
-
-        return $this->belongsTo($modelName);
+        return $this->belongsTo(Interaction::getUserModelName());
     }
 
     /**
