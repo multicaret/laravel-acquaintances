@@ -5,7 +5,6 @@ namespace Multicaret\Acquaintances\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\Str;
 use InvalidArgumentException;
 use Multicaret\Acquaintances\Interaction;
 
