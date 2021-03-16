@@ -715,7 +715,9 @@ This is the list of the events fired by default for each action:
 |acq.favorites.favorite         |When a an item or items get favored            |
 |acq.favorites.unfavorite       |When a an item or items get unfavored          |
 |acq.subscriptions.subscribe    |When a an item or items get subscribed         |                 
-|acq.subscriptions.unsubscribe  |When a an item or items get unsubscribed       |                 
+|acq.subscriptions.unsubscribe  |When a an item or items get unsubscribed       | 
+|acq.views.view                 |When a an item or items get viewed             |
+|acq.views.unview               |When a an item or items get unviewed           |                
 
 ### Contributing
 
