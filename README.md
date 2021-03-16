@@ -22,6 +22,7 @@ Gives eloquent models:
     - Subscribe
     - Follow
     - Ratings
+    - Views
 
 Take this example:
 
@@ -53,6 +54,7 @@ $user2->unfriend($user1);
     * [Favorite](#favorite)
     * [Subscribe](#subscribe)
     * [Vote](#vote)
+    * [View](#view)
     * [Parameters](#parameters)
     * [Query relations](#query-relations)
     * [Working with model](#working-with-model)
@@ -77,6 +79,7 @@ easily design your social-like System (Facebook, Twitter, Foursquare...etc).
 - Subscribe a User or a Model
 - Favorite a User or a Model
 - Vote (Upvote & Downvote a User or a Model)
+- View a User or a Model
 
 ---
 
@@ -606,6 +609,28 @@ $object->downvotersCount(); // or as attribute $object->downvoters_count
 $object->downvotersCountReadable(); // return readable number with precision, i.e: 5.2K
 ```
 
+### View
+
+#### `\Multicaret\Acquaintances\Traits\CanView`
+
+```php
+$user->view($targets);
+$user->unview($targets);
+$user->toggleView($targets);
+$user->hasViewed($target);
+$user->viewers()->get(); // default object: App\User:class
+$user->viewers(App\Post::class)->get();
+```
+
+#### `\Multicaret\Acquaintances\Traits\CanBeViewed`
+
+```php
+$object->viewers()->get();
+$object->isViewedBy($user);
+$object->viewersCount(); // or as attribute $object->viewers_count
+$object->viewersCountReadable(); // return readable number with precision, i.e: 5.2K
+```
+
 ### Parameters
 
 All the above mentioned methods of creating relationships, such as 'follow', 'like', 'unfollow', 'unlike', their syntax
@@ -690,7 +715,9 @@ This is the list of the events fired by default for each action:
 |acq.favorites.favorite         |When a an item or items get favored            |
 |acq.favorites.unfavorite       |When a an item or items get unfavored          |
 |acq.subscriptions.subscribe    |When a an item or items get subscribed         |                 
-|acq.subscriptions.unsubscribe  |When a an item or items get unsubscribed       |                 
+|acq.subscriptions.unsubscribe  |When a an item or items get unsubscribed       | 
+|acq.views.view                 |When a an item or items get viewed             |
+|acq.views.unview               |When a an item or items get unviewed           |                
 
 ### Contributing
 
