@@ -215,6 +215,21 @@ class Interaction
 
         return number_format($number / $divisor, $precision).$shorthand;
     }
+    
+    
+
+    public static function getFullModelName($modelClassName)
+    {
+        if (class_exists($modelClassName)) {
+            return Str::studly($modelClassName);
+        }
+
+        $namespace = config('acquaintances.model_namespace', 'App');
+
+        return empty($namespace)
+            ? Str::studly($modelClassName)
+            : $namespace . '\\' . Str::studly($modelClassName);
+    }
 
     public static function getUserModelName()
     {
