@@ -19,6 +19,7 @@ class Interaction
     const RELATION_UPVOTE = 'upvote';
     const RELATION_DOWNVOTE = 'downvote';
     const RELATION_RATE = 'rating';
+    const RELATION_VIEW = 'view';
 
     public static $pivotColumns = [
         'subject_type',
