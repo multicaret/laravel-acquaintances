@@ -13,6 +13,7 @@ class CreateAcquaintancesFriendshipsGroupsTable extends Migration
     {
 
         Schema::create(config('acquaintances.tables.friendship_groups'), function (Blueprint $table) {
+            $table->id();
 
             $table->integer('friendship_id')->unsigned();
             $table->morphs('friend');
