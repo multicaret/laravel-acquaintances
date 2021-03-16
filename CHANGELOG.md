@@ -1,3 +1,12 @@
+## v3.4.2
+* feat: add view relation
+* feat: add CanBeViewed trait
+* feat: add CanView trait
+* docs: extend readme
+* docs: add missing events
+* fix: fix typo
+* feat: extend relation map
+
 ## v3.4.1
 * fix: add option for custom column name
 * feat: add helper method to get user model name
