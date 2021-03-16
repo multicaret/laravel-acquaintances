@@ -12,7 +12,8 @@ class CreateAcquaintancesInteractionsTable extends Migration
     public function up()
     {
         Schema::create(config('acquaintances.tables.interactions', 'interactions'), function (Blueprint $table) {
-
+            $table->id();
+            
             $userModel = config('auth.providers.users.model');
             $userModel = (new $userModel);
 
