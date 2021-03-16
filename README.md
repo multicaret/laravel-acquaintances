@@ -22,6 +22,7 @@ Gives eloquent models:
     - Subscribe
     - Follow
     - Ratings
+    - Views
 
 Take this example:
 
@@ -53,6 +54,7 @@ $user2->unfriend($user1);
     * [Favorite](#favorite)
     * [Subscribe](#subscribe)
     * [Vote](#vote)
+    * [View](#view)
     * [Parameters](#parameters)
     * [Query relations](#query-relations)
     * [Working with model](#working-with-model)
@@ -77,6 +79,7 @@ easily design your social-like System (Facebook, Twitter, Foursquare...etc).
 - Subscribe a User or a Model
 - Favorite a User or a Model
 - Vote (Upvote & Downvote a User or a Model)
+- View a User or a Model
 
 ---
 
@@ -604,6 +607,28 @@ $object->downvoters()->get();
 $object->isDownvotedBy($user);
 $object->downvotersCount(); // or as attribute $object->downvoters_count
 $object->downvotersCountReadable(); // return readable number with precision, i.e: 5.2K
+```
+
+### View
+
+#### `\Multicaret\Acquaintances\Traits\CanView`
+
+```php
+$user->view($targets);
+$user->unview($targets);
+$user->toggleView($targets);
+$user->hasViewed($target);
+$user->viewers()->get(); // default object: App\User:class
+$user->viewers(App\Post::class)->get();
+```
+
+#### `\Multicaret\Acquaintances\Traits\CanBeViewed`
+
+```php
+$object->viewers()->get();
+$object->isViewedBy($user);
+$object->viewersCount(); // or as attribute $object->viewers_count
+$object->viewersCountReadable(); // return readable number with precision, i.e: 5.2K
 ```
 
 ### Parameters
