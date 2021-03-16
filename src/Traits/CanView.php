@@ -68,7 +68,7 @@ trait CanView
      */
     public function hasViewed($target, $class = __CLASS__)
     {
-        return Interaction::isRelationExists($this, 'viewed', $target, $class);
+        return Interaction::isRelationExists($this, 'views', $target, $class);
     }
 
     /**
