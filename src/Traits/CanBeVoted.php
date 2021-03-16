@@ -56,7 +56,8 @@ trait CanBeVoted
         return $this->morphToMany(Interaction::getUserModelName(), 'subject',
             config('acquaintances.tables.interactions'))
                     ->wherePivotIn('relation', [Interaction::RELATION_UPVOTE, Interaction::RELATION_DOWNVOTE])
-                    ->withPivot(...Interaction::$pivotColumns);
+                    ->withPivot(...Interaction::$pivotColumns)
+                    ->using(Interaction::getInteractionRelationModelName());
     }
 
     /**
@@ -69,7 +70,8 @@ trait CanBeVoted
         return $this->morphToMany(Interaction::getUserModelName(), 'subject',
             config('acquaintances.tables.interactions'))
                     ->wherePivot('relation', '=', Interaction::RELATION_UPVOTE)
-                    ->withPivot(...Interaction::$pivotColumns);
+                    ->withPivot(...Interaction::$pivotColumns)
+                    ->using(Interaction::getInteractionRelationModelName());
     }
 
     /**
@@ -82,7 +84,8 @@ trait CanBeVoted
         return $this->morphToMany(Interaction::getUserModelName(), 'subject',
             config('acquaintances.tables.interactions'))
                     ->wherePivot('relation', '=', Interaction::RELATION_DOWNVOTE)
-                    ->withPivot(...Interaction::$pivotColumns);
+                    ->withPivot(...Interaction::$pivotColumns)
+                    ->using(Interaction::getInteractionRelationModelName());
     }
 
     public function upvotersCount()
