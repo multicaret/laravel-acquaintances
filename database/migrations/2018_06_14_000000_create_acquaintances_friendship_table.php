@@ -10,7 +10,7 @@ class CreateAcquaintancesFriendshipTable extends Migration
     {
 
         Schema::create(config('acquaintances.tables.friendships'), function (Blueprint $table) {
-            $table->increments('id');
+            $table->id();
             $table->morphs('sender');
             $table->morphs('recipient');
             $table->string('status')->default('pending')->comment('pending/accepted/denied/blocked/');
