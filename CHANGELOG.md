@@ -1,3 +1,11 @@
+## v3.4.3
+* feat: allow empty model namespace
+* fix: add helper methods for all models
+* feat: allow all models to be configured
+* fix: use models from config
+* fix: set default user model to User
+* along with other fixes
+
 ## v3.4.2
 * feat: add view relation
 * feat: add CanBeViewed trait
