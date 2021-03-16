@@ -9,7 +9,7 @@ return [
         /*
          * Model name of User model
          */
-        'user' => 'Profile',
+        'user' => 'User',
         /*
          * Model name of Interaction Relation model
          */
