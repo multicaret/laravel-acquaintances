@@ -216,12 +216,43 @@ class Interaction
         return number_format($number / $divisor, $precision).$shorthand;
     }
 
-    static public function getUserModelName() {
-        $namespace = config('acquaintances.model_namespace', 'App');
-        $userClassName = config('acquaintances.user_model_class_name', 'User');
+    public static function getUserModelName()
+    {
+        return Interaction::getFullModelName(
+            config(
+                'acquaintances.user_model_class_name',
+                config('acquaintances.models.user', 'User')
+            )
+        );
+    }
 
-        return empty($namespace)
-          ? Str::studly($userClassName)
-          : $namespace . '\\' . Str::studly($userClassName);
+    public static function getInteractionRelationModelName()
+    {
+        return Interaction::getFullModelName(
+            config(
+                'acquaintances.models.interaction_relation',
+                \Multicaret\Acquaintances\Models\InteractionRelation::class
+            )
+        );
+    }
+
+    public static function getFriendshipModelName()
+    {
+        return Interaction::getFullModelName(
+            config(
+                'acquaintances.models.friendship',
+                \Multicaret\Acquaintances\Models\Friendship::class
+            )
+        );
+    }
+
+    public static function getFriendshipGroupsModelName()
+    {
+        return Interaction::getFullModelName(
+            config(
+                'acquaintances.models.friendship_groups',
+                \Multicaret\Acquaintances\Models\FriendshipGroups::class
+            )
+        );
     }
 }
