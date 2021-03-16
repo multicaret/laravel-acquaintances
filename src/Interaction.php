@@ -220,6 +220,8 @@ class Interaction
         $namespace = config('acquaintances.model_namespace', 'App');
         $userClassName = config('acquaintances.user_model_class_name', 'User');
 
-        return $namespace.'\\'.Str::studly($userClassName);
+        return empty($namespace)
+          ? Str::studly($userClassName)
+          : $namespace . '\\' . Str::studly($userClassName);
     }
 }
