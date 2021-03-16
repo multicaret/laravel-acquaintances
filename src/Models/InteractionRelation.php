@@ -3,7 +3,7 @@
 
 namespace Multicaret\Acquaintances\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphPivot;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use InvalidArgumentException;
 use Multicaret\Acquaintances\Interaction;
@@ -11,7 +11,7 @@ use Multicaret\Acquaintances\Interaction;
 /**
  * Class InteractionRelation.
  */
-class InteractionRelation extends Model
+class InteractionRelation extends MorphPivot
 {
     /**
      * @var string

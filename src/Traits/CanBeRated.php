@@ -64,7 +64,8 @@ trait CanBeRated
     {
         $relation = $this->morphToMany(Interaction::getUserModelName(), 'subject',
             config('acquaintances.tables.interactions'))
-                         ->wherePivot('relation', '=', Interaction::RELATION_RATE);
+                         ->wherePivot('relation', '=', Interaction::RELATION_RATE)
+                         ->using(Interaction::getInteractionRelationModelName());
 
         if ( ! $isAllTypes) {
             $relation = $relation->wherePivot('relation_type', '=', $this->ratedType());
@@ -81,7 +82,7 @@ trait CanBeRated
      */
     public function ratings()
     {
-        return $this->hasMany(InteractionRelation::class, 'subject_id')->with('user');
+        return $this->hasMany(Interaction::getInteractionRelationModelName(), 'subject_id')->with('user');
     }
 
     /**
@@ -91,7 +92,7 @@ trait CanBeRated
      */
     public function ratingsPure()
     {
-        return $this->hasMany(InteractionRelation::class, 'subject_id');
+        return $this->hasMany(Interaction::getInteractionRelationModelName(), 'subject_id');
     }
 
     public function averageRating($ratingType = null)
