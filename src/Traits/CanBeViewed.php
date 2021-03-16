@@ -32,7 +32,8 @@ trait CanBeViewed
         return $this->morphToMany(config('auth.providers.users.model'), 'subject',
             config('acquaintances.tables.interactions'))
                     ->wherePivot('relation', '=', Interaction::RELATION_VIEW)
-                    ->withPivot(...Interaction::$pivotColumns);
+                    ->withPivot(...Interaction::$pivotColumns)
+                    ->using(Interaction::getInteractionRelationModelName());
     }
 
     public function viewersCount()
