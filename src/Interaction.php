@@ -47,6 +47,8 @@ class Interaction
         'downvoters' => 'downvote',
         'ratings' => 'rating',
         'raters' => 'rating',
+        'views' => 'view',
+        'viewers' => 'view',
     ];
 
     /**
