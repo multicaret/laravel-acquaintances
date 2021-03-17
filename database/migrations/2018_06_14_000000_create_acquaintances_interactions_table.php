@@ -23,7 +23,7 @@ class CreateAcquaintancesInteractionsTable extends Migration
             $table->string('relation')->default('follow')->comment('follow/like/subscribe/favorite/upvote/downvote');
             $table->integer('relation_value')->nullable();
             $table->string('relation_type')->nullable();
-            $table->timestamp('created_at');
+            $table->timestamps();
 
 
             $table->foreign('user_id')
