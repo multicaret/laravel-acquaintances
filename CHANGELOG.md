@@ -1,3 +1,7 @@
+## v3.4.4
+* fix: in interaction table add update_at timestamp column
+
+
 ## v3.4.3
 * feat: allow empty model namespace
 * fix: add helper methods for all models
