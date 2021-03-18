@@ -22,6 +22,7 @@ class Interaction
     const RELATION_VIEW = 'view';
 
     public static $pivotColumns = [
+        'id',
         'subject_type',
         'relation',
         'relation_value',
