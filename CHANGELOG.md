@@ -1,6 +1,9 @@
+## v3.4.5
+* fix: use custom model for downvotes
+* fix: read pivot id
+
 ## v3.4.4
 * fix: in interaction table add update_at timestamp column
-
 
 ## v3.4.3
 * feat: allow empty model namespace
