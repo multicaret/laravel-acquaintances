@@ -1,3 +1,6 @@
+## v3.4.6
+* fix: friendship_id column type
+
 ## v3.4.5
 * fix: use custom model for downvotes
 * fix: read pivot id
