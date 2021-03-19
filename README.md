@@ -95,17 +95,6 @@ Laravel 5.8 and up => version 2.x (branch master)
 
 Laravel 5.7 and below => version 1.x (branch v1)
 
-#### Laravel 5.4 and down
-
-Then include the service provider inside `config/app.php`.
-
-```php
-'providers' => [
-//    ...
-    Multicaret\Acquaintances\AcquaintancesServiceProvider::class,
-//    ...
-];
-```
 
 Publish config and migrations:
 
