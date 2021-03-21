@@ -105,7 +105,7 @@ $ php artisan vendor:publish --provider="Multicaret\Acquaintances\AcquaintancesS
 Configure the published config in:
 
 ```
-config\acquaintances.php
+config/acquaintances.php
 ```
 
 Finally, migrate the database to create the table:
