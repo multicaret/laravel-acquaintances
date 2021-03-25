@@ -1,4 +1,7 @@
 ## v3.4.6
+* feat: change the naming of migration files to be prefixed with the current time. 
+
+## v3.4.6
 * fix: friendship_id column type
 
 ## v3.4.5
