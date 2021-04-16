@@ -7,7 +7,7 @@ use Multicaret\Acquaintances\Interaction;
 use Multicaret\Acquaintances\Models\InteractionRelation;
 
 /**
- * Trait CanBeLiked.
+ * Trait CanBeRated.
  */
 trait CanBeRated
 {
