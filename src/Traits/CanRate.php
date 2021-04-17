@@ -127,7 +127,7 @@ trait CanRate
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function ratings($class = __CLASS__)
+    public function ratingsTo($class = __CLASS__)
     {
         $relation = $this->morphedByMany($class, 'subject',
             config('acquaintances.tables.interactions'))
