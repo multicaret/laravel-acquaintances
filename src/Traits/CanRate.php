@@ -58,7 +58,7 @@ trait CanRate
     {
         Event::dispatch('acq.ratings.rate', [$this, $targets]);
 
-        return Interaction::attachRelations($this, 'ratings', $targets, $class, [
+        return Interaction::attachRelations($this, 'ratingsTo', $targets, $class, [
             'relation_value' => $amount,
             'relation_type' => $this->rateType($ratingType),
         ]);
@@ -78,7 +78,7 @@ trait CanRate
     {
         Event::dispatch('acq.ratings.unrate', [$this, $targets]);
 
-        return Interaction::detachRelations($this, 'ratings', $targets, $class, [
+        return Interaction::detachRelations($this, 'ratingsTo', $targets, $class, [
             'relation_type' => $this->rateType($ratingType),
         ]);
     }
@@ -97,7 +97,7 @@ trait CanRate
      */
     public function toggleRate($targets, float $amount, $ratingType = null, $class = __CLASS__)
     {
-        return Interaction::toggleRelations($this, 'ratings', $targets, $class, [
+        return Interaction::toggleRelations($this, 'ratingsTo', $targets, $class, [
             'relation_value' => $amount,
             'relation_type' => $this->rateType($ratingType),
         ]);
@@ -114,7 +114,7 @@ trait CanRate
      */
     public function hasRated($target, $ratingType = null, $class = __CLASS__)
     {
-        return Interaction::isRelationExists($this, 'ratings', $target, $class, [
+        return Interaction::isRelationExists($this, 'ratingsTo', $target, $class, [
             'relation_type' => $this->rateType($ratingType),
         ]);
     }
