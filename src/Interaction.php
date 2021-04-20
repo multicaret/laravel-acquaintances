@@ -46,7 +46,7 @@ class Interaction
         'upvoters' => 'upvote',
         'downvotes' => 'downvote',
         'downvoters' => 'downvote',
-        'ratings' => 'rating',
+        'ratingsTo' => 'rating',
         'raters' => 'rating',
         'views' => 'view',
         'viewers' => 'view',
