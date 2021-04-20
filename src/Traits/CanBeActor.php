@@ -42,14 +42,20 @@ trait CanBeActor
 
     /**
      * @param  array|Model  $models
+     * @param  array|string  $relationTypes
      *
      * @return \Illuminate\Database\Eloquent\Relations\MorphMany|\Illuminate\Database\Eloquent\Builder
      */
-    public function getRatesVia($models)
+    public function getRatesVia($models, $relationTypes = [])
     {
         return $this->getRelation(Interaction::RELATION_RATE)->whereHasMorph(
             'subject',
             $models
+        )->when(
+            count($relationTypes) > 0,
+            function ($query) use ($relationTypes) {
+                $query->whereIn('relation_type', $relationTypes);
+            }
         );
     }
 
