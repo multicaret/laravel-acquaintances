@@ -21,11 +21,27 @@ trait CanFollow
      *
      * @throws \Exception
      */
-    public function follow($targets, $class = __CLASS__)
+    public function follow($targets, $class = __CLASS__, $actor = null)
     {
         Event::dispatch('acq.followships.follow', [$this, $targets]);
+        $updates = [];
+        if ($actor) {
+            $updates = array_merge(
+                $updates,
+                [
+                    'actor_type' => $actor->getMorphClass(),
+                    'actor_id'   => $actor->id,
+                ]
+            );
+        }
 
-        return Interaction::attachRelations($this, 'followings', $targets, $class);
+        return Interaction::attachRelations(
+            $this,
+            'followings',
+            $targets,
+            $class,
+            $updates
+        );
     }
 
     /**
@@ -40,7 +56,12 @@ trait CanFollow
     {
         Event::dispatch('acq.followships.unfollow', [$this, $targets]);
 
-        return Interaction::detachRelations($this, 'followings', $targets, $class);
+        return Interaction::detachRelations(
+            $this,
+            'followings',
+            $targets,
+            $class
+        );
     }
 
     /**
@@ -55,7 +76,12 @@ trait CanFollow
      */
     public function toggleFollow($targets, $class = __CLASS__)
     {
-        return Interaction::toggleRelations($this, 'followings', $targets, $class);
+        return Interaction::toggleRelations(
+            $this,
+            'followings',
+            $targets,
+            $class
+        );
     }
 
     /**
@@ -68,7 +94,12 @@ trait CanFollow
      */
     public function isFollowing($target, $class = __CLASS__)
     {
-        return Interaction::isRelationExists($this, 'followings', $target, $class);
+        return Interaction::isRelationExists(
+            $this,
+            'followings',
+            $target,
+            $class
+        );
     }
 
     /**
@@ -80,10 +111,12 @@ trait CanFollow
      */
     public function followings($class = __CLASS__)
     {
-        return $this->morphedByMany($class, 'subject',
-            config('acquaintances.tables.interactions'))
-                    ->wherePivot('relation', '=', Interaction::RELATION_FOLLOW)
-                    ->withPivot(...Interaction::$pivotColumns)
-                    ->using(Interaction::getInteractionRelationModelName());
+        return $this->morphedByMany(
+            $class,
+            'subject',
+            config('acquaintances.tables.interactions')
+        )->wherePivot('relation', '=', Interaction::RELATION_FOLLOW)->withPivot(
+            ...Interaction::$pivotColumns
+        )->using(Interaction::getInteractionRelationModelName());
     }
 }

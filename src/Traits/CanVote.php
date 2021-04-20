@@ -23,11 +23,32 @@ trait CanVote
      *
      * @throws \Exception
      */
-    public function vote($targets, $type = 'upvote', $class = __CLASS__)
-    {
+    public function vote(
+        $targets,
+        $type = 'upvote',
+        $class = __CLASS__,
+        $actor = null
+    ) {
         $this->cancelVote($targets);
 
-        return Interaction::attachRelations($this, Str::plural($type), $targets, $class);
+        $updates = [];
+        if ($actor) {
+            $updates = array_merge(
+                $updates,
+                [
+                    'actor_type' => $actor->getMorphClass(),
+                    'actor_id'   => $actor->id,
+                ]
+            );
+        }
+
+        return Interaction::attachRelations(
+            $this,
+            Str::plural($type),
+            $targets,
+            $class,
+            $updates
+        );
     }
 
     /**
@@ -104,7 +125,12 @@ trait CanVote
      */
     public function hasDownvoted($target, $class = __CLASS__)
     {
-        return Interaction::isRelationExists($this, 'downvotes', $target, $class);
+        return Interaction::isRelationExists(
+            $this,
+            'downvotes',
+            $target,
+            $class
+        );
     }
 
     /**
@@ -116,11 +142,16 @@ trait CanVote
      */
     public function votes($class = __CLASS__)
     {
-        return $this->morphedByMany($class, 'subject',
-            config('acquaintances.tables.interactions'))
-                    ->wherePivotIn('relation', [Interaction::RELATION_UPVOTE, Interaction::RELATION_DOWNVOTE])
-                    ->withPivot(...Interaction::$pivotColumns)
-                    ->using(Interaction::getInteractionRelationModelName());
+        return $this->morphedByMany(
+            $class,
+            'subject',
+            config('acquaintances.tables.interactions')
+        )->wherePivotIn(
+            'relation',
+            [Interaction::RELATION_UPVOTE, Interaction::RELATION_DOWNVOTE]
+        )->withPivot(...Interaction::$pivotColumns)->using(
+            Interaction::getInteractionRelationModelName()
+        );
     }
 
     /**
@@ -132,11 +163,13 @@ trait CanVote
      */
     public function upvotes($class = __CLASS__)
     {
-        return $this->morphedByMany($class, 'subject',
-            config('acquaintances.tables.interactions'))
-                    ->wherePivot('relation', '=', Interaction::RELATION_UPVOTE)
-                    ->withPivot(...Interaction::$pivotColumns)
-                    ->using(Interaction::getInteractionRelationModelName());
+        return $this->morphedByMany(
+            $class,
+            'subject',
+            config('acquaintances.tables.interactions')
+        )->wherePivot('relation', '=', Interaction::RELATION_UPVOTE)->withPivot(
+            ...Interaction::$pivotColumns
+        )->using(Interaction::getInteractionRelationModelName());
     }
 
     /**
@@ -148,10 +181,13 @@ trait CanVote
      */
     public function downvotes($class = __CLASS__)
     {
-        return $this->morphedByMany($class, 'subject',
-            config('acquaintances.tables.interactions'))
-                    ->wherePivot('relation', '=', Interaction::RELATION_DOWNVOTE)
-                    ->withPivot(...Interaction::$pivotColumns)
-                    ->using(Interaction::getInteractionRelationModelName());
+        return $this->morphedByMany(
+            $class,
+            'subject',
+            config('acquaintances.tables.interactions')
+        )->wherePivot('relation', '=', Interaction::RELATION_DOWNVOTE)
+            ->withPivot(...Interaction::$pivotColumns)->using(
+                Interaction::getInteractionRelationModelName()
+            );
     }
 }

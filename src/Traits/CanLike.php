@@ -21,11 +21,28 @@ trait CanLike
      *
      * @throws \Exception
      */
-    public function like($targets, $class = __CLASS__)
+    public function like($targets, $class = __CLASS__, $actor = null)
     {
         Event::dispatch('acq.likes.like', [$this, $targets]);
 
-        return Interaction::attachRelations($this, 'likes', $targets, $class);
+        $updates = [];
+        if ($actor) {
+            $updates = array_merge(
+                $updates,
+                [
+                    'actor_type' => $actor->getMorphClass(),
+                    'actor_id'   => $actor->id,
+                ]
+            );
+        }
+
+        return Interaction::attachRelations(
+            $this,
+            'likes',
+            $targets,
+            $class,
+            $updates
+        );
     }
 
     /**
@@ -80,10 +97,12 @@ trait CanLike
      */
     public function likes($class = __CLASS__)
     {
-        return $this->morphedByMany($class, 'subject',
-            config('acquaintances.tables.interactions'))
-                    ->wherePivot('relation', '=', Interaction::RELATION_LIKE)
-                    ->withPivot(...Interaction::$pivotColumns)
-                    ->using(Interaction::getInteractionRelationModelName());
+        return $this->morphedByMany(
+            $class,
+            'subject',
+            config('acquaintances.tables.interactions')
+        )->wherePivot('relation', '=', Interaction::RELATION_LIKE)->withPivot(
+            ...Interaction::$pivotColumns
+        )->using(Interaction::getInteractionRelationModelName());
     }
 }

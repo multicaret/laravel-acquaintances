@@ -21,9 +21,20 @@ trait CanView
      *
      * @throws \Exception
      */
-    public function view($targets, $class = __CLASS__)
+    public function view($targets, $class = __CLASS__, $actor = null)
     {
         Event::dispatch('acq.views.view', [$this, $targets]);
+
+        $updates = [];
+        if ($actor) {
+            $updates = array_merge(
+                $updates,
+                [
+                    'actor_type' => $actor->getMorphClass(),
+                    'actor_id'   => $actor->id,
+                ]
+            );
+        }
 
         return Interaction::attachRelations($this, 'views', $targets, $class);
     }
@@ -80,10 +91,12 @@ trait CanView
      */
     public function views($class = __CLASS__)
     {
-        return $this->morphedByMany($class, 'subject',
-            config('acquaintances.tables.interactions'))
-                    ->wherePivot('relation', '=', Interaction::RELATION_VIEW)
-                    ->withPivot(...Interaction::$pivotColumns)
-                    ->using(Interaction::getInteractionRelationModelName());
+        return $this->morphedByMany(
+            $class,
+            'subject',
+            config('acquaintances.tables.interactions')
+        )->wherePivot('relation', '=', Interaction::RELATION_VIEW)->withPivot(
+            ...Interaction::$pivotColumns
+        )->using(Interaction::getInteractionRelationModelName());
     }
 }

@@ -24,6 +24,7 @@ class Interaction
     public static $pivotColumns = [
         'id',
         'subject_type',
+        'actor_type',
         'relation',
         'relation_value',
         'relation_type',
@@ -121,7 +122,6 @@ class Interaction
     {
         $targets = self::attachPivotsFromRelation($model->{$relation}(), $targets, $class, $updates);
 
-//        dd($relation, $targets);
         return $model->{$relation}($targets->classname)->toggle($targets->targets);
     }
 
@@ -164,7 +164,6 @@ class Interaction
         $result->ids = array_map(function ($target) use ($result) {
             if ($target instanceof Model) {
                 $result->classname = get_class($target);
-
                 return $target->getKey();
             }
 
@@ -216,8 +215,8 @@ class Interaction
 
         return number_format($number / $divisor, $precision).$shorthand;
     }
-    
-    
+
+
 
     public static function getFullModelName($modelClassName)
     {

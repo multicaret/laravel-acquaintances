@@ -31,6 +31,16 @@ class InteractionRelation extends MorphPivot
         return $this->morphTo('subject');
     }
 
+
+    /** Owner of the subject.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
+     */
+    public function actor()
+    {
+        return $this->morphTo('actor');
+    }
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\MorphTo
      */
@@ -47,9 +57,11 @@ class InteractionRelation extends MorphPivot
      */
     public function scopePopular($query, $type = null)
     {
-        $query->select('subject_id', 'subject_type', \DB::raw('COUNT(*) AS count'))
-              ->groupBy('subject_id', 'subject_type')
-              ->orderByDesc('count');
+        $query->select(
+            'subject_id',
+            'subject_type',
+            \DB::raw('COUNT(*) AS count')
+        )->groupBy('subject_id', 'subject_type')->orderByDesc('count');
 
         if ($type) {
             $query->where('subject_type', $this->normalizeSubjectType($type));
@@ -64,7 +76,10 @@ class InteractionRelation extends MorphPivot
     public function getTable()
     {
         if ( ! $this->table) {
-            $this->table = config('acquaintances.tables.interactions', 'interactions');
+            $this->table = config(
+                'acquaintances.tables.interactions',
+                'interactions'
+            );
         }
 
         return parent::getTable();
@@ -102,7 +117,9 @@ class InteractionRelation extends MorphPivot
         $modelName = $namespace.'\\'.studly_case($type);
 
         if ( ! class_exists($modelName)) {
-            throw new InvalidArgumentException("Model {$modelName} not exists. Please check your config 'acquaintances.model_namespace'.");
+            throw new InvalidArgumentException(
+                "Model {$modelName} not exists. Please check your config 'acquaintances.model_namespace'."
+            );
         }
 
         return $modelName;

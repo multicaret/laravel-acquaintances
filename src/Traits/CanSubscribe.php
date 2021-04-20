@@ -21,11 +21,28 @@ trait CanSubscribe
      *
      * @throws \Exception
      */
-    public function subscribe($targets, $class = __CLASS__)
+    public function subscribe($targets, $class = __CLASS__, $actor = null)
     {
         Event::dispatch('acq.subscriptions.subscribe', [$this, $targets]);
 
-        return Interaction::attachRelations($this, 'subscriptions', $targets, $class);
+        $updates = [];
+        if ($actor) {
+            $updates = array_merge(
+                $updates,
+                [
+                    'actor_type' => $actor->getMorphClass(),
+                    'actor_id'   => $actor->id,
+                ]
+            );
+        }
+
+        return Interaction::attachRelations(
+            $this,
+            'subscriptions',
+            $targets,
+            $class,
+            $updates
+        );
     }
 
     /**
@@ -40,7 +57,12 @@ trait CanSubscribe
     {
         Event::dispatch('acq.subscriptions.unsubscribe', [$this, $targets]);
 
-        return Interaction::detachRelations($this, 'subscriptions', $targets, $class);
+        return Interaction::detachRelations(
+            $this,
+            'subscriptions',
+            $targets,
+            $class
+        );
     }
 
     /**
@@ -55,7 +77,12 @@ trait CanSubscribe
      */
     public function toggleSubscribe($targets, $class = __CLASS__)
     {
-        return Interaction::toggleRelations($this, 'subscriptions', $targets, $class);
+        return Interaction::toggleRelations(
+            $this,
+            'subscriptions',
+            $targets,
+            $class
+        );
     }
 
     /**
@@ -68,7 +95,12 @@ trait CanSubscribe
      */
     public function hasSubscribed($target, $class = __CLASS__)
     {
-        return Interaction::isRelationExists($this, 'subscriptions', $target, $class);
+        return Interaction::isRelationExists(
+            $this,
+            'subscriptions',
+            $target,
+            $class
+        );
     }
 
     /**
@@ -80,10 +112,13 @@ trait CanSubscribe
      */
     public function subscriptions($class = __CLASS__)
     {
-        return $this->morphedByMany($class, 'subject',
-            config('acquaintances.tables.interactions'))
-                    ->wherePivot('relation', '=', Interaction::RELATION_SUBSCRIBE)
-                    ->withPivot(...Interaction::$pivotColumns)
-                    ->using(Interaction::getInteractionRelationModelName());
+        return $this->morphedByMany(
+            $class,
+            'subject',
+            config('acquaintances.tables.interactions')
+        )->wherePivot('relation', '=', Interaction::RELATION_SUBSCRIBE)
+            ->withPivot(...Interaction::$pivotColumns)->using(
+                Interaction::getInteractionRelationModelName()
+            );
     }
 }

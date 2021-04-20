@@ -19,11 +19,28 @@ trait CanFavorite
      *
      * @return array
      */
-    public function favorite($targets, $class = __CLASS__)
+    public function favorite($targets, $class = __CLASS__, $actor = null)
     {
         Event::dispatch('acq.favorites.favorite', [$this, $targets]);
 
-        return Interaction::attachRelations($this, 'favorites', $targets, $class);
+        $updates = [];
+        if ($actor) {
+            $updates = array_merge(
+                $updates,
+                [
+                    'actor_type' => $actor->getMorphClass(),
+                    'actor_id'   => $actor->id,
+                ]
+            );
+        }
+
+        return Interaction::attachRelations(
+            $this,
+            'favorites',
+            $targets,
+            $class,
+            $updates
+        );
     }
 
     /**
@@ -38,7 +55,12 @@ trait CanFavorite
     {
         Event::dispatch('acq.favorites.unfavorite', [$this, $targets]);
 
-        return Interaction::detachRelations($this, 'favorites', $targets, $class);
+        return Interaction::detachRelations(
+            $this,
+            'favorites',
+            $targets,
+            $class
+        );
     }
 
     /**
@@ -51,7 +73,12 @@ trait CanFavorite
      */
     public function toggleFavorite($targets, $class = __CLASS__)
     {
-        return Interaction::toggleRelations($this, 'favorites', $targets, $class);
+        return Interaction::toggleRelations(
+            $this,
+            'favorites',
+            $targets,
+            $class
+        );
     }
 
     /**
@@ -64,7 +91,12 @@ trait CanFavorite
      */
     public function hasFavorited($target, $class = __CLASS__)
     {
-        return Interaction::isRelationExists($this, 'favorites', $target, $class);
+        return Interaction::isRelationExists(
+            $this,
+            'favorites',
+            $target,
+            $class
+        );
     }
 
     /**
@@ -76,10 +108,13 @@ trait CanFavorite
      */
     public function favorites($class = __CLASS__)
     {
-        return $this->morphedByMany($class, 'subject',
-            config('acquaintances.tables.interactions'))
-                    ->wherePivot('relation', '=', Interaction::RELATION_FAVORITE)
-                    ->withPivot(...Interaction::$pivotColumns)
-                    ->using(Interaction::getInteractionRelationModelName());
+        return $this->morphedByMany(
+            $class,
+            'subject',
+            config('acquaintances.tables.interactions')
+        )->wherePivot('relation', '=', Interaction::RELATION_FAVORITE)
+            ->withPivot(...Interaction::$pivotColumns)->using(
+                Interaction::getInteractionRelationModelName()
+            );
     }
 }
