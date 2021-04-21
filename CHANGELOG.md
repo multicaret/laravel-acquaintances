@@ -1,3 +1,6 @@
+## v3.5.1
+* fix: Trait helper method morph key of 'ratingsTo'.
+
 ## v3.5.0
 * fix: rename collision method name 'ratings' to 'ratingsTo'
 
