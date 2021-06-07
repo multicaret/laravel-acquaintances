@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\MorphPivot;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use InvalidArgumentException;
 use Multicaret\Acquaintances\Interaction;
+use Illuminate\Support\Str;
 
 /**
  * Class InteractionRelation.
@@ -99,7 +100,7 @@ class InteractionRelation extends MorphPivot
 
         $namespace = config('acquaintances.model_namespace', 'App');
 
-        $modelName = $namespace.'\\'.studly_case($type);
+        $modelName = $namespace.'\\'.Str::studly($type);
 
         if ( ! class_exists($modelName)) {
             throw new InvalidArgumentException("Model {$modelName} not exists. Please check your config 'acquaintances.model_namespace'.");
