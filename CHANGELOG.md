@@ -1,3 +1,6 @@
+## v3.5.2
+* fix: deprecated method studly_case() PR #53, thanks to @Forsakenrox
+
 ## v3.5.1
 * fix: Trait helper method morph key of 'ratingsTo'.
 
