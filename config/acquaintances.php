@@ -3,7 +3,7 @@
 return [
     /**
      * Load migrations from package migrations,
-     * if You published the migration files, please set to `false`.
+     * If you published the migration files, please set to `false`.
      */
     'migrations' => false,
     
