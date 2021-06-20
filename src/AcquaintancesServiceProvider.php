@@ -26,7 +26,12 @@ class AcquaintancesServiceProvider extends ServiceProvider
      */
     protected function registerMigrations()
     {
-        if (count(\File::glob(database_path('migrations/*acquaintances*.php'))) === 0) {
+        $config = $this->app['config']['acquaintances'];
+        $runMigrations = is_null($config['migrations'] ?? null) 
+            ? count(\File::glob(database_path('migrations/*acquaintances*.php'))) === 0
+            : $config['migrations'];
+
+        if ($runMigrations) {
             $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
         }
     }
