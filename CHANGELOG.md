@@ -1,3 +1,6 @@
+## v3.5.3
+* feat: allow user to turn off migrations, thanks to @jaulz
+
 ## v3.5.2
 * fix: deprecated method studly_case() PR #53, thanks to @Forsakenrox
 
