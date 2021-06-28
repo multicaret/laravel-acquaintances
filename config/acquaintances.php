@@ -10,7 +10,7 @@ return [
     /*
      * Models Related.
      */
-    'model_namespace' => 'App\Models',
+    'model_namespace' => (int)app()->version() <= 7 ? 'App' : 'App\Models',
     'models' => [
         /*
          * Model name of User model
