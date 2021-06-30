@@ -6,11 +6,11 @@ return [
      * If you published the migration files, please set to `false`.
      */
     'migrations' => false,
-    
+
     /*
      * Models Related.
      */
-    'model_namespace' => (int)app()->version() <= 7 ? 'App' : 'App\Models',
+    'model_namespace' => (int) app()->version() <= 7 ? 'App' : 'App\Models',
     'models' => [
         /*
          * Model name of User model
