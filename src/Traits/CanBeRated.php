@@ -4,7 +4,6 @@
 namespace Multicaret\Acquaintances\Traits;
 
 use Multicaret\Acquaintances\Interaction;
-use Multicaret\Acquaintances\Models\InteractionRelation;
 
 /**
  * Trait CanBeRated.
@@ -192,7 +191,6 @@ trait CanBeRated
      *
      * @param  null  $max
      *
-     * @param  null  $ratingType
      *
      * @return float|int
      */
