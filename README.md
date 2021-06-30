@@ -461,7 +461,7 @@ $user->rate($targets);
 $user->unrate($targets);
 $user->toggleRate($targets);
 $user->ratings()->get(); // App\User:class
-$user->rateings(App\Post::class)->get();
+$user->ratings(App\Post::class)->get();
 $user->hasRated($target);
 ```
 
