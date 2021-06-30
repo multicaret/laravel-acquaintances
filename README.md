@@ -242,30 +242,35 @@ $user->getFriendship($friend);
 
 ```php
 $user->getAllFriendships();
+$user->getAllFriendships($group_name, $perPage = 20, $fields = ['id','name']);
 ```
 
 #### Get a list of pending Friendships
 
 ```php
 $user->getPendingFriendships();
+$user->getPendingFriendships($group_name, $perPage = 20, $fields = ['id','name']);
 ```
 
 #### Get a list of accepted Friendships
 
 ```php
 $user->getAcceptedFriendships();
+$user->getAcceptedFriendships($group_name, $perPage = 20, $fields = ['id','name']);
 ```
 
 #### Get a list of denied Friendships
 
 ```php
 $user->getDeniedFriendships();
+$user->getDeniedFriendships($perPage = 20, $fields = ['id','name']);
 ```
 
 #### Get a list of blocked Friendships
 
 ```php
 $user->getBlockedFriendships();
+$user->getBlockedFriendships($perPage = 20, $fields = ['id','name']);
 ```
 
 #### Get a list of pending Friend Requests

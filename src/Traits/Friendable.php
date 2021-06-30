@@ -218,54 +218,61 @@ trait Friendable
     }
 
     /**
-     * @param  string  $groupSlug
+     * @param string $groupSlug
+     * @param  int  $perPage  Number
+     * @param  array  $fields
      *
      * @return \Illuminate\Database\Eloquent\Collection|Friendship[]
-     *
      */
-    public function getAllFriendships($groupSlug = '')
+    public function getAllFriendships(string $groupSlug = '', int $perPage = 0, array $fields = ['*'])
     {
-        return $this->findFriendships(null, $groupSlug)->get();
+        return $this->getOrPaginate($this->findFriendships(null, $groupSlug), $perPage, $fields);
     }
 
     /**
-     * @param  string  $groupSlug
+     * @param string $groupSlug
+     * @param  int  $perPage  Number
+     * @param  array  $fields
      *
      * @return \Illuminate\Database\Eloquent\Collection|Friendship[]
-     *
      */
-    public function getPendingFriendships($groupSlug = '')
+    public function getPendingFriendships(string $groupSlug = '', int $perPage = 0, array $fields = ['*'])
     {
-        return $this->findFriendships(Status::PENDING, $groupSlug)->get();
+        return $this->getOrPaginate($this->findFriendships(Status::PENDING, $groupSlug), $perPage, $fields);
     }
 
     /**
-     * @param  string  $groupSlug
+     * @param string $groupSlug
+     * @param  int  $perPage  Number
+     * @param  array  $fields
      *
      * @return \Illuminate\Database\Eloquent\Collection|Friendship[]
-     *
      */
-    public function getAcceptedFriendships($groupSlug = '')
+    public function getAcceptedFriendships(string $groupSlug = '', int $perPage = 0, array $fields = ['*'])
     {
-        return $this->findFriendships(Status::ACCEPTED, $groupSlug)->get();
+        return $this->getOrPaginate($this->findFriendships(Status::ACCEPTED, $groupSlug), $perPage, $fields);
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Collection|Friendship[]
+     * @param  int  $perPage  Number
+     * @param  array  $fields
      *
+     * @return \Illuminate\Database\Eloquent\Collection|Friendship[]
      */
-    public function getDeniedFriendships()
+    public function getDeniedFriendships(int $perPage = 0, array $fields = ['*'])
     {
-        return $this->findFriendships(Status::DENIED)->get();
+        return $this->getOrPaginate($this->findFriendships(Status::DENIED), $perPage, $fields);
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Collection|Friendship[]
+     * @param  int  $perPage  Number
+     * @param  array  $fields
      *
+     * @return \Illuminate\Database\Eloquent\Collection|Friendship[]
      */
-    public function getBlockedFriendships()
+    public function getBlockedFriendships(int $perPage = 0, array $fields = ['*'])
     {
-        return $this->findFriendships(Status::BLOCKED)->get();
+        return $this->getOrPaginate($this->findFriendships(Status::BLOCKED), $perPage, $fields);
     }
 
     /**
