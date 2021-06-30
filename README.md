@@ -457,6 +457,13 @@ $object->followersCountReadable(); // return readable number with precision, i.e
 #### `\Multicaret\Acquaintances\Traits\CanRate`
 
 ```php
+// Rate type in the following line will be
+// the same as the one specified
+// in config('acquaintances.rating.defaults.type')
+// if your app is using a single type of rating on your model,
+// like one factor only, then simply use the rate() as it's shown here,
+// and if you have multiple factors then
+// take a look the examples exactly below this these ones. 
 $user->rate($targets);
 $user->unrate($targets);
 $user->toggleRate($targets);
