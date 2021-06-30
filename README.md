@@ -463,6 +463,14 @@ $user->toggleRate($targets);
 $user->ratings()->get(); // App\User:class
 $user->ratings(App\Post::class)->get();
 $user->hasRated($target);
+
+// Some Examples on how to rate the object based on different factors (rating type)
+$user->setRateType('bedside-manners')->rate($target, 4);
+$user->setRateType('waiting-time')->rate($target, 3);
+$user->setRateType('quality')->rate($target, 4);
+$user->setRateType('delivery-time')->rate($target, 2);
+$user->setRateType('communication')->rate($target, 5);
+// Remember that you can always use the functions on $target which have this phrase "AllTypes" in them. check the below section for more details
 ```
 
 #### `\Multicaret\Acquaintances\Traits\CanBeRated`
