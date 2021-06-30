@@ -58,10 +58,13 @@ trait CanRate
     {
         Event::dispatch('acq.ratings.rate', [$this, $targets]);
 
-        return Interaction::attachRelations($this, 'ratingsTo', $targets, $class, [
+        $attachRelations = Interaction::attachRelations($this, 'ratingsTo', $targets, $class, [
             'relation_value' => $amount,
             'relation_type' => $this->rateType($ratingType),
         ]);
+        self::$rateType = config('acquaintances.rating.defaults.type');
+
+        return $attachRelations;
     }
 
     /**
