@@ -64,7 +64,8 @@ trait CanBeRated
         $relation = $this->morphToMany(Interaction::getUserModelName(), 'subject',
             config('acquaintances.tables.interactions'))
                          ->wherePivot('relation', '=', Interaction::RELATION_RATE)
-                         ->using(Interaction::getInteractionRelationModelName());
+                         ->using(Interaction::getInteractionRelationModelName())
+                         ->withTimestamps();
 
         if ( ! $isAllTypes) {
             $relation = $relation->wherePivot('relation_type', '=', $this->ratedType());

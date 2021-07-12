@@ -135,7 +135,8 @@ trait CanRate
         $relation = $this->morphedByMany($class, 'subject',
             config('acquaintances.tables.interactions'))
                          ->wherePivot('relation', '=', Interaction::RELATION_RATE)
-                         ->using(Interaction::getInteractionRelationModelName());
+                         ->using(Interaction::getInteractionRelationModelName())
+                         ->withTimestamps();
 
         $relation = $relation->wherePivot('relation_type', '=', $this->rateType());
 

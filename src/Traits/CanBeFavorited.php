@@ -34,7 +34,8 @@ trait CanBeFavorited
             config('acquaintances.tables.interactions'))
                     ->wherePivot('relation', '=', Interaction::RELATION_FAVORITE)
                     ->withPivot(...Interaction::$pivotColumns)
-                    ->using(Interaction::getInteractionRelationModelName());
+                    ->using(Interaction::getInteractionRelationModelName())
+                    ->withTimestamps();
     }
 
     public function favoritersCount()

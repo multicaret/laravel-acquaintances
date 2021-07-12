@@ -33,7 +33,8 @@ trait CanBeSubscribed
             config('acquaintances.tables.interactions'))
                     ->wherePivot('relation', '=', Interaction::RELATION_SUBSCRIBE)
                     ->withPivot(...Interaction::$pivotColumns)
-                    ->using(Interaction::getInteractionRelationModelName());
+                    ->using(Interaction::getInteractionRelationModelName())
+                    ->withTimestamps();
     }
 
     public function subscribersCount()
