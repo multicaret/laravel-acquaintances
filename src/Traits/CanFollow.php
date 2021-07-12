@@ -84,6 +84,7 @@ trait CanFollow
             config('acquaintances.tables.interactions'))
                     ->wherePivot('relation', '=', Interaction::RELATION_FOLLOW)
                     ->withPivot(...Interaction::$pivotColumns)
-                    ->using(Interaction::getInteractionRelationModelName());
+                    ->using(Interaction::getInteractionRelationModelName())
+                    ->withTimestamps();
     }
 }

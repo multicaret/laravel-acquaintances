@@ -57,7 +57,8 @@ trait CanBeVoted
             config('acquaintances.tables.interactions'))
                     ->wherePivotIn('relation', [Interaction::RELATION_UPVOTE, Interaction::RELATION_DOWNVOTE])
                     ->withPivot(...Interaction::$pivotColumns)
-                    ->using(Interaction::getInteractionRelationModelName());
+                    ->using(Interaction::getInteractionRelationModelName())
+                    ->withTimestamps();
     }
 
     /**
@@ -71,7 +72,8 @@ trait CanBeVoted
             config('acquaintances.tables.interactions'))
                     ->wherePivot('relation', '=', Interaction::RELATION_UPVOTE)
                     ->withPivot(...Interaction::$pivotColumns)
-                    ->using(Interaction::getInteractionRelationModelName());
+                    ->using(Interaction::getInteractionRelationModelName())
+                    ->withTimestamps();
     }
 
     /**
@@ -85,7 +87,8 @@ trait CanBeVoted
             config('acquaintances.tables.interactions'))
                     ->wherePivot('relation', '=', Interaction::RELATION_DOWNVOTE)
                     ->withPivot(...Interaction::$pivotColumns)
-                    ->using(Interaction::getInteractionRelationModelName());
+                    ->using(Interaction::getInteractionRelationModelName())
+                    ->withTimestamps();
     }
 
     public function upvotersCount()
