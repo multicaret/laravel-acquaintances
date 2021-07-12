@@ -219,53 +219,63 @@ trait Friendable
 
     /**
      * @param  string  $groupSlug
+     * @param  int  $perPage  Number
+     * @param  array  $fields
+     * @param  string $type
      *
      * @return \Illuminate\Database\Eloquent\Collection|Friendship[]
-     *
      */
-    public function getAllFriendships($groupSlug = '')
+    public function getAllFriendships(string $groupSlug = '', int $perPage = 0, array $fields = ['*'], string $type = 'all')
     {
-        return $this->findFriendships(null, $groupSlug)->get();
+        return $this->getOrPaginate($this->findFriendships(null, $groupSlug, $type), $perPage, $fields);
     }
 
     /**
      * @param  string  $groupSlug
+     * @param  int  $perPage  Number
+     * @param  array  $fields
+     * @param  string $type
      *
      * @return \Illuminate\Database\Eloquent\Collection|Friendship[]
-     *
      */
-    public function getPendingFriendships($groupSlug = '')
+    public function getPendingFriendships(string $groupSlug = '', int $perPage = 0, array $fields = ['*'], string $type = 'all')
     {
-        return $this->findFriendships(Status::PENDING, $groupSlug)->get();
+        return $this->getOrPaginate($this->findFriendships(Status::PENDING, $groupSlug, $type), $perPage, $fields);
     }
 
     /**
      * @param  string  $groupSlug
+     * @param  int  $perPage  Number
+     * @param  array  $fields
+     * @param  string $type
      *
      * @return \Illuminate\Database\Eloquent\Collection|Friendship[]
-     *
      */
-    public function getAcceptedFriendships($groupSlug = '')
+    public function getAcceptedFriendships(string $groupSlug = '', int $perPage = 0, array $fields = ['*'], string $type = 'all')
     {
-        return $this->findFriendships(Status::ACCEPTED, $groupSlug)->get();
+        return $this->getOrPaginate($this->findFriendships(Status::ACCEPTED, $groupSlug, $type), $perPage, $fields);
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Collection|Friendship[]
+     * @param  int  $perPage  Number
+     * @param  array  $fields
      *
+     * @return \Illuminate\Database\Eloquent\Collection|Friendship[]
      */
-    public function getDeniedFriendships()
+    public function getDeniedFriendships(int $perPage = 0, array $fields = ['*'])
     {
-        return $this->findFriendships(Status::DENIED)->get();
+        return $this->getOrPaginate($this->findFriendships(Status::DENIED), $perPage, $fields);
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Collection|Friendship[]
+     * @param  int  $perPage  Number
+     * @param  array  $fields
      *
+     * @return \Illuminate\Database\Eloquent\Collection|Friendship[]
      */
-    public function getBlockedFriendships()
+    public function getBlockedFriendships(int $perPage = 0, array $fields = ['*'])
     {
-        return $this->findFriendships(Status::BLOCKED)->get();
+        return $this->getOrPaginate($this->findFriendships(Status::BLOCKED), $perPage, $fields);
     }
 
     /**
@@ -359,12 +369,13 @@ trait Friendable
      * Get the number of friends
      *
      * @param  string  $groupSlug
+     * @param  string  $type
      *
      * @return integer
      */
-    public function getFriendsCount($groupSlug = '')
+    public function getFriendsCount($groupSlug = '', $type = 'all')
     {
-        $friendsCount = $this->findFriendships(Status::ACCEPTED, $groupSlug)->count();
+        $friendsCount = $this->findFriendships(Status::ACCEPTED, $groupSlug, $type)->count();
 
         return $friendsCount;
     }
@@ -408,19 +419,27 @@ trait Friendable
 
     /**
      * @param        $status
-     * @param  string  $groupSlug
+     * @param string $groupSlug
+     * @param string $type
      *
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    private function findFriendships($status = null, $groupSlug = '')
+    private function findFriendships($status = null, string $groupSlug = '', string $type = 'all')
     {
         $friendshipModelName = Interaction::getFriendshipModelName();
-        $query = $friendshipModelName::where(function ($query) {
-            $query->where(function ($q) {
-                $q->whereSender($this);
-            })->orWhere(function ($q) {
-                $q->whereRecipient($this);
-            });
+        $query = $friendshipModelName::where(function ($query) use ($type) {
+            switch ($type) {
+                case 'all':
+                    $query->where(function ($q) {$q->whereSender($this);})->orWhere(function ($q) {$q->whereRecipient($this);});
+                    break;
+                case 'sender':
+                    $query->where(function ($q) {$q->whereSender($this);});
+                    break;
+                case 'recipient':
+                    $query->where(function ($q) {$q->whereRecipient($this);});
+                    break;
+            }
+            $query->where(function ($q) {$q->whereSender($this);})->orWhere(function ($q) {$q->whereRecipient($this);});
         })->whereGroup($this, $groupSlug);
 
         //if $status is passed, add where clause
