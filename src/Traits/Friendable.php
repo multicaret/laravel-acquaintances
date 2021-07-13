@@ -439,7 +439,6 @@ trait Friendable
                     $query->where(function ($q) {$q->whereRecipient($this);});
                     break;
             }
-            $query->where(function ($q) {$q->whereSender($this);})->orWhere(function ($q) {$q->whereRecipient($this);});
         })->whereGroup($this, $groupSlug);
 
         //if $status is passed, add where clause
