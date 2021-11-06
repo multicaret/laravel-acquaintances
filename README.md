@@ -88,7 +88,7 @@ easily design your social-like System (Facebook, Twitter, Foursquare...etc).
 First, install the package through Composer.
 
 ```sh
-$ composer require multicaret/laravel-acquaintances
+composer require multicaret/laravel-acquaintances
 ```
 
 Laravel 5.8 and up => version 2.x (branch master)
@@ -99,7 +99,7 @@ Laravel 5.7 and below => version 1.x (branch v1)
 Publish config and migrations:
 
 ```sh
-$ php artisan vendor:publish --provider="Multicaret\Acquaintances\AcquaintancesServiceProvider"
+php artisan vendor:publish --provider="Multicaret\Acquaintances\AcquaintancesServiceProvider"
 ```
 
 Configure the published config in:
@@ -111,7 +111,7 @@ config/acquaintances.php
 Finally, migrate the database to create the table:
 
 ```sh
-$ php artisan migrate
+php artisan migrate
 ```
 
 ---
