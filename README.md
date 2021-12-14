@@ -309,6 +309,8 @@ $user->getFriends();
 $user->getFriends($perPage = 20, $group_name);
 // or paginated with certain fields 
 $user->getFriends($perPage = 20, $group_name, $fields = ['id','name']);
+// or paginated with cursor & certain fields
+$user->getFriends($perPage = 20, $group_name, $fields = ['id','name'],$cursor = true);
 ```
 
 Parameters:
