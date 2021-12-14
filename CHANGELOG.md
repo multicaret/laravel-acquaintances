@@ -1,3 +1,7 @@
+## v3.5.5
+
+* feat: add cursor paginate support to `getFriends` and `getOrPaginate`
+
 ## v3.5.4
 
 * fix: make interaction relation_value type a double, better for rating values.
