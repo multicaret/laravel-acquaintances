@@ -318,9 +318,9 @@ trait Friendable
      *
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function getFriends($perPage = 0, $groupSlug = '', array $fields = ['*'])
+    public function getFriends($perPage = 0, $groupSlug = '', array $fields = ['*'], bool $cursor = false)
     {
-        return $this->getOrPaginate($this->getFriendsQueryBuilder($groupSlug), $perPage, $fields);
+        return $this->getOrPaginate($this->getFriendsQueryBuilder($groupSlug), $perPage, $fields, $cursor);
     }
 
     /**
@@ -552,10 +552,14 @@ trait Friendable
         return $this->morphMany($friendshipGroupsModelName, 'friend');
     }
 
-    protected function getOrPaginate($builder, $perPage, array $fields = ['*'])
+    protected function getOrPaginate($builder, $perPage, array $fields = ['*'], bool $cursor = false)
     {
         if ($perPage == 0) {
             return $builder->get($fields);
+        }
+
+        if ($cursor) {
+            return $builder->cursorPaginate($perPage, $fields);
         }
 
         return $builder->paginate($perPage, $fields);
