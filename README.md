@@ -95,7 +95,6 @@ Laravel 5.8 and up => version 2.x (branch master)
 
 Laravel 5.7 and below => version 1.x (branch v1)
 
-
 Publish config and migrations:
 
 ```sh
@@ -310,7 +309,7 @@ $user->getFriends($perPage = 20, $group_name);
 // or paginated with certain fields 
 $user->getFriends($perPage = 20, $group_name, $fields = ['id','name']);
 // or paginated with cursor & certain fields
-$user->getFriends($perPage = 20, $group_name, $fields = ['id','name'],$cursor = true);
+$user->getFriends($perPage = 20, $group_name, $fields = ['id','name'], $cursor = true);
 ```
 
 Parameters:
