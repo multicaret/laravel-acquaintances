@@ -1,3 +1,7 @@
+## v3.5.6
+
+* fix: findFriendships with params `sender` & `recipient` were not working, fixed by @beratkara
+
 ## v3.5.5
 
 * feat: add cursor paginate support to `getFriends` and `getOrPaginate`
