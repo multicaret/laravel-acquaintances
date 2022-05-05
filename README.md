@@ -304,7 +304,7 @@ To get a collection of friend models (ex. User) use the following methods:
 
 ```php
 $user->getFriends();
-// or panigated
+// or paginated
 $user->getFriends($perPage = 20, $group_name);
 // or paginated with certain fields 
 $user->getFriends($perPage = 20, $group_name, $fields = ['id','name']);
