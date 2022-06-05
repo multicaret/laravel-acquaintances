@@ -148,7 +148,6 @@ trait Friendable
      */
     public function ungroupFriend(Model $friend, $groupSlug = '')
     {
-
         $friendship = $this->findFriendship($friend)->first();
         $groupsAvailable = config('acquaintances.friendships_groups', []);
 
@@ -361,9 +360,8 @@ trait Friendable
      */
     public function getFriendsOfFriends($perPage = 0, array $fields = ['*'])
     {
-        return $this->getOrPaginate($this->friendsOfFriendsQueryBuilder(), $perPage, $fields);
+        return $this->getOrPaginate($this->getFriendsOfFriendsQueryBuilder(), $perPage, $fields);
     }
-
 
     /**
      * Get the number of friends
@@ -424,19 +422,28 @@ trait Friendable
      *
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    private function findFriendships($status = null, string $groupSlug = '', string $type = 'all')
+    public function findFriendships($status = null, string $groupSlug = '', string $type = 'all')
     {
         $friendshipModelName = Interaction::getFriendshipModelName();
         $query = $friendshipModelName::where(function ($query) use ($type) {
             switch ($type) {
                 case 'all':
-                    $query->where(function ($q) {$q->whereSender($this);})->orWhere(function ($q) {$q->whereRecipient($this);});
+                    $query->where(function ($q) {
+                            $q->whereSender($this);
+                        })
+                        ->orWhere(function ($q) {
+                            $q->whereRecipient($this);
+                        });
                     break;
                 case 'sender':
-                    $query->where(function ($q) {$q->whereSender($this);});
+                    $query->where(function ($q) {
+                        $q->whereSender($this);
+                    });
                     break;
                 case 'recipient':
-                    $query->where(function ($q) {$q->whereRecipient($this);});
+                    $query->where(function ($q) {
+                        $q->whereRecipient($this);
+                    });
                     break;
             }
         })->whereGroup($this, $groupSlug);
@@ -456,14 +463,14 @@ trait Friendable
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    private function getFriendsQueryBuilder($groupSlug = '')
+    public function getFriendsQueryBuilder($groupSlug = '')
     {
-
         $friendships = $this->findFriendships(Status::ACCEPTED, $groupSlug)->get(['sender_id', 'recipient_id']);
         $recipients = $friendships->pluck('recipient_id')->all();
         $senders = $friendships->pluck('sender_id')->all();
 
-        return $this->where('id', '!=', $this->getKey())->whereIn('id', array_merge($recipients, $senders));
+        return $this->where('id', '!=', $this->getKey())
+                    ->whereIn('id', array_merge($recipients, $senders));
     }
 
     /**
@@ -471,7 +478,7 @@ trait Friendable
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    private function getMutualFriendsQueryBuilder(Model $other)
+    public function getMutualFriendsQueryBuilder(Model $other)
     {
         $user1['friendships'] = $this->findFriendships(Status::ACCEPTED)->get(['sender_id', 'recipient_id']);
         $user1['recipients'] = $user1['friendships']->pluck('recipient_id')->all();
@@ -488,7 +495,8 @@ trait Friendable
             )
         );
 
-        return $this->whereNotIn('id', [$this->getKey(), $other->getKey()])->whereIn('id', $mutualFriendships);
+        return $this->whereNotIn('id', [$this->getKey(), $other->getKey()])
+                    ->whereIn('id', $mutualFriendships);
     }
 
     /**
@@ -498,7 +506,7 @@ trait Friendable
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    private function friendsOfFriendsQueryBuilder($groupSlug = '')
+    public function getFriendsOfFriendsQueryBuilder($groupSlug = '')
     {
         $friendships = $this->findFriendships(Status::ACCEPTED)->get(['sender_id', 'recipient_id']);
         $recipients = $friendships->pluck('recipient_id')->all();
@@ -521,14 +529,6 @@ trait Friendable
         $fofIds = array_unique(
             array_merge($fofs->pluck('sender_id')->all(), $fofs->pluck('recipient_id')->all())
         );
-
-//      Alternative way using collection helpers
-//        $fofIds = array_unique(
-//            $fofs->map(function ($item) {
-//                return [$item->sender_id, $item->recipient_id];
-//            })->flatten()->all()
-//        );
-
 
         return $this->whereIn('id', $fofIds)->whereNotIn('id', $friendIds);
     }
