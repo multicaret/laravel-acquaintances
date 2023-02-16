@@ -1,3 +1,7 @@
+## v3.5.7
+
+* Laravel 10 Support - composer-wise not fully support, and no PHP 8.1 types or anything fancy here
+
 ## v3.5.6
 
 * fix: findFriendships with params `sender` & `recipient` were not working, fixed by @beratkara
