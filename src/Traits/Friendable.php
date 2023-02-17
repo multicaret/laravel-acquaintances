@@ -349,6 +349,17 @@ trait Friendable
     }
 
     /**
+     * Get the number of pending friend requests
+     *
+     * @return integer
+     */
+    public function getPendingsCount($other)
+    {
+        
+        return $this->getPendingFriendships()->count();
+    }
+
+    /**
      * This method will not return Friendship models
      * It will return the 'friends' models. ex: App\User
      *
