@@ -355,7 +355,6 @@ trait Friendable
      */
     public function getPendingsCount($other)
     {
-        
         return $this->getPendingFriendships()->count();
     }
 
