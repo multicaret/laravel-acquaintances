@@ -1,3 +1,8 @@
+## v3.5.8
+
+* feat: adding get pending count function by @prawn185
+* fix: solve isRelationExists causing potential ambiguous errors when doing some complex DB queries. by @midblep
+
 ## v3.5.7
 
 * Laravel 10 Support - composer-wise not fully support, and no PHP 8.1 types or anything fancy here
