@@ -67,7 +67,7 @@ class Interaction
         $target = self::formatTargets($target, $class ?: config('auth.providers.users.model'), $updates);
 
         return $model->{$relation}($target->classname)
-                     ->where($class ? 'subject_id' : 'user_id', head($target->ids))
+                     ->where($class ? config('acquaintances.tables.interactions', 'interactions') . '.subject_id' : config('acquaintances.tables.interactions', 'interactions') . '.user_id', head($target->ids))
                      ->exists();
     }
 
@@ -216,8 +216,8 @@ class Interaction
 
         return number_format($number / $divisor, $precision).$shorthand;
     }
-    
-    
+
+
 
     public static function getFullModelName($modelClassName)
     {
