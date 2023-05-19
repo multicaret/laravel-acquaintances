@@ -93,9 +93,15 @@ trait Friendable
     {
         Event::dispatch('acq.friendships.accepted', [$this, $recipient]);
 
-        return $this->findFriendship($recipient)->whereRecipient($this)->update([
+        $befriending = $this->findFriendship($recipient)->whereRecipient($this)->where('status', 'pending')->orderBy('created_at', 'DESC')->first()->update([
             'status' => Status::ACCEPTED,
         ]);
+
+        $this->findFriendship($recipient)->whereRecipient($this)->where('status', 'pending')->update([
+            'status' => Status::DENIED,
+        ]);
+
+        return $befriending;
     }
 
     /**
