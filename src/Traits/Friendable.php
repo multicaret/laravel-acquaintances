@@ -430,7 +430,7 @@ trait Friendable
      * @param string $groupSlug
      * @param string $type
      *
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return \Illuminate\Database\Eloquent\Builder
      */
     public function findFriendships($status = null, string $groupSlug = '', string $type = 'all')
     {
