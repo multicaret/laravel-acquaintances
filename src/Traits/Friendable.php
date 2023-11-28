@@ -24,7 +24,7 @@ trait Friendable
     public function befriend(Model $recipient)
     {
 
-        if ( ! $this->canBefriend($recipient)) {
+        if (!$this->canBefriend($recipient)) {
             return false;
         }
 
@@ -38,7 +38,6 @@ trait Friendable
         Event::dispatch('acq.friendships.sent', [$this, $recipient]);
 
         return $friendship;
-
     }
 
     /**
@@ -125,7 +124,7 @@ trait Friendable
         $friendship = $this->findFriendship($friend)->whereStatus(Status::ACCEPTED)->first();
         $groupsAvailable = config('acquaintances.friendships_groups', []);
 
-        if ( ! isset($groupsAvailable[$groupSlug]) || empty($friendship)) {
+        if (!isset($groupsAvailable[$groupSlug]) || empty($friendship)) {
             return false;
         }
 
@@ -137,7 +136,6 @@ trait Friendable
         ]);
 
         return $group->wasRecentlyCreated;
-
     }
 
     /**
@@ -168,7 +166,6 @@ trait Friendable
         $result = $friendship->groups()->where($where)->delete();
 
         return $result;
-
     }
 
     /**
@@ -180,7 +177,7 @@ trait Friendable
     {
         // if there is a friendship between the two users and the sender is not blocked
         // by the recipient user then delete the friendship
-        if ( ! $this->isBlockedBy($recipient)) {
+        if (!$this->isBlockedBy($recipient)) {
             $this->findFriendship($recipient)->delete();
         }
 
@@ -275,6 +272,16 @@ trait Friendable
     public function getBlockedFriendships(int $perPage = 0, array $fields = ['*'])
     {
         return $this->getOrPaginate($this->findFriendships(Status::BLOCKED), $perPage, $fields);
+    }
+
+    public function getBlockedFriendshipsByCurrentUser(int $perPage = 0, array $fields = ['*'])
+    {
+        return $this->getOrPaginate($this->findFriendships(Status::BLOCKED, type: 'sender'), $perPage, $fields);
+    }
+
+    public function getBlockedFriendshipsByOtherUsers(int $perPage = 0, array $fields = ['*'])
+    {
+        return $this->getOrPaginate($this->findFriendships(Status::BLOCKED, type: 'recipient'), $perPage, $fields);
     }
 
     /**
@@ -439,8 +446,8 @@ trait Friendable
             switch ($type) {
                 case 'all':
                     $query->where(function ($q) {
-                            $q->whereSender($this);
-                        })
+                        $q->whereSender($this);
+                    })
                         ->orWhere(function ($q) {
                             $q->whereRecipient($this);
                         });
@@ -459,7 +466,7 @@ trait Friendable
         })->whereGroup($this, $groupSlug);
 
         //if $status is passed, add where clause
-        if ( ! is_null($status)) {
+        if (!is_null($status)) {
             $query->where('status', $status);
         }
 
@@ -480,7 +487,7 @@ trait Friendable
         $senders = $friendships->pluck('sender_id')->all();
 
         return $this->where('id', '!=', $this->getKey())
-                    ->whereIn('id', array_merge($recipients, $senders));
+            ->whereIn('id', array_merge($recipients, $senders));
     }
 
     /**
@@ -506,7 +513,7 @@ trait Friendable
         );
 
         return $this->whereNotIn('id', [$this->getKey(), $other->getKey()])
-                    ->whereIn('id', $mutualFriendships);
+            ->whereIn('id', $mutualFriendships);
     }
 
     /**
@@ -526,15 +533,15 @@ trait Friendable
 
         $friendshipModelName = Interaction::getFriendshipModelName();
         $fofs = $friendshipModelName::where('status', Status::ACCEPTED)
-                          ->where(function ($query) use ($friendIds) {
-                              $query->where(function ($q) use ($friendIds) {
-                                  $q->whereIn('sender_id', $friendIds);
-                              })->orWhere(function ($q) use ($friendIds) {
-                                  $q->whereIn('recipient_id', $friendIds);
-                              });
-                          })
-                          ->whereGroup($this, $groupSlug)
-                          ->get(['sender_id', 'recipient_id']);
+            ->where(function ($query) use ($friendIds) {
+                $query->where(function ($q) use ($friendIds) {
+                    $q->whereIn('sender_id', $friendIds);
+                })->orWhere(function ($q) use ($friendIds) {
+                    $q->whereIn('recipient_id', $friendIds);
+                });
+            })
+            ->whereGroup($this, $groupSlug)
+            ->get(['sender_id', 'recipient_id']);
 
         $fofIds = array_unique(
             array_merge($fofs->pluck('sender_id')->all(), $fofs->pluck('recipient_id')->all())
