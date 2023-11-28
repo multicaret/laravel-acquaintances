@@ -265,11 +265,24 @@ $user->getDeniedFriendships();
 $user->getDeniedFriendships($perPage = 20, $fields = ['id','name']);
 ```
 
-#### Get a list of blocked Friendships
+#### Get a list of blocked Friendships in total
 
 ```php
 $user->getBlockedFriendships();
 $user->getBlockedFriendships($perPage = 20, $fields = ['id','name']);
+```
+#### Get a list of blocked Friendships by current user
+
+```php
+$user->getBlockedFriendshipsByCurrentUser();
+$user->getBlockedFriendshipsByCurrentUser($perPage = 20, $fields = ['id','name']);
+```
+
+#### Get a list of blocked Friendships by others
+
+```php
+$user->getBlockedFriendshipsByOtherUsers();
+$user->getBlockedFriendshipsByOtherUsers($perPage = 20, $fields = ['id','name']);
 ```
 
 #### Get a list of pending Friend Requests

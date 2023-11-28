@@ -1,3 +1,8 @@
+## v3.5.9
+
+* feat: adding a way to get a list of blocked Friendships by current user by @mercExec
+* feat: adding a way to get a list of blocked Friendships by others by @mercExec
+
 ## v3.5.8
 
 * feat: adding get pending count function by @prawn185
