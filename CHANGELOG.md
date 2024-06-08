@@ -1,3 +1,6 @@
+## v3.6.1
+* use config variable `interactions_user_id_fk_column_name` PR #109
+
 ## v3.5.9
 
 * feat: adding a way to get a list of blocked Friendships by current user by @mercExec
