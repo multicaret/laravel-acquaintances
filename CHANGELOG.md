@@ -1,5 +1,10 @@
 ## v3.6.1
+
 * use config variable `interactions_user_id_fk_column_name` PR #109
+
+## v3.6.0
+
+* Bump Laravel support to V11.
 
 ## v3.5.9
 
