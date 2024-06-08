@@ -3,6 +3,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Multicaret\Acquaintances\Interaction;
 
 class CreateAcquaintancesInteractionsTable extends Migration
 {
@@ -14,11 +15,12 @@ class CreateAcquaintancesInteractionsTable extends Migration
         Schema::create(config('acquaintances.tables.interactions', 'interactions'), function (Blueprint $table) {
             $table->id();
 
-            $userModel = config('auth.providers.users.model');
+            $userModel = Interaction::getUserModelName();
             $userModel = (new $userModel);
+            $userIdFkColumnName = config('acquaintances.tables.interactions_user_id_fk_column_name', 'user_id');
 
             $userIdFkType = config('acquaintances.tables.interactions_user_id_fk_column_type');
-            $table->{$userIdFkType}('user_id')->index();
+            $table->{$userIdFkType}($userIdFkColumnName)->index();
             $table->morphs('subject');
             $table->string('relation')->default('follow')->comment('follow/like/subscribe/favorite/upvote/downvote');
             $table->double('relation_value')->nullable();
@@ -26,7 +28,7 @@ class CreateAcquaintancesInteractionsTable extends Migration
             $table->timestamps();
 
 
-            $table->foreign('user_id')
+            $table->foreign($userIdFkColumnName)
                   ->references($userModel->getKeyName())
                   ->on($userModel->getTable())
                   ->onUpdate('cascade')

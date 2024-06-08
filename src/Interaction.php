@@ -64,11 +64,12 @@ class Interaction
      */
     public static function isRelationExists(Model $model, $relation, $target, $class = null, array $updates = [])
     {
-        $target = self::formatTargets($target, $class ?: config('auth.providers.users.model'), $updates);
+        $target = self::formatTargets($target, $class ?: self::getUserModelName(), $updates);
+        $userIdFkColumnName = config('acquaintances.tables.interactions_user_id_fk_column_name', 'user_id');
 
         return $model->{$relation}($target->classname)
-                     ->where($class ? config('acquaintances.tables.interactions', 'interactions') . '.subject_id' : config('acquaintances.tables.interactions', 'interactions') . '.user_id', head($target->ids))
-                     ->exists();
+            ->where($class ? config('acquaintances.tables.interactions', 'interactions') . '.subject_id' : config('acquaintances.tables.interactions', 'interactions') . '.' . $userIdFkColumnName, head($target->ids))
+            ->exists();
     }
 
     /**
