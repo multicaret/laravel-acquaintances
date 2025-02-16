@@ -55,14 +55,14 @@ trait CanReport
     }
 
     /**
-     * Check if a model is reportd given model.
+     * Check if a model is reported given model.
      *
      * @param  int|array|\Illuminate\Database\Eloquent\Model  $target
      * @param  string  $class
      *
      * @return bool
      */
-    public function hasReportd($target, $class = __CLASS__)
+    public function hasReported($target, $class = __CLASS__)
     {
         return Interaction::isRelationExists($this, 'reports', $target, $class);
     }
