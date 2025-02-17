@@ -85,10 +85,10 @@ trait CanFollow
             'subject',
             config('acquaintances.tables.interactions')
         )
-            ->wherePivot('relation', '=', Interaction::RELATION_FOLLOW)
-            ->withPivot(...Interaction::$pivotColumns)
-            ->using(Interaction::getInteractionRelationModelName())
-            ->withTimestamps();
+                    ->wherePivot('relation', '=', Interaction::RELATION_FOLLOW)
+                    ->withPivot(...Interaction::$pivotColumns)
+                    ->using(Interaction::getInteractionRelationModelName())
+                    ->withTimestamps();
     }
 
     /**
@@ -98,7 +98,7 @@ trait CanFollow
      */
     public function followingCount()
     {
-        return $this->followings()->get()->count();
+        return $this->followings()->count();
     }
 
     /**
@@ -114,8 +114,8 @@ trait CanFollow
     /**
      * Return followingCount in a readable format.
      *
-     * @param integer $precision
-     * @param string $divisors
+     * @param  integer  $precision
+     * @param  string  $divisors
      * @return int|float|string
      */
     public function followingCountReadable(int $precision = 1, string $divisors = null)
