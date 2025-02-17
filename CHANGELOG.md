@@ -1,3 +1,7 @@
+## v3.7.0
+
+* feat: new trait for reporting added by @jayenne. PR #116
+
 ## v3.6.2
 
 * feat: new functions added `followingCount()` and `followingCountReadable()` thanks to @jayenne <3. PR #115
