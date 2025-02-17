@@ -80,11 +80,46 @@ trait CanFollow
      */
     public function followings($class = __CLASS__)
     {
-        return $this->morphedByMany($class, 'subject',
-            config('acquaintances.tables.interactions'))
-                    ->wherePivot('relation', '=', Interaction::RELATION_FOLLOW)
-                    ->withPivot(...Interaction::$pivotColumns)
-                    ->using(Interaction::getInteractionRelationModelName())
-                    ->withTimestamps();
+        return $this->morphedByMany(
+            $class,
+            'subject',
+            config('acquaintances.tables.interactions')
+        )
+            ->wherePivot('relation', '=', Interaction::RELATION_FOLLOW)
+            ->withPivot(...Interaction::$pivotColumns)
+            ->using(Interaction::getInteractionRelationModelName())
+            ->withTimestamps();
+    }
+
+    /**
+     * Return following count.
+     *
+     * @return int
+     */
+    public function followingCount()
+    {
+        return $this->followings()->get()->count();
+    }
+
+    /**
+     * Get followingCount attribute
+     *
+     * @return int
+     */
+    public function getFollowingCountAttribute()
+    {
+        return $this->followingCount();
+    }
+
+    /**
+     * Return followingCount in a readable format.
+     *
+     * @param integer $precision
+     * @param string $divisors
+     * @return int|float|string
+     */
+    public function followingCountReadable(int $precision = 1, string $divisors = null)
+    {
+        return Interaction::numberToReadable($this->followingCount(), $precision, $divisors);
     }
 }
