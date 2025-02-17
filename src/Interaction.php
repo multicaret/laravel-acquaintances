@@ -221,7 +221,9 @@ class Interaction
             }
         }
 
-        return number_format($number / $divisor, $precision).$shorthand;
+        $precision = empty($shorthand) ? 0 : $precision;
+
+        return number_format($number / $divisor, $precision) . $shorthand;
     }
 
 
