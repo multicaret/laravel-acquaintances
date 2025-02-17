@@ -271,6 +271,7 @@ $user->getDeniedFriendships($perPage = 20, $fields = ['id','name']);
 $user->getBlockedFriendships();
 $user->getBlockedFriendships($perPage = 20, $fields = ['id','name']);
 ```
+
 #### Get a list of blocked Friendships by current user
 
 ```php
@@ -460,6 +461,8 @@ $user->toggleFollow($targets);
 $user->followings()->get(); // App\User:class
 $user->followings(App\Post::class)->get();
 $user->isFollowing($target);
+$object->followingCount(); // or as attribute $object->following_count
+$object->followingCountReadable(); // return readable number with precision, i.e: 5.2K
 ```
 
 #### `\Multicaret\Acquaintances\Traits\CanBeFollowed`
@@ -718,29 +721,29 @@ $relations = InteractionRelation::popular(App\Post::class)->paginate(15);
 
 This is the list of the events fired by default for each action:
 
-|Event name                     |Fired                                          |
-|---------------------------    |-----------------------------------------------|
-|acq.friendships.sent           |When a friend request is sent                  |
-|acq.friendships.accepted       |When a friend request is accepted              |
-|acq.friendships.denied         |When a friend request is denied                |
-|acq.friendships.blocked        |When a friend is blocked                       |
-|acq.friendships.unblocked      |When a friend is unblocked                     |
-|acq.friendships.cancelled      |When a friendship is cancelled                 |
-|acq.ratings.rate               |When a an item or items get Rated              |
-|acq.ratings.unrate             |When a an item or items get unRated            |
-|acq.vote.up                    |When a an item or items get upvoted            |
-|acq.vote.down                  |When a an item or items get downvoted          |
-|acq.vote.cancel                |When a an item or items get vote cancellation  |
-|acq.likes.like                 |When a an item or items get liked              |
-|acq.likes.unlike               |When a an item or items get unliked            |
-|acq.followships.follow         |When a an item or items get followed           |
-|acq.followships.unfollow       |When a an item or items get unfollowed         |
-|acq.favorites.favorite         |When a an item or items get favored            |
-|acq.favorites.unfavorite       |When a an item or items get unfavored          |
-|acq.subscriptions.subscribe    |When a an item or items get subscribed         |                 
-|acq.subscriptions.unsubscribe  |When a an item or items get unsubscribed       | 
-|acq.views.view                 |When a an item or items get viewed             |
-|acq.views.unview               |When a an item or items get unviewed           |                
+| Event name                    | Fired                                         |
+|-------------------------------|-----------------------------------------------|
+| acq.friendships.sent          | When a friend request is sent                 |
+| acq.friendships.accepted      | When a friend request is accepted             |
+| acq.friendships.denied        | When a friend request is denied               |
+| acq.friendships.blocked       | When a friend is blocked                      |
+| acq.friendships.unblocked     | When a friend is unblocked                    |
+| acq.friendships.cancelled     | When a friendship is cancelled                |
+| acq.ratings.rate              | When a an item or items get Rated             |
+| acq.ratings.unrate            | When a an item or items get unRated           |
+| acq.vote.up                   | When a an item or items get upvoted           |
+| acq.vote.down                 | When a an item or items get downvoted         |
+| acq.vote.cancel               | When a an item or items get vote cancellation |
+| acq.likes.like                | When a an item or items get liked             |
+| acq.likes.unlike              | When a an item or items get unliked           |
+| acq.followships.follow        | When a an item or items get followed          |
+| acq.followships.unfollow      | When a an item or items get unfollowed        |
+| acq.favorites.favorite        | When a an item or items get favored           |
+| acq.favorites.unfavorite      | When a an item or items get unfavored         |
+| acq.subscriptions.subscribe   | When a an item or items get subscribed        |                 
+| acq.subscriptions.unsubscribe | When a an item or items get unsubscribed      | 
+| acq.views.view                | When a an item or items get viewed            |
+| acq.views.unview              | When a an item or items get unviewed          |                
 
 ### Contributing
 
