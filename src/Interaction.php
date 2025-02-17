@@ -20,6 +20,7 @@ class Interaction
     const RELATION_DOWNVOTE = 'downvote';
     const RELATION_RATE = 'rating';
     const RELATION_VIEW = 'view';
+    const RELATION_REPORT = 'report';
 
     public static $pivotColumns = [
         'id',
@@ -50,6 +51,8 @@ class Interaction
         'raters' => 'rating',
         'views' => 'view',
         'viewers' => 'view',
+        'reporters' => 'report',
+        'reports' => 'report',
     ];
 
     /**
@@ -122,7 +125,7 @@ class Interaction
     {
         $targets = self::attachPivotsFromRelation($model->{$relation}(), $targets, $class, $updates);
 
-//        dd($relation, $targets);
+        //        dd($relation, $targets);
         return $model->{$relation}($targets->classname)->toggle($targets->targets);
     }
 
@@ -140,7 +143,7 @@ class Interaction
     {
         $essentialUpdates = array_merge($updates, [
             'relation' => self::getRelationTypeFromRelation($morph),
-//            'created_at' => Carbon::now(),
+            //            'created_at' => Carbon::now(),
         ]);
 
         return self::formatTargets($targets, $class, $essentialUpdates);
@@ -158,7 +161,7 @@ class Interaction
         $result = new stdClass();
         $result->classname = $classname;
 
-        if ( ! is_array($targets)) {
+        if (! is_array($targets)) {
             $targets = [$targets];
         }
 
@@ -172,8 +175,10 @@ class Interaction
             return intval($target);
         }, $targets);
 
-        $result->targets = empty($update) ? $result->ids : array_combine($result->ids,
-            array_pad([], count($result->ids), $update));
+        $result->targets = empty($update) ? $result->ids : array_combine(
+            $result->ids,
+            array_pad([], count($result->ids), $update)
+        );
 
         return $result;
     }
@@ -187,7 +192,7 @@ class Interaction
      */
     protected static function getRelationTypeFromRelation(MorphToMany $relation)
     {
-        if ( ! \array_key_exists($relation->getRelationName(), self::$relationMap)) {
+        if (! \array_key_exists($relation->getRelationName(), self::$relationMap)) {
             throw new \Exception('Invalid relation definition.');
         }
 
@@ -198,7 +203,7 @@ class Interaction
     {
         $shorthand = '';
         $divisor = pow(1000, 0);
-        if ( ! isset($divisors)) {
+        if (! isset($divisors)) {
             $divisors = [
                 $divisor => $shorthand, // 1000^0 == 1
                 pow(1000, 1) => 'K', // Thousand
@@ -215,7 +220,7 @@ class Interaction
             }
         }
 
-        return number_format($number / $divisor, $precision).$shorthand;
+        return number_format($number / $divisor, $precision) . $shorthand;
     }
 
 
