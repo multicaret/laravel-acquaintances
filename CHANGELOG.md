@@ -1,3 +1,7 @@
+## v3.7.1
+
+* fix: numberToReadable will return an int if the $shorthand is empty.
+
 ## v3.7.0
 
 * feat: new trait for reporting added by @jayenne. PR #116
