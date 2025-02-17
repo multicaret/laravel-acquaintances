@@ -125,7 +125,6 @@ class Interaction
     {
         $targets = self::attachPivotsFromRelation($model->{$relation}(), $targets, $class, $updates);
 
-        //        dd($relation, $targets);
         return $model->{$relation}($targets->classname)->toggle($targets->targets);
     }
 
