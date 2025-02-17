@@ -1,3 +1,7 @@
+## v3.6.2
+
+* feat: new functions added `followingCount()` and `followingCountReadable()` thanks to @jayenne <3. PR #115
+
 ## v3.6.1
 
 * use config variable `interactions_user_id_fk_column_name` PR #109
