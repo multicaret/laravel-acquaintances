@@ -18,6 +18,7 @@ Gives eloquent models:
 - Interactions ability such as:
     - Likes
     - Favorites
+    - Reporting
     - Votes (up/down)
     - Subscribe
     - Follow
@@ -578,6 +579,29 @@ $object->favoritersCount(); // or as attribute $object->favoriters_count
 $object->favoritersCountReadable(); // return readable number with precision, i.e: 5.2K
 ```
 
+
+### Reporting
+
+#### `\Multicaret\Acquaintances\Traits\CanReport`
+
+```php
+$user->report($targets);
+$user->unreport($targets);
+$user->toggleReport($targets);
+$user->hasReported($target);
+$user->reports()->get(); // App\User:class
+$user->reports(App\Post::class)->get();
+```
+
+#### `\Multicaret\Acquaintances\Traits\CanBeReported`
+
+```php
+$object->reporters()->get(); // or $object->reporters
+$object->isReportedBy($user);
+$object->reportersCount(); // or as attribute $object->reporters_count
+$object->reportersCountReadable(); // return readable number with precision, i.e: 5.2K
+```
+
 ### Subscribe
 
 #### `\Multicaret\Acquaintances\Traits\CanSubscribe`
@@ -740,6 +764,8 @@ This is the list of the events fired by default for each action:
 | acq.followships.unfollow      | When a an item or items get unfollowed        |
 | acq.favorites.favorite        | When a an item or items get favored           |
 | acq.favorites.unfavorite      | When a an item or items get unfavored         |
+| acq.reports.report            | When a an item or items get reported          |
+| acq.reports.unreport          | When a an item or items get unreported        |
 | acq.subscriptions.subscribe   | When a an item or items get subscribed        |                 
 | acq.subscriptions.unsubscribe | When a an item or items get unsubscribed      | 
 | acq.views.view                | When a an item or items get viewed            |
