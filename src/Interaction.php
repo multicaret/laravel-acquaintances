@@ -3,8 +3,8 @@
 namespace Multicaret\Acquaintances;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Support\Str;
 use stdClass;
 
 /**
@@ -71,8 +71,10 @@ class Interaction
         $userIdFkColumnName = config('acquaintances.tables.interactions_user_id_fk_column_name', 'user_id');
 
         return $model->{$relation}($target->classname)
-            ->where($class ? config('acquaintances.tables.interactions', 'interactions') . '.subject_id' : config('acquaintances.tables.interactions', 'interactions') . '.' . $userIdFkColumnName, head($target->ids))
-            ->exists();
+                     ->where($class ? config('acquaintances.tables.interactions',
+                             'interactions').'.subject_id' : config('acquaintances.tables.interactions',
+                             'interactions').'.'.$userIdFkColumnName, head($target->ids))
+                     ->exists();
     }
 
     /**
@@ -160,7 +162,7 @@ class Interaction
         $result = new stdClass();
         $result->classname = $classname;
 
-        if (! is_array($targets)) {
+        if ( ! is_array($targets)) {
             $targets = [$targets];
         }
 
@@ -191,7 +193,7 @@ class Interaction
      */
     protected static function getRelationTypeFromRelation(MorphToMany $relation)
     {
-        if (! \array_key_exists($relation->getRelationName(), self::$relationMap)) {
+        if ( ! \array_key_exists($relation->getRelationName(), self::$relationMap)) {
             throw new \Exception('Invalid relation definition.');
         }
 
@@ -202,7 +204,7 @@ class Interaction
     {
         $shorthand = '';
         $divisor = pow(1000, 0);
-        if (! isset($divisors)) {
+        if ( ! isset($divisors)) {
             $divisors = [
                 $divisor => $shorthand, // 1000^0 == 1
                 pow(1000, 1) => 'K', // Thousand
@@ -219,9 +221,8 @@ class Interaction
             }
         }
 
-        return number_format($number / $divisor, $precision) . $shorthand;
+        return number_format($number / $divisor, $precision).$shorthand;
     }
-
 
 
     public static function getFullModelName($modelClassName)
@@ -234,7 +235,7 @@ class Interaction
 
         return empty($namespace)
             ? Str::studly($modelClassName)
-            : $namespace . '\\' . Str::studly($modelClassName);
+            : $namespace.'\\'.Str::studly($modelClassName);
     }
 
     public static function getUserModelName()
