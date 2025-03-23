@@ -35,7 +35,7 @@ trait CanBeReported
             'subject',
             config('acquaintances.tables.interactions')
         )
-                    ->wherePivot('relation', '=', Interaction::RELATION_FAVORITE)
+                    ->wherePivot('relation', '=', Interaction::RELATION_REPORT)
                     ->withPivot(...Interaction::$pivotColumns)
                     ->using(Interaction::getInteractionRelationModelName())
                     ->withTimestamps();
