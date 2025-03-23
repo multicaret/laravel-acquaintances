@@ -1,3 +1,7 @@
+## v3.7.2
+
+* fix: RELATION_REPORT instead of RELATION_FAVORITE in `CanBeReported` class. #117
+
 ## v3.7.1
 
 * fix: numberToReadable will return an int if the $shorthand is empty.
