@@ -8,7 +8,7 @@
 
 [Laravel News Article](https://laravel-news.com/manage-friendships-likes-and-more-with-the-acquaintances-laravel-package)
 
-Supports Laravel 10 and below, with no dependencies
+Supports Laravel 12, with no dependencies
 
 ## TL;DR
 
