@@ -115,10 +115,10 @@ trait CanFollow
      * Return followingCount in a readable format.
      *
      * @param  integer  $precision
-     * @param  string  $divisors
+     * @param  string|null  $divisors
      * @return int|float|string
      */
-    public function followingCountReadable(int $precision = 1, string $divisors = null)
+    public function followingCountReadable(int $precision = 1, ?string $divisors = null)
     {
         return Interaction::numberToReadable($this->followingCount(), $precision, $divisors);
     }
