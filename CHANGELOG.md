@@ -1,3 +1,8 @@
+## v3.7.3
+
+* fix: PHP 8.4 compatibility: Add explicit nullable type declaration for followingCountReadable
+
+
 ## v3.7.2
 
 * fix: RELATION_REPORT instead of RELATION_FAVORITE in `CanBeReported` class. #117
