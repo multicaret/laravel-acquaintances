@@ -81,9 +81,9 @@ trait CanReport
             'subject',
             config('acquaintances.tables.interactions')
         )
-            ->wherePivot('relation', '=', Interaction::RELATION_REPORT)
-            ->withPivot(...Interaction::$pivotColumns)
-            ->using(Interaction::getInteractionRelationModelName())
-            ->withTimestamps();
+                    ->wherePivot('relation', '=', Interaction::RELATION_REPORT)
+                    ->withPivot(...Interaction::$pivotColumns)
+                    ->using(Interaction::getInteractionRelationModelName())
+                    ->withTimestamps();
     }
 }
