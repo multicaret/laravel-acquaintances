@@ -3,8 +3,8 @@
 namespace Multicaret\Acquaintances;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Support\Str;
 use stdClass;
 
 /**
@@ -71,7 +71,13 @@ class Interaction
         $userIdFkColumnName = config('acquaintances.tables.interactions_user_id_fk_column_name', 'user_id');
 
         return $model->{$relation}($target->classname)
-            ->where($class ? config('acquaintances.tables.interactions', 'interactions') . '.subject_id' : config('acquaintances.tables.interactions', 'interactions') . '.' . $userIdFkColumnName, head($target->ids))
+            ->where($class ? config(
+                'acquaintances.tables.interactions',
+                'interactions'
+            ) . '.subject_id' : config(
+                'acquaintances.tables.interactions',
+                'interactions'
+            ) . '.' . $userIdFkColumnName, head($target->ids))
             ->exists();
     }
 
@@ -125,7 +131,6 @@ class Interaction
     {
         $targets = self::attachPivotsFromRelation($model->{$relation}(), $targets, $class, $updates);
 
-        //        dd($relation, $targets);
         return $model->{$relation}($targets->classname)->toggle($targets->targets);
     }
 
@@ -220,9 +225,10 @@ class Interaction
             }
         }
 
+        $precision = empty($shorthand) ? 0 : $precision;
+
         return number_format($number / $divisor, $precision) . $shorthand;
     }
-
 
 
     public static function getFullModelName($modelClassName)
@@ -274,6 +280,26 @@ class Interaction
             config(
                 'acquaintances.models.friendship_groups',
                 \Multicaret\Acquaintances\Models\FriendshipGroups::class
+            )
+        );
+    }
+
+    public static function getVerificationModelName()
+    {
+        return Interaction::getFullModelName(
+            config(
+                'acquaintances.models.verifcation',
+                \Multicaret\Acquaintances\Models\Verification::class
+            )
+        );
+    }
+
+    public static function getVerificationGroupsModelName()
+    {
+        return Interaction::getFullModelName(
+            config(
+                'acquaintances.models.verification_groups',
+                \Multicaret\Acquaintances\Models\VerificationGroups::class
             )
         );
     }

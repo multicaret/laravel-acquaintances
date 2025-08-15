@@ -28,6 +28,14 @@ return [
          * Model name of Interaction Relation model
          */
         'friendship_groups' => \Multicaret\Acquaintances\Models\FriendFriendshipGroups::class,
+        /*
+         * Model name of Interaction Relation model
+         */
+        'verification' => \Multicaret\Acquaintances\Models\Verification::class,
+        /*
+         * Model name of Interaction Relation model
+         */
+        'verification_groups' => \Multicaret\Acquaintances\Models\VerificationGroups::class,
     ],
 
     'tables' => [
@@ -51,6 +59,14 @@ return [
          * Table name of friendship Groups relations.
          */
         'friendship_groups' => 'friendship_groups',
+        /*
+         * Table name of verifications relations.
+         */
+        'verifications' => 'verifications',
+        /*
+         * Table name of verification Groups relations.
+         */
+        'verification_groups' => 'verification_groups',
     ],
 
     'rating' => [
@@ -82,6 +98,14 @@ return [
         'acquaintances' => 0,
         'close_friends' => 1,
         'family' => 2
+    ],
+
+    'verifications_groups' => [
+        'text' => 0,
+        'phone' => 1,
+        'cam' => 2,
+        'personally' => 3,
+        'intimately' => 4
     ],
 
 ];

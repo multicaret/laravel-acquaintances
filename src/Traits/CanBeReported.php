@@ -35,10 +35,10 @@ trait CanBeReported
             'subject',
             config('acquaintances.tables.interactions')
         )
-            ->wherePivot('relation', '=', Interaction::RELATION_FAVORITE)
-            ->withPivot(...Interaction::$pivotColumns)
-            ->using(Interaction::getInteractionRelationModelName())
-            ->withTimestamps();
+                    ->wherePivot('relation', '=', Interaction::RELATION_REPORT)
+                    ->withPivot(...Interaction::$pivotColumns)
+                    ->using(Interaction::getInteractionRelationModelName())
+                    ->withTimestamps();
     }
 
     public function reportersCount()
@@ -46,7 +46,7 @@ trait CanBeReported
         return $this->reporters()->count();
     }
 
-    public function getreportersCountAttribute()
+    public function getReportersCountAttribute()
     {
         return $this->reportersCount();
     }

@@ -1,3 +1,24 @@
+## v3.7.3
+
+* fix: PHP 8.4 compatibility: Add explicit nullable type declaration for followingCountReadable
+
+
+## v3.7.2
+
+* fix: RELATION_REPORT instead of RELATION_FAVORITE in `CanBeReported` class. #117
+
+## v3.7.1
+
+* fix: numberToReadable will return an int if the $shorthand is empty.
+
+## v3.7.0
+
+* feat: new trait for reporting added by @jayenne. PR #116
+
+## v3.6.2
+
+* feat: new functions added `followingCount()` and `followingCountReadable()` thanks to @jayenne <3. PR #115
+
 ## v3.6.1
 
 * use config variable `interactions_user_id_fk_column_name` PR #109
