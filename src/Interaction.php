@@ -279,4 +279,24 @@ class Interaction
             )
         );
     }
+
+    public static function getVerificationModelName()
+    {
+        return Interaction::getFullModelName(
+            config(
+                'acquaintances.models.verifcation',
+                \Multicaret\Acquaintances\Models\Verification::class
+            )
+        );
+    }
+
+    public static function getVerificationGroupsModelName()
+    {
+        return Interaction::getFullModelName(
+            config(
+                'acquaintances.models.verification_groups',
+                \Multicaret\Acquaintances\Models\VerificationGroups::class
+            )
+        );
+    }
 }

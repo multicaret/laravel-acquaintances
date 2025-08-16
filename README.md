@@ -15,6 +15,7 @@ Supports Laravel 12, with no dependencies
 Gives eloquent models:
 
 - Friendships & Groups ability
+- Verifications & Groups ability
 - Interactions ability such as:
     - Likes
     - Favorites
@@ -31,12 +32,22 @@ Take this example:
 $user1 = User::find(1);
 $user2 = User::find(2);
 
+// Friendships
 $user1->befriend($user2);
 $user2->acceptFriendRequest($user1);
 
 // The messy breakup :(
 $user2->unfriend($user1);
 
+// Verifications work similarly to Friends, with an optional from the verifier
+$message = "I've met John and worked with him. He's an excellent developer and trustworthy colleague.";
+$user1->verify($user2, $message);
+$user2->acceptVerificationRequest($user1);
+
+// Check if users are verified with each other
+if ($user1->isVerifiedWith($user2)) {
+    echo "These users have verified each other!";
+}
 ```
 
 1. [Introduction](#introduction)
@@ -47,7 +58,13 @@ $user2->unfriend($user1);
     * [Retrieve Friend Requests](#retrieve-friend-requests)
     * [Retrieve Friends](#retrieve-friends)
     * [Friend Groups](#friend-groups)
-3. [Interactions](#interactions)
+3. [Verifications:](#verifications)
+    * [Verification Requests](#verification-requests)
+    * [Check Verification Requests](#check-verification-requests)
+    * [Retrieve Verification Requests](#retrieve-verification-requests)
+    * [Retrieve Verifications](#retrieve-verifications)
+    * [Verification Groups](#verification-groups)
+4. [Interactions](#interactions)
     * [Traits Usage](#traits-usage)
     * [Follow](#follow)
     * [Rate](#rate)
@@ -59,8 +76,8 @@ $user2->unfriend($user1);
     * [Parameters](#parameters)
     * [Query relations](#query-relations)
     * [Working with model](#working-with-model)
-4. [Events](#events)
-5. [Contributing](#contributing)
+5. [Events](#events)
+6. [Contributing](#contributing)
 
 ## Introduction
 
@@ -74,6 +91,10 @@ easily design your social-like System (Facebook, Twitter, Foursquare...etc).
 - Deny Friend Requests
 - Block a User
 - Group Friends
+- Send Verification Requests
+- Accept Verification Requests
+- Deny Verification Requests
+- Group Verifications
 - Rate a User or a Model, supporting multiple aspects
 - Follow a User or a Model
 - Like a User or a Model
@@ -122,6 +143,7 @@ Example:
 
 ```php
 use Multicaret\Acquaintances\Traits\Friendable;
+use Multicaret\Acquaintances\Traits\Verifiable;
 use Multicaret\Acquaintances\Traits\CanFollow;
 use Multicaret\Acquaintances\Traits\CanBeFollowed;
 use Multicaret\Acquaintances\Traits\CanLike;
@@ -133,6 +155,7 @@ use Multicaret\Acquaintances\Traits\CanBeRated;
 class User extends Model
 {
     use Friendable;
+    use Verifiable;
     use CanFollow, CanBeFollowed;
     use CanLike, CanBeLiked;
     use CanRate, CanBeRated;
@@ -140,7 +163,7 @@ class User extends Model
 }
 ```
 
-All available APIs are listed below for Friendships & Interactions.
+All available APIs are listed below for Friendships, Verifications & Interactions.
 
 
 ---
@@ -413,6 +436,280 @@ $user->getFriendsCount($group_name);
 $user->getAllFriendships($group_name);
 $user->getAcceptedFriendships($group_name);
 $user->getPendingFriendships($group_name);
+...
+```
+
+---
+
+## Verifications:
+
+### Verification Requests:
+
+Add `Verifiable` Trait to User model.
+
+```php
+use Multicaret\Acquaintances\Traits\Verifiable;
+
+class User extends Model
+{
+    use Verifiable;
+}
+```
+
+#### Send a Verification Request
+
+```php
+$user->verify($recipient, $message);
+```
+
+**Note:** The `$message` parameter is optional for verification requests. This message should ideally contain information about how the verifier knows the recipient and why they are vouching for them, but it's 'required' status is left to your discretion.
+
+Examples:
+```php
+$user->verify($recipient, "I've worked with John for 2 years at ABC Company and can vouch for his expertise in Laravel development.");
+$user->verify($recipient, "I met Sarah at the Laravel conference and she gave an excellent presentation on testing strategies.");
+```
+
+#### Accept a Verification Request
+
+```php
+$user->acceptVerificationRequest($sender);
+```
+
+#### Deny a Verification Request
+
+```php
+$user->denyVerificationRequest($sender);
+```
+
+#### Remove Verification
+
+```php
+$user->unverify($recipient);
+```
+
+#### Block a User's Verifications
+
+```php
+$user->blockVerification($recipient);
+```
+
+#### Unblock a User's Verifications
+
+```php
+$user->unblockVerification($recipient);
+```
+
+#### Check if User is Verified with another User
+
+```php
+$user->isVerifiedWith($recipient);
+```
+
+### Check Verification Requests:
+
+#### Check if User has a pending verification request from another User
+
+```php
+$user->hasVerificationRequestFrom($sender);
+```
+
+#### Check if User has already sent a verification request to another User
+
+```php
+$user->hasSentVerificationRequestTo($recipient);
+```
+
+#### Check if User can verify another User
+
+```php
+$user->canVerify($recipient);
+```
+
+---
+
+### Retrieve Verification Requests:
+
+#### Get a single verification
+
+```php
+$user->getVerification($recipient);
+```
+
+#### Get a list of all Verifications
+
+```php
+$user->getAllVerifications();
+$user->getAllVerifications($group_name, $perPage = 20, $fields = ['*'], $type = 'all');
+```
+
+#### Get a list of pending Verifications
+
+```php
+$user->getPendingVerifications();
+$user->getPendingVerifications($group_name, $perPage = 20, $fields = ['*'], $type = 'all');
+```
+
+#### Get a list of accepted Verifications
+
+```php
+$user->getAcceptedVerifications();
+$user->getAcceptedVerifications($group_name, $perPage = 20, $fields = ['*'], $type = 'all');
+```
+
+#### Get a list of denied Verifications
+
+```php
+$user->getDeniedVerifications();
+$user->getDeniedVerifications($perPage = 20, $fields = ['*']);
+```
+
+#### Get a list of blocked Verifications
+
+```php
+$user->getBlockedVerifications();
+$user->getBlockedVerifications($perPage = 20, $fields = ['*']);
+```
+
+#### Get a list of blocked Verifications by current user
+
+```php
+$user->getBlockedVerificationsByCurrentUser();
+$user->getBlockedVerificationsByCurrentUser($perPage = 20, $fields = ['*']);
+```
+
+#### Get a list of blocked Verifications by others
+
+```php
+$user->getBlockedVerificationsByOtherUsers();
+$user->getBlockedVerificationsByOtherUsers($perPage = 20, $fields = ['*']);
+```
+
+#### Get a list of pending Verification Requests
+
+```php
+$user->getVerificationRequests();
+```
+
+#### Get the number of Verifiers
+
+```php
+$user->getVerifiersCount();
+$user->getVerifiersCount($group_name, $type = 'all');
+```
+
+#### Get the number of Pending Verification Requests
+
+```php
+$user->getPendingVerificationsCount();
+```
+
+#### Get the number of mutual Verifiers with another user
+
+```php
+$user->getMutualVerifiersCount($otherUser);
+```
+
+## Retrieve Verifiers:
+
+To get a collection of verifier models (ex. User) use the following methods:
+
+#### `getVerifiers()`
+
+```php
+$user->getVerifiers();
+// or paginated
+$user->getVerifiers($perPage = 20, $group_name = '', $fields = ['*'], $cursor = false);
+```
+
+Parameters:
+
+* `$perPage`: integer (default: `0`), Get values paginated
+* `$group_name`: string (default: `''`), Get collection of Verifiers in specific group paginated
+* `$fields`: array (default: `['*']`), Specify the desired fields to query.
+* `$cursor`: boolean (default: `false`), Use cursor pagination
+
+#### `getVerifiersOfVerifiers()`
+
+```php
+$user->getVerifiersOfVerifiers();
+// or
+$user->getVerifiersOfVerifiers($perPage = 20);
+// or 
+$user->getVerifiersOfVerifiers($perPage = 20, $fields = ['*']);
+```
+
+Parameters:
+
+* `$perPage`: integer (default: `0`), Get values paginated
+* `$fields`: array (default: `['*']`), Specify the desired fields to query.
+
+#### `getMutualVerifiers()`
+
+Get mutual Verifiers with another user
+
+```php
+$user->getMutualVerifiers($otherUser);
+// or 
+$user->getMutualVerifiers($otherUser, $perPage = 20);
+// or 
+$user->getMutualVerifiers($otherUser, $perPage = 20, $fields = ['*']);
+```
+
+Parameters:
+
+* `$otherUser`: Model (required), The Other user model to check mutual verifiers with
+* `$perPage`: integer (default: `0`), Get values paginated
+* `$fields`: array (default: `['*']`), Specify the desired fields to query.
+
+## Verification Groups:
+
+The verification groups are defined in the `config/acquaintances.php` file. These groups categorize the type of verification method used. To modify them, or add your own, you need to specify a `slug` and a `key`.
+
+```php
+// config/acquaintances.php
+//...
+'verifications_groups' => [
+    'text' => 0,
+    'phone' => 1,
+    'cam' => 2,
+    'personally' => 3,
+    'intimately' => 4
+];
+```
+
+Since you've configured verification groups, you can group/ungroup verifications using the following methods.
+
+#### Group a Verification
+
+```php
+$user->groupVerification($verifier, $group_name);
+```
+
+#### Remove a Verification from specific group
+
+```php
+$user->ungroupVerification($verifier, 'text');
+```
+
+#### Remove a Verification from all groups
+
+```php
+$user->ungroupVerification($verifier);
+```
+
+#### Get the number of Verifiers in specific group
+
+```php
+$user->getVerifiersCount($group_name);
+```
+
+#### To filter `verifications` by group you can pass a group slug.
+
+```php
+$user->getAllVerifications($group_name);
+$user->getAcceptedVerifications($group_name);
+$user->getPendingVerifications($group_name);
 ...
 ```
 
@@ -753,6 +1050,12 @@ This is the list of the events fired by default for each action:
 | acq.friendships.blocked       | When a friend is blocked                      |
 | acq.friendships.unblocked     | When a friend is unblocked                    |
 | acq.friendships.cancelled     | When a friendship is cancelled                |
+| acq.verifications.sent        | When a verification request is sent           |
+| acq.verifications.accepted    | When a verification request is accepted       |
+| acq.verifications.denied      | When a verification request is denied         |
+| acq.verifications.blocked     | When a verifier is blocked                    |
+| acq.verifications.unblocked   | When a verifier is unblocked                  |
+| acq.verifications.cancelled   | When a verification is cancelled              |
 | acq.ratings.rate              | When a an item or items get Rated             |
 | acq.ratings.unrate            | When a an item or items get unRated           |
 | acq.vote.up                   | When a an item or items get upvoted           |
