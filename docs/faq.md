@@ -1,0 +1,13 @@
+# FAQ
+
+- Does this package depend on laravel/framework?
+  - No. It depends only on illuminate components.
+
+- Which Laravel versions are supported?
+  - Illuminate ^9–^12 (Laravel 9–12), PHP >= 8.0.
+
+- How do migrations get loaded?
+  - See docs/migrations.md. By default, the package will not auto-load migrations unless configured or no published files exist.
+
+- Where is the users model assumed to live?
+  - Default model namespace in config is dynamic; for Laravel 8+ it is App\Models by default. You can override in the config.
