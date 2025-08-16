@@ -37,18 +37,18 @@ if ($user1->isVerifiedWith($user2)) {
 ## Documentation
 
 To keep this README concise, the full documentation lives under docs/:
-- Overview: docs/overview.md
-- Installation: docs/installation.md
-- Configuration: docs/configuration.md
-- Friendships: docs/friendships.md
-- Verifications: docs/verifications.md
-- Interactions (Follow/Like/Favorite/Report/Subscribe/Vote/View): docs/interactions.md
-- Ratings: docs/ratings.md
-- Migrations: docs/migrations.md
-- Events: docs/events.md
-- Testing: docs/testing.md
-- FAQ: docs/faq.md
-- Upgrade Notes: docs/upgrade.md
+- [Overview](docs/overview.md)
+- [Installation](docs/installation.md)
+- [Configuration](docs/configuration.md)
+- [Friendships](docs/friendships.md)
+- [Verifications](docs/verifications.md)
+- [Interactions (Follow/Like/Favorite/Report/Subscribe/Vote/View)](docs/interactions.md)
+- [Ratings](docs/ratings.md)
+- [Migrations](docs/migrations.md)
+- [Events](docs/events.md)
+- [Testing](docs/testing.md)
+- [FAQ](docs/faq.md)
+- [Upgrade Notes](docs/upgrade.md)
 
 ## Quickstart
 
