@@ -1,6 +1,7 @@
 {
   "name": "multicaret/laravel-acquaintances",
   "description": "This light package, with no dependencies, gives Eloquent models the ability to manage friendships (with groups). And interactions such as: Likes, favorites, votes, subscribe, follow, ..etc. And it includes advanced rating system.",
+  "type": "library",
   "keywords": [
     "laravel",
     "friendships",
@@ -17,14 +18,17 @@
     "eloquent"
   ],
   "require": {
-    "php": ">=8.0"
+    "php": ">=8.0",
+    "illuminate/support": "^9.0|^10.0|^11.0|^12.0",
+    "illuminate/database": "^9.0|^10.0|^11.0|^12.0",
+    "illuminate/events": "^9.0|^10.0|^11.0|^12.0",
+    "illuminate/filesystem": "^9.0|^10.0|^11.0|^12.0"
   },
   "require-dev": {
-    "laravel/laravel": "5.*|^9.0|^10.0|^11.0",
-    "phpunit/phpunit": "5.*",
-    "mockery/mockery": "1.0.x-dev",
-    "fzaninotto/faker": "~1.4",
-    "codeclimate/php-test-reporter": "^0.3.2",
+    "orchestra/testbench": "^7.0|^8.0|^9.0|^10.0",
+    "phpunit/phpunit": "^9.6 || ^10.5 || ^11.0",
+    "mockery/mockery": "^1.4",
+    "fakerphp/faker": "^1.21",
     "doctrine/dbal": "^2.5"
   },
   "license": "MIT",
@@ -43,9 +47,6 @@
     "psr-4": {
       "Tests\\": "tests/"
     },
-    "classmap": [
-      "vendor/laravel/laravel/tests/TestCase.php"
-    ],
     "files": [
       "tests/helpers.php"
     ]
@@ -57,5 +58,10 @@
       ]
     }
   },
-  "minimum-stability": "stable"
+  "minimum-stability": "stable",
+  "config": {
+    "allow-plugins": {
+      "kylekatarnls/update-helper": true
+    }
+  }
 }
