@@ -1,9 +1,10 @@
 {
   "name": "multicaret/laravel-acquaintances",
-  "description": "This light package, with no dependencies, gives Eloquent models the ability to manage friendships (with groups). And interactions such as: Likes, favorites, votes, subscribe, follow, ..etc. And it includes advanced rating system.",
+  "description": "This light package, with no dependencies, gives Eloquent models the ability to manage friendships (with groups), verifications, and interactions such as: Likes, favorites, votes, subscribe, follow, ..etc. And it includes advanced rating system.",
   "keywords": [
     "laravel",
     "friendships",
+    "verifications",
     "followships",
     "interactions",
     "wish-list",
