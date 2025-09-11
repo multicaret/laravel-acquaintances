@@ -18,20 +18,38 @@ trait Verifiable
     /**
      * @param  Model  $recipient
      * @param  string|null  $verificationMessage
+     * @param  string|null  $groupSlug
      *
      * @return \Multicaret\Acquaintances\Models\Verification|false
      */
-    public function verify(Model $recipient, ?string $verificationMessage = null)
+    public function verify(Model $recipient, ?string $message = null, ?string $group = null)
     {
 
-        if (! $this->canVerify($recipient)) {
+        // Prevent self-verification
+        if ($this->getKey() === $recipient->getKey() && $this->getMorphClass() === $recipient->getMorphClass()) {
+            throw new \InvalidArgumentException('Users cannot verify themselves.');
+        }
+
+        // Validate message length
+        if ($message !== null) {
+            $maxLength = config('platform.verification.max_length', 255);
+
+            if (strlen($message) > $maxLength) {
+                throw new \InvalidArgumentException(
+                    "Verification message cannot exceed {$maxLength} characters. Current message length: " . strlen($message)
+                );
+            }
+        }
+
+        if (! $this->canVerify($recipient, $group)) {
             return false;
         }
 
         $verifierModelName = Interaction::getVerificationModelName();
         $verifier = (new $verifierModelName)->fillRecipient($recipient)->fill([
             'status' => Status::PENDING,
-            'message' => $verificationMessage
+            'message' => $message,
+            'group_slug' => $group,
         ]);
 
         $this->verifications()->save($verifier);
@@ -47,11 +65,11 @@ trait Verifiable
      *
      * @return bool
      */
-    public function unverify(Model $recipient)
+    public function unverify(Model $recipient, int $verificationId)
     {
         Event::dispatch('acq.verifications.cancelled', [$this, $recipient]);
 
-        return $this->findVerification($recipient)->delete();
+        return $this->findVerification($recipient, $verificationId)->delete();
     }
 
     /**
@@ -87,29 +105,140 @@ trait Verifiable
     }
 
     /**
+     * Check if verified with a specific group type
+     *
      * @param  Model  $recipient
+     * @param  string  $groupSlug
+     *
+     * @return bool
+     */
+    public function isVerifiedWithGroup(Model $recipient, string $groupSlug)
+    {
+        $groupsAvailable = config('acquaintances.verifications_groups', []);
+
+        if (!isset($groupsAvailable[$groupSlug])) {
+            return false;
+        }
+
+        $groupId = $groupsAvailable[$groupSlug];
+
+        $query = $this->findVerification($recipient)
+            ->where('status', Status::ACCEPTED)
+            ->whereHas('groups', function ($query) use ($groupId) {
+                $query->where('group_id', $groupId);
+            });
+
+        return $query->exists();
+    }
+
+    /**
+     * Get count of accepted verifications with a user
+     *
+     * @param  Model  $recipient
+     *
+     * @return int
+     */
+    public function getVerificationCount(Model $recipient)
+    {
+        return $this->findVerification($recipient)->where('status', Status::ACCEPTED)->count();
+    }
+
+    /**
+     * Get all verification groups between users
+     *
+     * @param  Model  $recipient
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function getVerificationGroups(Model $recipient)
+    {
+        $verificationModelName = Interaction::getVerificationModelName();
+        $groupsAvailable = config('acquaintances.verifications_groups', []);
+
+        if (empty($groupsAvailable)) {
+            return collect([]);
+        }
+
+        // Get all accepted verifications with groups
+        $verifications = $verificationModelName::where(function ($query) use ($recipient) {
+            $query->where(function ($q) use ($recipient) {
+                $q->where('sender_id', $this->getKey())
+                    ->where('sender_type', $this->getMorphClass())
+                    ->where('recipient_id', $recipient->getKey())
+                    ->where('recipient_type', $recipient->getMorphClass());
+            })->orWhere(function ($q) use ($recipient) {
+                $q->where('sender_id', $recipient->getKey())
+                    ->where('sender_type', $recipient->getMorphClass())
+                    ->where('recipient_id', $this->getKey())
+                    ->where('recipient_type', $this->getMorphClass());
+            });
+        })
+            ->where('status', Status::ACCEPTED)
+            ->with('groups')
+            ->get();
+
+        $groupSlugs = collect([]);
+
+        foreach ($verifications as $verification) {
+            if ($verification->groups) {
+                foreach ($verification->groups as $group) {
+                    $groupSlug = array_search($group->group_id, $groupsAvailable);
+                    if ($groupSlug !== false) {
+                        $groupSlugs->push($groupSlug);
+                    }
+                }
+            }
+        }
+
+        return $groupSlugs->unique()->values();
+    }
+
+    /**
+     * Accept a specific verification request by ID
+     *
+     * @param  int  $verificationId
      *
      * @return bool|int
      */
-    public function acceptVerificationRequest(Model $recipient)
+    public function acceptVerificationRequest($verificationId)
     {
-        Event::dispatch('acq.verifications.accepted', [$this, $recipient]);
+        $verificationModelName = Interaction::getVerificationModelName();
+        $verification = $verificationModelName::where('id', $verificationId)
+            ->whereRecipient($this)
+            ->first();
 
-        return $this->findVerification($recipient)->whereRecipient($this)->update([
+        if (!$verification) {
+            return false;
+        }
+
+        Event::dispatch('acq.verifications.accepted', [$this, $verification->sender]);
+
+        return $verification->update([
             'status' => Status::ACCEPTED,
         ]);
     }
 
     /**
-     * @param  Model  $recipient
+     * Deny a specific verification request by ID
+     *
+     * @param  int  $verificationId
      *
      * @return bool|int
      */
-    public function denyVerificationRequest(Model $recipient)
+    public function denyVerificationRequest($verificationId)
     {
-        Event::dispatch('acq.verifications.denied', [$this, $recipient]);
+        $verificationModelName = Interaction::getVerificationModelName();
+        $verification = $verificationModelName::where('id', $verificationId)
+            ->whereRecipient($this)
+            ->first();
 
-        return $this->findVerification($recipient)->whereRecipient($this)->update([
+        if (!$verification) {
+            return false;  // <-- Returns false if not found or not pending
+        }
+
+        Event::dispatch('acq.verifications.denied', [$this, $verification->sender]);
+
+        return $verification->update([
             'status' => Status::DENIED,
         ]);
     }
@@ -118,23 +247,45 @@ trait Verifiable
     /**
      * @param  Model  $verifier
      * @param  string $groupSlug
+     * @param  int|null $verificationId Specific verification to group (optional)
      *
      * @return bool
      */
-    public function groupVerification(Model $verifier, $groupSlug)
+    public function groupVerification(Model $verifier, $groupSlug, $verificationId = null)
     {
-        $verification = $this->findVerification($verifier)->whereStatus(Status::ACCEPTED)->first();
         $groupsAvailable = config('acquaintances.verifications_groups', []);
 
-        if (! isset($groupsAvailable[$groupSlug]) || empty($verification)) {
+        if (! isset($groupsAvailable[$groupSlug])) {
             return false;
         }
 
-        $group = $verification->groups()->firstOrCreate([
+        // If specific verification ID is provided, use it
+        if ($verificationId) {
+            $verification = $this->findVerification($verifier)
+                ->whereStatus(Status::ACCEPTED)
+                ->where('id', $verificationId)
+                ->first();
+        } else {
+            // For backward compatibility, get the latest accepted verification
+            $verification = $this->findVerification($verifier)
+                ->whereStatus(Status::ACCEPTED)
+                ->latest()
+                ->first();
+        }
+
+        if (empty($verification)) {
+            return false;
+        }
+
+        // Always allow grouping - no restrictions
+        $group = $verification->groups()->updateOrCreate([
             'verification_id' => $verification->id,
             'group_id' => $groupsAvailable[$groupSlug],
             'verifier_id' => $verifier->getKey(),
             'verifier_type' => $verifier->getMorphClass(),
+        ], [
+            // Add any additional fields that should be updated here if needed
+            'updated_at' => now(),
         ]);
 
         return $group->wasRecentlyCreated;
@@ -142,27 +293,36 @@ trait Verifiable
 
     /**
      * @param  Model  $verifier
-     * @param       $groupSlug
+     * @param  int|null $verificationId
      *
      * @return bool
      */
-    public function ungroupVerification(Model $verifier, $groupSlug = '')
+    public function ungroupVerification(Model $verifier, ?int $verificationId = null)
     {
-        $verification = $this->findVerification($verifier)->first();
-        $groupsAvailable = config('acquaintances.verifications_groups', []);
+        // If specific verification ID is provided, use it
+        if ($verificationId) {
+            $verification = $this->findVerification($verifier)
+                ->where('id', $verificationId)
+                ->first();
+
+            $where = [
+                'verification_id' => $verification->id,
+            ];
+        } else {
+            // For backward compatibility, get the latest accepted verification
+            $verification = $this->findVerification($verifier)
+                ->latest()
+                ->first();
+
+            $where = [
+                'verification_id' => $verification->id,
+                'verifier_id' => $verifier->getKey(),
+                'verifier_type' => $verifier->getMorphClass(),
+            ];
+        }
 
         if (empty($verification)) {
             return false;
-        }
-
-        $where = [
-            'verification_id' => $verification->id,
-            'verifier_id' => $verifier->getKey(),
-            'verifier_type' => $verifier->getMorphClass(),
-        ];
-
-        if ('' !== $groupSlug && isset($groupsAvailable[$groupSlug])) {
-            $where['group_id'] = $groupsAvailable[$groupSlug];
         }
 
         $result = $verification->groups()->where($where)->delete();
@@ -175,44 +335,47 @@ trait Verifiable
      *
      * @return \Multicaret\Acquaintances\Models\Verification
      */
-    public function blockVerification(Model $recipient)
-    {
-        // if there is a verification between the two users and the sender is not blocked
-        // by the recipient user then delete the verification
-        if (! $this->isBlockedBy($recipient)) {
-            $this->findVerification($recipient)->delete();
-        }
-
-        $verificationModelName = Interaction::getVerificationModelName();
-        $verification = (new $verificationModelName)->fillRecipient($recipient)->fill([
-            'status' => Status::BLOCKED,
-        ]);
-
-        Event::dispatch('acq.verifications.blocked', [$this, $recipient]);
-
-        return $this->verifications()->save($verification);
-    }
-
-    /**
-     * @param  Model  $recipient
-     *
-     * @return mixed
-     */
-    public function unblockVerification(Model $recipient)
-    {
-        Event::dispatch('acq.verifications.unblocked', [$this, $recipient]);
-
-        return $this->findVerification($recipient)->whereSender($this)->delete();
-    }
-
-    /**
-     * @param  Model  $recipient
-     *
-     * @return \Multicaret\Acquaintances\Models\Verification
-     */
     public function getVerification(Model $recipient)
     {
         return $this->findVerification($recipient)->first();
+    }
+
+    /**
+     * Get the latest verification between users
+     *
+     * @param  Model  $recipient
+     *
+     * @return \Multicaret\Acquaintances\Models\Verification|null
+     */
+    public function getLatestVerification(Model $recipient)
+    {
+        $verificationModelName = Interaction::getVerificationModelName();
+
+        return $verificationModelName::where(function ($query) use ($recipient) {
+            $query->where(function ($q) use ($recipient) {
+                $q->where('sender_id', $this->getKey())
+                    ->where('sender_type', $this->getMorphClass())
+                    ->where('recipient_id', $recipient->getKey())
+                    ->where('recipient_type', $recipient->getMorphClass());
+            })->orWhere(function ($q) use ($recipient) {
+                $q->where('sender_id', $recipient->getKey())
+                    ->where('sender_type', $recipient->getMorphClass())
+                    ->where('recipient_id', $this->getKey())
+                    ->where('recipient_type', $this->getMorphClass());
+            });
+        })->orderBy('id', 'desc')->first();
+    }
+
+    /**
+     * Get all verifications between users
+     *
+     * @param  Model  $recipient
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getAllVerificationsWith(Model $recipient)
+    {
+        return $this->findVerification($recipient)->get();
     }
 
     /**
@@ -233,69 +396,54 @@ trait Verifiable
     }
 
     /**
-     * @param  string  $groupSlug
-     * @param  int  $perPage  Number
-     * @param  array  $fields
-     * @param  string  $type
+     * @param  string|null  $groupSlug
+     * @param  int|null  $perPage  Number
+     * @param  array|null  $fields
+     * @param  string|null  $type
      *
      * @return \Illuminate\Database\Eloquent\Collection|Verification[]
      */
     public function getPendingVerifications(
-        string $groupSlug = '',
-        int $perPage = 0,
-        array $fields = ['*'],
-        string $type = 'all'
+        ?string $groupSlug = null,
+        ?int $perPage = 0,
+        ?array $fields = ['*'],
+        ?string $type = null
     ) {
         return $this->getOrPaginateVerifications($this->findVerifications(Status::PENDING, $groupSlug, $type), $perPage, $fields);
     }
 
     /**
-     * @param  string  $groupSlug
-     * @param  int  $perPage  Number
-     * @param  array  $fields
-     * @param  string  $type
+     * @param  string|null  $groupSlug
+     * @param  int|null  $perPage  Number
+     * @param  array|null  $fields
+     * @param  string|null  $type
      *
      * @return \Illuminate\Database\Eloquent\Collection|Verification[]
      */
     public function getAcceptedVerifications(
-        string $groupSlug = '',
-        int $perPage = 0,
-        array $fields = ['*'],
-        string $type = 'all'
+        ?string $groupSlug = null,
+        ?int $perPage = 0,
+        ?array $fields = ['*'],
+        ?string $type = null
     ) {
         return $this->getOrPaginateVerifications($this->findVerifications(Status::ACCEPTED, $groupSlug, $type), $perPage, $fields);
     }
 
     /**
+     * @param  string|null  $groupSlug
      * @param  int  $perPage  Number
      * @param  array  $fields
+     * @param  string|null  $type
      *
      * @return \Illuminate\Database\Eloquent\Collection|Verification[]
      */
-    public function getDeniedVerifications(int $perPage = 0, array $fields = ['*'])
-    {
-        return $this->getOrPaginateVerifications($this->findVerifications(Status::DENIED), $perPage, $fields);
-    }
-
-    /**
-     * @param  int  $perPage  Number
-     * @param  array  $fields
-     *
-     * @return \Illuminate\Database\Eloquent\Collection|Verification[]
-     */
-    public function getBlockedVerifications(int $perPage = 0, array $fields = ['*'])
-    {
-        return $this->getOrPaginateVerifications($this->findVerifications(Status::BLOCKED), $perPage, $fields);
-    }
-
-    public function getBlockedVerificationsByCurrentUser(int $perPage = 0, array $fields = ['*'])
-    {
-        return $this->getOrPaginateVerifications($this->findVerifications(Status::BLOCKED, type: 'sender'), $perPage, $fields);
-    }
-
-    public function getBlockedVerificationsByOtherUsers(int $perPage = 0, array $fields = ['*'])
-    {
-        return $this->getOrPaginateVerifications($this->findVerifications(Status::BLOCKED, type: 'recipient'), $perPage, $fields);
+    public function getDeniedVerifications(
+        ?string $groupSlug = null,
+        ?int $perPage = 0,
+        ?array $fields = ['*'],
+        ?string $type = null
+    ) {
+        return $this->getOrPaginateVerifications($this->findVerifications(Status::DENIED, $groupSlug, $type), $perPage, $fields);
     }
 
     /**
@@ -383,7 +531,7 @@ trait Verifiable
      *
      * @return integer
      */
-    public function getVerifiersCount($groupSlug = '', $type = 'all')
+    public function getVerifiersCount(?string $groupSlug = null, ?string $type = null)
     {
         $verifiersCount = $this->findVerifications(Status::ACCEPTED, $groupSlug, $type)->count();
 
@@ -392,56 +540,59 @@ trait Verifiable
 
     /**
      * @param  Model  $recipient
+     * @param  string|null  $groupSlug
      *
      * @return bool
      */
-    public function canVerify($recipient)
+    public function canVerify($recipient, $groupSlug = null)
     {
-        // if user has Blocked the recipient and changed his mind
-        // he can send a verifier request after unblocking
-        if ($this->hasBlocked($recipient)) {
-            $this->unblockFriend($recipient);
-
-            return true;
+        // Check if there's a blocked verification between the users
+        $verification = $this->getVerification($recipient);
+        if ($verification && $verification->status === Status::BLOCKED) {
+            return false;
         }
 
-        // if sender has a verification with the recipient return false
-        if ($verification = $this->getVerification($recipient)) {
-            // if previous verification was Denied then let the user send fr
-            if ($verification->status != Status::DENIED) {
-                return false;
-            }
+        // Check if the recipient has blocked this user in verifications
+        $recipientVerification = $recipient->getVerification($this);
+        if ($recipientVerification && $recipientVerification->status === Status::BLOCKED) {
+            return false;
         }
 
+        // Always allow verifications if not blocked - let the application layer handle any other restrictions
         return true;
     }
 
-
     /**
      * @param  Model  $recipient
+     * @param  int|null  $verificationId
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    private function findVerification(Model $recipient)
+    private function findVerification(Model $recipient, ?int $verificationId = null)
     {
         $verificationModelName = Interaction::getVerificationModelName();
 
-        return $verificationModelName::betweenModels($this, $recipient);
+        $query = $verificationModelName::betweenModels($this, $recipient);
+
+        if ($verificationId !== null) {
+            $query->where('id', $verificationId);
+        }
+        return $query;
     }
 
     /**
-     * @param         $status
-     * @param  string $groupSlug
-     * @param  string $type
+     * @param string|null $status
+     * @param string|null $groupSlug
+     * @param string|null $type
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function findVerifications($status = null, string $groupSlug = '', string $type = 'all')
+    public function findVerifications(?string $status = null, ?string $groupSlug = null, ?string $type = null)
     {
         $verificationModelName = Interaction::getVerificationModelName();
         $query = $verificationModelName::where(function ($query) use ($type) {
             switch ($type) {
-                case 'all':
+                case null:
                     $query->where(function ($q) {
                         $q->whereSender($this);
                     })
@@ -460,8 +611,12 @@ trait Verifiable
                     });
                     break;
             }
-        })->whereGroup($this, $groupSlug)
-            ->orderByRaw("FIELD(status, '" . implode("','", Status::getOrderedStatuses()) . "')");
+        });
+
+        if (! is_null($groupSlug)) {
+            $query->whereGroup($this, $groupSlug)
+                ->orderByRaw("FIELD(status, '" . implode("','", Status::getOrderedStatuses()) . "')");
+        }
 
         if (! is_null($status)) {
             $query->where('status', $status);

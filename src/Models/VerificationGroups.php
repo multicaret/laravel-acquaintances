@@ -15,7 +15,7 @@ class VerificationGroups extends Model
     /**
      * @var array
      */
-    protected $fillable = ['verification_id', 'group_id', 'verifier_id', 'verifier_type'];
+    protected $fillable = ['verification_id', 'group_id', 'verifier_id', 'verifier_type', 'group_slug'];
 
     /**
      * @var bool
