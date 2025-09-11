@@ -21,19 +21,19 @@ return [
          */
         'interaction_relation' => \Multicaret\Acquaintances\Models\InteractionRelation::class,
         /*
-         * Model name of Interaction Relation model
+         * Model name of Friendship Relation model
          */
         'friendship' => \Multicaret\Acquaintances\Models\Friendship::class,
         /*
-         * Model name of Interaction Relation model
+         * Model name of Friendship Groups model
          */
         'friendship_groups' => \Multicaret\Acquaintances\Models\FriendFriendshipGroups::class,
         /*
-         * Model name of Interaction Relation model
+         * Model name of Verification Relation model
          */
         'verification' => \Multicaret\Acquaintances\Models\Verification::class,
         /*
-         * Model name of Interaction Relation model
+         * Model name of Verification Groups model
          */
         'verification_groups' => \Multicaret\Acquaintances\Models\VerificationGroups::class,
     ],

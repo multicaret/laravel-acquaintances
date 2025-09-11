@@ -71,10 +71,14 @@ class Interaction
         $userIdFkColumnName = config('acquaintances.tables.interactions_user_id_fk_column_name', 'user_id');
 
         return $model->{$relation}($target->classname)
-                     ->where($class ? config('acquaintances.tables.interactions',
-                             'interactions').'.subject_id' : config('acquaintances.tables.interactions',
-                             'interactions').'.'.$userIdFkColumnName, head($target->ids))
-                     ->exists();
+            ->where($class ? config(
+                'acquaintances.tables.interactions',
+                'interactions'
+            ) . '.subject_id' : config(
+                'acquaintances.tables.interactions',
+                'interactions'
+            ) . '.' . $userIdFkColumnName, head($target->ids))
+            ->exists();
     }
 
     /**
@@ -162,7 +166,7 @@ class Interaction
         $result = new stdClass();
         $result->classname = $classname;
 
-        if ( ! is_array($targets)) {
+        if (! is_array($targets)) {
             $targets = [$targets];
         }
 
@@ -193,7 +197,7 @@ class Interaction
      */
     protected static function getRelationTypeFromRelation(MorphToMany $relation)
     {
-        if ( ! \array_key_exists($relation->getRelationName(), self::$relationMap)) {
+        if (! \array_key_exists($relation->getRelationName(), self::$relationMap)) {
             throw new \Exception('Invalid relation definition.');
         }
 
@@ -204,7 +208,7 @@ class Interaction
     {
         $shorthand = '';
         $divisor = pow(1000, 0);
-        if ( ! isset($divisors)) {
+        if (! isset($divisors)) {
             $divisors = [
                 $divisor => $shorthand, // 1000^0 == 1
                 pow(1000, 1) => 'K', // Thousand
@@ -237,7 +241,7 @@ class Interaction
 
         return empty($namespace)
             ? Str::studly($modelClassName)
-            : $namespace.'\\'.Str::studly($modelClassName);
+            : $namespace . '\\' . Str::studly($modelClassName);
     }
 
     public static function getUserModelName()
@@ -275,7 +279,7 @@ class Interaction
         return Interaction::getFullModelName(
             config(
                 'acquaintances.models.friendship_groups',
-                \Multicaret\Acquaintances\Models\FriendshipGroups::class
+                \Multicaret\Acquaintances\Models\FriendFriendshipGroups::class
             )
         );
     }
@@ -284,18 +288,8 @@ class Interaction
     {
         return Interaction::getFullModelName(
             config(
-                'acquaintances.models.verifcation',
+                'acquaintances.models.verification',
                 \Multicaret\Acquaintances\Models\Verification::class
-            )
-        );
-    }
-
-    public static function getVerificationGroupsModelName()
-    {
-        return Interaction::getFullModelName(
-            config(
-                'acquaintances.models.verification_groups',
-                \Multicaret\Acquaintances\Models\VerificationGroups::class
             )
         );
     }
