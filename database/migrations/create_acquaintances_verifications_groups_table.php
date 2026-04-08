@@ -6,17 +6,16 @@ use Illuminate\Database\Schema\Blueprint;
 /**
  * Class CreateVerificationsGroupsTable
  */
-class CreateAcquaintancesVerificationsGroupsTable extends Migration
+return new class extends Migration
 {
-
-    public function up()
+    public function up(): void
     {
-
         Schema::create(config('acquaintances.tables.verification_groups'), function (Blueprint $table) {
-            $table->id();
+            $morphType = config('acquaintances.tables.verification_groups_morph_type', 'morphs');
 
+            $table->id();
             $table->unsignedBigInteger('verification_id')->unsigned();
-            $table->morphs('verifier');
+            $table->{$morphType}('verifier');
             $table->integer('group_id')->unsigned();
 
             $table->foreign('verification_id')
@@ -24,12 +23,12 @@ class CreateAcquaintancesVerificationsGroupsTable extends Migration
                 ->on(config('acquaintances.tables.verifications'))
                 ->onDelete('cascade');
 
-            $table->unique(['verification_id', 'verifier_id', 'verifier_type', 'group_id'], 'unique');
+            $table->unique(['verification_id', 'verifier_id', 'verifier_type', 'group_id'], 'verification_groups_unique');
         });
     }
 
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists(config('acquaintances.tables.verification_groups'));
     }
-}
+};

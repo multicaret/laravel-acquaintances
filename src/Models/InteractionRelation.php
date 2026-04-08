@@ -1,13 +1,15 @@
 <?php
 
-
 namespace Multicaret\Acquaintances\Models;
 
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphPivot;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Str;
 use InvalidArgumentException;
 use Multicaret\Acquaintances\Interaction;
-use Illuminate\Support\Str;
 
 /**
  * Class InteractionRelation.
@@ -24,33 +26,26 @@ class InteractionRelation extends MorphPivot
      */
     protected $with = ['subject'];
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
-     */
-    public function subject()
+    public function subject(): MorphTo
     {
         return $this->morphTo('subject');
     }
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
-     */
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(Interaction::getUserModelName());
     }
 
     /**
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  Builder  $query
      * @param  string|null  $type
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return Builder
      */
     public function scopePopular($query, $type = null)
     {
         $query->select('subject_id', 'subject_type', \DB::raw('COUNT(*) AS count'))
-              ->groupBy('subject_id', 'subject_type')
-              ->orderByDesc('count');
+            ->groupBy('subject_id', 'subject_type')
+            ->orderByDesc('count');
 
         if ($type) {
             $query->where('subject_type', $this->normalizeSubjectType($type));
@@ -64,7 +59,7 @@ class InteractionRelation extends MorphPivot
      */
     public function getTable()
     {
-        if ( ! $this->table) {
+        if (! $this->table) {
             $this->table = config('acquaintances.tables.interactions', 'interactions');
         }
 
@@ -81,16 +76,15 @@ class InteractionRelation extends MorphPivot
 
     /**
      * @param  string  $type
-     *
      * @return string
-     * @throws \InvalidArgumentException
      *
+     * @throws InvalidArgumentException
      */
     protected function normalizeSubjectType($type)
     {
         $morphMap = Relation::morphMap();
 
-        if ( ! empty($morphMap) && in_array($type, $morphMap, true)) {
+        if (! empty($morphMap) && in_array($type, $morphMap, true)) {
             $type = array_search($type, $morphMap, true);
         }
 
@@ -102,7 +96,7 @@ class InteractionRelation extends MorphPivot
 
         $modelName = $namespace.'\\'.Str::studly($type);
 
-        if ( ! class_exists($modelName)) {
+        if (! class_exists($modelName)) {
             throw new InvalidArgumentException("Model {$modelName} not exists. Please check your config 'acquaintances.model_namespace'.");
         }
 

@@ -6,17 +6,16 @@ use Illuminate\Database\Schema\Blueprint;
 /**
  * Class CreateFriendshipsGroupsTable
  */
-class CreateAcquaintancesFriendshipsGroupsTable extends Migration
+return new class extends Migration
 {
-
-    public function up()
+    public function up(): void
     {
-
         Schema::create(config('acquaintances.tables.friendship_groups'), function (Blueprint $table) {
-            $table->id();
+            $morphType = config('acquaintances.tables.friendship_groups_morph_type', 'morphs');
 
+            $table->id();
             $table->unsignedBigInteger('friendship_id')->unsigned();
-            $table->morphs('friend');
+            $table->{$morphType}('friend');
             $table->integer('group_id')->unsigned();
 
             $table->foreign('friendship_id')
@@ -24,15 +23,12 @@ class CreateAcquaintancesFriendshipsGroupsTable extends Migration
                   ->on(config('acquaintances.tables.friendships'))
                   ->onDelete('cascade');
 
-            $table->unique(['friendship_id', 'friend_id', 'friend_type', 'group_id'], 'unique');
-
+            $table->unique(['friendship_id', 'friend_id', 'friend_type', 'group_id'], 'friendship_groups_unique');
         });
-
     }
 
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists(config('acquaintances.tables.friendship_groups'));
     }
-
-}
+};

@@ -1,43 +1,38 @@
 <?php
 
-
 namespace Multicaret\Acquaintances\Traits;
 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Facades\Event;
 use Multicaret\Acquaintances\Interaction;
 
 /**
- * Class CanRate
- * @package Multicaret\Acquaintances\Traits
+ * Trait CanRate.
  */
 trait CanRate
 {
     private static $rateType = null;
 
-    public static function bootCanRate()
+    public static function bootCanRate(): void
     {
         self::$rateType = config('acquaintances.rating.defaults.type');
     }
 
-    public function setRateType(string $ratingType)
+    public function setRateType(string $ratingType): static
     {
         self::$rateType = $ratingType;
 
         return $this;
     }
 
-    private function rateType($type = null)
+    private function rateType($type = null): string
     {
         if (empty($type) && empty(self::$rateType)) {
             $this->setRateType(config('acquaintances.rating.defaults.type'));
-        } elseif ( ! empty($type)) {
+        } elseif (! empty($type)) {
             $this->setRateType($type);
         }
-
-        /*
-         * Todo: [minor feature] Check if the passed type exists in types array
-         *  config('acquaintances.rating.types')
-         */
 
         return self::$rateType;
     }
@@ -45,19 +40,14 @@ trait CanRate
     /**
      * Rate an item or items.
      *
-     * @param  int|array|\Illuminate\Database\Eloquent\Model  $targets
-     * @param  float  $amount
-     * @param  null  $ratingType
+     * @param  int|array|Model  $targets
      * @param  string  $class
-     *
-     * @return array
      *
      * @throws \Exception
      */
     public function rate($targets, float $amount, $ratingType = null, $class = __CLASS__): array
     {
         Event::dispatch('acq.ratings.rate', [$this, $targets]);
-
         $attachRelations = Interaction::attachRelations($this, 'ratingsTo', $targets, $class, [
             'relation_value' => $amount,
             'relation_type' => $this->rateType($ratingType),
@@ -70,14 +60,12 @@ trait CanRate
     /**
      * UnRate an item or items.
      *
-     * @param  int|array|\Illuminate\Database\Eloquent\Model  $targets
-     * @param  null  $ratingType
+     * @param  int|array|Model  $targets
      * @param  string  $class
      *
-     * @return array
      * @throws \Exception
      */
-    public function unrate($targets, $ratingType = null, $class = __CLASS__)
+    public function unrate($targets, $ratingType = null, $class = __CLASS__): array
     {
         Event::dispatch('acq.ratings.unrate', [$this, $targets]);
 
@@ -89,16 +77,12 @@ trait CanRate
     /**
      * Toggle Rate an item or items.
      *
-     * @param  int|array|\Illuminate\Database\Eloquent\Model  $targets
-     * @param  float  $amount
-     * @param  null  $ratingType
+     * @param  int|array|Model  $targets
      * @param  string  $class
-     *
-     * @return array
      *
      * @throws \Exception
      */
-    public function toggleRate($targets, float $amount, $ratingType = null, $class = __CLASS__)
+    public function toggleRate($targets, float $amount, $ratingType = null, $class = __CLASS__): array
     {
         return Interaction::toggleRelations($this, 'ratingsTo', $targets, $class, [
             'relation_value' => $amount,
@@ -109,38 +93,31 @@ trait CanRate
     /**
      * Check if a model is rated by given model.
      *
-     * @param  int|array|\Illuminate\Database\Eloquent\Model  $target
-     * @param  null  $ratingType
+     * @param  int|array|Model  $target
      * @param  string  $class
-     *
-     * @return bool
      */
-    public function hasRated($target, $ratingType = null, $class = __CLASS__)
+    public function hasRated($target, $ratingType = null, $class = __CLASS__): bool
     {
         return Interaction::isRelationExists($this, 'ratingsTo', $target, $class, [
             'relation_type' => $this->rateType($ratingType),
         ]);
     }
 
-
     /**
-     * Return item likes.
+     * Return item ratings.
      *
      * @param  string  $class
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function ratingsTo($class = __CLASS__)
+    public function ratingsTo($class = __CLASS__): MorphToMany
     {
         $relation = $this->morphedByMany($class, 'subject',
             config('acquaintances.tables.interactions'))
-                         ->wherePivot('relation', '=', Interaction::RELATION_RATE)
-                         ->using(Interaction::getInteractionRelationModelName())
-                         ->withTimestamps();
+            ->wherePivot('relation', '=', Interaction::RELATION_RATE)
+            ->using(Interaction::getInteractionRelationModelName())
+            ->withTimestamps();
 
         $relation = $relation->wherePivot('relation_type', '=', $this->rateType());
 
         return $relation->withPivot(...Interaction::$pivotColumns);
     }
-
 }

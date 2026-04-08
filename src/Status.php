@@ -8,14 +8,15 @@ namespace Multicaret\Acquaintances;
 class Status
 {
     const PENDING = 'pending';
+
     const ACCEPTED = 'accepted';
+
     const DENIED = 'denied';
+
     const BLOCKED = 'blocked';
 
     /**
      * Get the status order for sorting
-     *
-     * @return array
      */
     public static function getOrder(): array
     {
@@ -29,9 +30,6 @@ class Status
 
     /**
      * Get the priority order for a specific status
-     *
-     * @param string $status
-     * @return int
      */
     public static function getOrderPriority(string $status): int
     {
@@ -40,8 +38,6 @@ class Status
 
     /**
      * Get all statuses in priority order
-     *
-     * @return array
      */
     public static function getOrderedStatuses(): array
     {

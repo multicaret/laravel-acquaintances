@@ -4,7 +4,13 @@ namespace Multicaret\Acquaintances;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
+use Multicaret\Acquaintances\Models\Friendship;
+use Multicaret\Acquaintances\Models\FriendshipGroups;
+use Multicaret\Acquaintances\Models\InteractionRelation;
+use Multicaret\Acquaintances\Models\Verification;
+use Multicaret\Acquaintances\Models\VerificationGroups;
 use stdClass;
 
 /**
@@ -13,13 +19,21 @@ use stdClass;
 class Interaction
 {
     const RELATION_LIKE = 'like';
+
     const RELATION_FOLLOW = 'follow';
+
     const RELATION_SUBSCRIBE = 'subscribe';
+
     const RELATION_FAVORITE = 'favorite';
+
     const RELATION_UPVOTE = 'upvote';
+
     const RELATION_DOWNVOTE = 'downvote';
+
     const RELATION_RATE = 'rating';
+
     const RELATION_VIEW = 'view';
+
     const RELATION_REPORT = 'report';
 
     public static $pivotColumns = [
@@ -28,8 +42,15 @@ class Interaction
         'relation',
         'relation_value',
         'relation_type',
-        'created_at'
+        'created_at',
     ];
+
+    /**
+     * In-memory cache for relation existence checks within the current request.
+     *
+     * @var array<string, bool>
+     */
+    protected static array $requestCache = [];
 
     /**
      * @var array
@@ -56,88 +77,93 @@ class Interaction
     ];
 
     /**
-     * @param  \Illuminate\Database\Eloquent\Model  $model
      * @param  string  $relation
-     * @param  array|string|\Illuminate\Database\Eloquent\Model  $target
-     * @param  string  $class
-     *
-     * @param  array  $updates
-     *
+     * @param  array|string|Model  $target
+     * @param  string|null  $class
      * @return bool
      */
     public static function isRelationExists(Model $model, $relation, $target, $class = null, array $updates = [])
     {
         $target = self::formatTargets($target, $class ?: self::getUserModelName(), $updates);
-        $userIdFkColumnName = config('acquaintances.tables.interactions_user_id_fk_column_name', 'user_id');
+        $cacheKey = self::buildCacheKey($model, $relation, $target->classname, head($target->ids));
 
-        return $model->{$relation}($target->classname)
-                     ->where($class ? config('acquaintances.tables.interactions',
-                             'interactions').'.subject_id' : config('acquaintances.tables.interactions',
-                             'interactions').'.'.$userIdFkColumnName, head($target->ids))
-                     ->exists();
+        if (isset(self::$requestCache[$cacheKey])) {
+            return self::$requestCache[$cacheKey];
+        }
+
+        $resolver = function () use ($model, $relation, $target, $class) {
+            $userIdFkColumnName = config('acquaintances.tables.interactions_user_id_fk_column_name', 'user_id');
+
+            return $model->{$relation}($target->classname)
+                ->where($class ? config('acquaintances.tables.interactions',
+                    'interactions').'.subject_id' : config('acquaintances.tables.interactions',
+                        'interactions').'.'.$userIdFkColumnName, head($target->ids))
+                ->exists();
+        };
+
+        $result = self::resolveFromCache($cacheKey, $resolver);
+        self::$requestCache[$cacheKey] = $result;
+
+        return $result;
     }
 
     /**
-     * @param  \Illuminate\Database\Eloquent\Model  $model
      * @param  string  $relation
-     * @param  array|string|\Illuminate\Database\Eloquent\Model  $targets
+     * @param  array|string|Model  $targets
      * @param  string  $class
-     *
-     * @param  array  $updates
-     *
      * @return array
+     *
      * @throws \Exception
      */
     public static function attachRelations(Model $model, $relation, $targets, $class, array $updates = [])
     {
         $targets = self::attachPivotsFromRelation($model->{$relation}(), $targets, $class, $updates);
+        $result = $model->{$relation}($targets->classname)->sync($targets->targets, false);
 
-        return $model->{$relation}($targets->classname)->sync($targets->targets, false);
+        self::invalidateRelationCache($model, $relation, $targets->classname, $targets->ids);
+
+        return $result;
     }
 
     /**
-     * @param  \Illuminate\Database\Eloquent\Model  $model
      * @param  string  $relation
-     * @param  array|string|\Illuminate\Database\Eloquent\Model  $targets
+     * @param  array|string|Model  $targets
      * @param  string  $class
-     *
-     * @param  array  $updates
-     *
      * @return array
      */
     public static function detachRelations(Model $model, $relation, $targets, $class, array $updates = [])
     {
         $targets = self::formatTargets($targets, $class, $updates);
+        $result = $model->{$relation}($targets->classname)->detach($targets->ids);
 
-        return $model->{$relation}($targets->classname)->detach($targets->ids);
+        self::invalidateRelationCache($model, $relation, $targets->classname, $targets->ids);
+
+        return $result;
     }
 
     /**
-     * @param  \Illuminate\Database\Eloquent\Model  $model
      * @param  string  $relation
-     * @param  array|string|\Illuminate\Database\Eloquent\Model  $targets
+     * @param  array|string|Model  $targets
      * @param  string  $class
-     *
-     * @param  array  $updates
-     *
      * @return array
+     *
      * @throws \Exception
      */
     public static function toggleRelations(Model $model, $relation, $targets, $class, array $updates = [])
     {
         $targets = self::attachPivotsFromRelation($model->{$relation}(), $targets, $class, $updates);
+        $result = $model->{$relation}($targets->classname)->toggle($targets->targets);
 
-        return $model->{$relation}($targets->classname)->toggle($targets->targets);
+        self::invalidateRelationCache($model, $relation, $targets->classname, $targets->ids);
+
+        return $result;
     }
 
     /**
-     * @param  \Illuminate\Database\Eloquent\Relations\MorphToMany  $morph
-     * @param  array|string|\Illuminate\Database\Eloquent\Model  $targets
+     * @param  array|string|Model  $targets
      * @param  string  $class
+     * @return stdClass
      *
-     * @param  array  $updates
-     *
-     * @return \stdClass
      * @throws \Exception
      */
     public static function attachPivotsFromRelation(MorphToMany $morph, $targets, $class, array $updates = [])
@@ -151,18 +177,16 @@ class Interaction
     }
 
     /**
-     * @param  array|string|\Illuminate\Database\Eloquent\Model  $targets
+     * @param  array|string|Model  $targets
      * @param  string  $classname
-     * @param  array  $update
-     *
-     * @return \stdClass
+     * @return stdClass
      */
     public static function formatTargets($targets, $classname, array $update = [])
     {
-        $result = new stdClass();
+        $result = new stdClass;
         $result->classname = $classname;
 
-        if ( ! is_array($targets)) {
+        if (! is_array($targets)) {
             $targets = [$targets];
         }
 
@@ -185,26 +209,24 @@ class Interaction
     }
 
     /**
-     * @param  \Illuminate\Database\Eloquent\Relations\MorphToMany  $relation
-     *
      * @return array
-     * @throws \Exception
      *
+     * @throws \Exception
      */
     protected static function getRelationTypeFromRelation(MorphToMany $relation)
     {
-        if ( ! \array_key_exists($relation->getRelationName(), self::$relationMap)) {
+        if (! \array_key_exists($relation->getRelationName(), self::$relationMap)) {
             throw new \Exception('Invalid relation definition.');
         }
 
         return self::$relationMap[$relation->getRelationName()];
     }
 
-    static public function numberToReadable($number, $precision = 1, $divisors = null)
+    public static function numberToReadable($number, $precision = 1, $divisors = null)
     {
         $shorthand = '';
         $divisor = pow(1000, 0);
-        if ( ! isset($divisors)) {
+        if (! isset($divisors)) {
             $divisors = [
                 $divisor => $shorthand, // 1000^0 == 1
                 pow(1000, 1) => 'K', // Thousand
@@ -223,9 +245,8 @@ class Interaction
 
         $precision = empty($shorthand) ? 0 : $precision;
 
-        return number_format($number / $divisor, $precision) . $shorthand;
+        return number_format($number / $divisor, $precision).$shorthand;
     }
-
 
     public static function getFullModelName($modelClassName)
     {
@@ -255,7 +276,7 @@ class Interaction
         return Interaction::getFullModelName(
             config(
                 'acquaintances.models.interaction_relation',
-                \Multicaret\Acquaintances\Models\InteractionRelation::class
+                InteractionRelation::class
             )
         );
     }
@@ -265,7 +286,7 @@ class Interaction
         return Interaction::getFullModelName(
             config(
                 'acquaintances.models.friendship',
-                \Multicaret\Acquaintances\Models\Friendship::class
+                Friendship::class
             )
         );
     }
@@ -275,7 +296,7 @@ class Interaction
         return Interaction::getFullModelName(
             config(
                 'acquaintances.models.friendship_groups',
-                \Multicaret\Acquaintances\Models\FriendshipGroups::class
+                FriendshipGroups::class
             )
         );
     }
@@ -285,7 +306,7 @@ class Interaction
         return Interaction::getFullModelName(
             config(
                 'acquaintances.models.verifcation',
-                \Multicaret\Acquaintances\Models\Verification::class
+                Verification::class
             )
         );
     }
@@ -295,8 +316,63 @@ class Interaction
         return Interaction::getFullModelName(
             config(
                 'acquaintances.models.verification_groups',
-                \Multicaret\Acquaintances\Models\VerificationGroups::class
+                VerificationGroups::class
             )
         );
+    }
+
+    /**
+     * Build a unique cache key for a relation existence check.
+     */
+    protected static function buildCacheKey(Model $model, string $relation, string $classname, mixed $targetId): string
+    {
+        return sprintf(
+            'acq:%s:%s:%s:%s:%s',
+            $model->getMorphClass(),
+            $model->getKey(),
+            $relation,
+            $classname,
+            $targetId
+        );
+    }
+
+    /**
+     * Resolve a value from the configurable cache store, or directly from the resolver.
+     */
+    protected static function resolveFromCache(string $cacheKey, callable $resolver): bool
+    {
+        if (! config('acquaintances.cache.enabled', false)) {
+            return $resolver();
+        }
+
+        $store = config('acquaintances.cache.store');
+        $ttl = config('acquaintances.cache.ttl', 3600);
+
+        return Cache::store($store)->remember($cacheKey, $ttl, $resolver);
+    }
+
+    /**
+     * Invalidate both in-memory and persistent cache for the given relation targets.
+     *
+     * @param  array<int|string>  $targetIds
+     */
+    protected static function invalidateRelationCache(Model $model, string $relation, string $classname, array $targetIds): void
+    {
+        foreach ($targetIds as $targetId) {
+            $cacheKey = self::buildCacheKey($model, $relation, $classname, $targetId);
+            unset(self::$requestCache[$cacheKey]);
+
+            if (config('acquaintances.cache.enabled', false)) {
+                Cache::store(config('acquaintances.cache.store'))->forget($cacheKey);
+            }
+        }
+    }
+
+    /**
+     * Flush the in-memory request cache (useful for testing).
+     */
+    public static function flushRequestCache(): void
+    {
+        self::$requestCache = [];
     }
 }

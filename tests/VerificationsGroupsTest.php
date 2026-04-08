@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -10,7 +11,7 @@ class VerificationsGroupsTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+    #[Test]
     public function user_can_add_a_verified_user_to_a_group()
     {
         $sender = User::factory()->create();
@@ -33,7 +34,7 @@ class VerificationsGroupsTest extends TestCase
         $this->assertEquals($sender->id, $recipient->getVerifiers(0, 'text')->first()->id);
     }
 
-    /** @test */
+    #[Test]
     public function user_cannot_add_a_non_verified_user_to_a_group()
     {
         $sender = User::factory()->create();
@@ -43,7 +44,7 @@ class VerificationsGroupsTest extends TestCase
         $this->assertCount(0, $sender->getVerifiers(0, 'phone'));
     }
 
-    /** @test */
+    #[Test]
     public function user_can_remove_a_verifier_from_group()
     {
         $sender = User::factory()->create();
@@ -62,7 +63,7 @@ class VerificationsGroupsTest extends TestCase
         $this->assertCount(1, $recipient->getVerifiers(0, 'phone'));
     }
 
-    /** @test */
+    #[Test]
     public function user_cannot_remove_a_non_existing_verifier_from_group()
     {
         $sender = User::factory()->create();
@@ -75,7 +76,7 @@ class VerificationsGroupsTest extends TestCase
         $this->assertEquals(0, $recipient2->ungroupVerification($sender, 'text'));
     }
 
-    /** @test */
+    #[Test]
     public function user_can_remove_a_verifier_from_all_groups()
     {
         $sender = User::factory()->create();
@@ -93,7 +94,7 @@ class VerificationsGroupsTest extends TestCase
         $this->assertCount(0, $sender->getVerifiers(0, 'text'));
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_verifiers_of_a_group()
     {
         $sender = User::factory()->create();
@@ -112,7 +113,7 @@ class VerificationsGroupsTest extends TestCase
         $this->assertCount(10, $sender->getVerifiers());
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_all_user_verifications_by_group()
     {
         $sender = User::factory()->create();
@@ -140,7 +141,7 @@ class VerificationsGroupsTest extends TestCase
         $this->assertCount(5, $sender->getAllVerifications('whatever'));
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_accepted_user_verifications_by_group()
     {
         $sender = User::factory()->create();
@@ -160,7 +161,7 @@ class VerificationsGroupsTest extends TestCase
         $this->assertCount(2, $sender->getAcceptedVerifications('phone'));
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_accepted_user_verifications_number_by_group()
     {
         $sender = User::factory()->create();
@@ -179,7 +180,7 @@ class VerificationsGroupsTest extends TestCase
         $this->assertEquals(0, $recipients[0]->getVerifiersCount('phone'));
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_user_verifiers_by_group_per_page()
     {
         $sender = User::factory()->create();

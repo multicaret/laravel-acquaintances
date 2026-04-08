@@ -1,17 +1,14 @@
 <?php
 
-
 namespace Multicaret\Acquaintances\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class VerificationGroups
- * @package Multicaret\Acquaintances\Models
  */
 class VerificationGroups extends Model
 {
-
     /**
      * @var array
      */
@@ -22,9 +19,6 @@ class VerificationGroups extends Model
      */
     public $timestamps = false;
 
-    /**
-     * @param  array  $attributes
-     */
     public function __construct(array $attributes = [])
     {
         $this->table = config('acquaintances.tables.verification_groups');

@@ -1,8 +1,9 @@
 <?php
 
-
 namespace Multicaret\Acquaintances\Traits;
 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Facades\Event;
 use Multicaret\Acquaintances\Interaction;
 
@@ -14,14 +15,12 @@ trait CanSubscribe
     /**
      * Subscribe an item or items.
      *
-     * @param  int|array|\Illuminate\Database\Eloquent\Model  $targets
+     * @param  int|array|Model  $targets
      * @param  string  $class
-     *
-     * @return array
      *
      * @throws \Exception
      */
-    public function subscribe($targets, $class = __CLASS__)
+    public function subscribe($targets, $class = __CLASS__): array
     {
         Event::dispatch('acq.subscriptions.subscribe', [$this, $targets]);
 
@@ -31,12 +30,10 @@ trait CanSubscribe
     /**
      * Unsubscribe an item or items.
      *
-     * @param  int|array|\Illuminate\Database\Eloquent\Model  $targets
+     * @param  int|array|Model  $targets
      * @param  string  $class
-     *
-     * @return array
      */
-    public function unsubscribe($targets, $class = __CLASS__)
+    public function unsubscribe($targets, $class = __CLASS__): array
     {
         Event::dispatch('acq.subscriptions.unsubscribe', [$this, $targets]);
 
@@ -46,14 +43,12 @@ trait CanSubscribe
     /**
      * Toggle subscribe an item or items.
      *
-     * @param  int|array|\Illuminate\Database\Eloquent\Model  $targets
+     * @param  int|array|Model  $targets
      * @param  string  $class
-     *
-     * @return array
      *
      * @throws \Exception
      */
-    public function toggleSubscribe($targets, $class = __CLASS__)
+    public function toggleSubscribe($targets, $class = __CLASS__): array
     {
         return Interaction::toggleRelations($this, 'subscriptions', $targets, $class);
     }
@@ -61,12 +56,10 @@ trait CanSubscribe
     /**
      * Check if a model is subscribed to a given model.
      *
-     * @param  int|array|\Illuminate\Database\Eloquent\Model  $target
+     * @param  int|array|Model  $target
      * @param  string  $class
-     *
-     * @return bool
      */
-    public function hasSubscribed($target, $class = __CLASS__)
+    public function hasSubscribed($target, $class = __CLASS__): bool
     {
         return Interaction::isRelationExists($this, 'subscriptions', $target, $class);
     }
@@ -75,16 +68,14 @@ trait CanSubscribe
      * Return user subscriptions.
      *
      * @param  string  $class
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function subscriptions($class = __CLASS__)
+    public function subscriptions($class = __CLASS__): MorphToMany
     {
         return $this->morphedByMany($class, 'subject',
             config('acquaintances.tables.interactions'))
-                    ->wherePivot('relation', '=', Interaction::RELATION_SUBSCRIBE)
-                    ->withPivot(...Interaction::$pivotColumns)
-                    ->using(Interaction::getInteractionRelationModelName())
-                    ->withTimestamps();
+            ->wherePivot('relation', '=', Interaction::RELATION_SUBSCRIBE)
+            ->withPivot(...Interaction::$pivotColumns)
+            ->using(Interaction::getInteractionRelationModelName())
+            ->withTimestamps();
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -10,7 +11,7 @@ class VerificationsTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+    #[Test]
     public function user_can_send_a_verification_request()
     {
         $sender = User::factory()->create();
@@ -21,7 +22,7 @@ class VerificationsTest extends TestCase
         $this->assertCount(1, $recipient->getVerificationRequests());
     }
 
-    /** @test */
+    #[Test]
     public function user_can_not_send_a_verification_request_if_verification_is_pending()
     {
         $sender = User::factory()->create();
@@ -33,7 +34,7 @@ class VerificationsTest extends TestCase
         $this->assertCount(1, $recipient->getVerificationRequests());
     }
 
-    /** @test */
+    #[Test]
     public function user_can_send_a_verification_request_if_verification_is_denied()
     {
         $sender = User::factory()->create();
@@ -47,7 +48,7 @@ class VerificationsTest extends TestCase
         $this->assertCount(1, $recipient->getVerificationRequests());
     }
 
-    /** @test */
+    #[Test]
     public function user_can_remove_a_verification_request()
     {
         $sender = User::factory()->create();
@@ -70,7 +71,7 @@ class VerificationsTest extends TestCase
         $this->assertEquals(false, $recipient->isVerifiedWith($sender));
     }
 
-    /** @test */
+    #[Test]
     public function user_is_verified_with_another_user_if_accepts_a_verification_request()
     {
         $sender = User::factory()->create();
@@ -86,7 +87,7 @@ class VerificationsTest extends TestCase
         $this->assertCount(0, $recipient->getVerificationRequests());
     }
 
-    /** @test */
+    #[Test]
     public function user_is_not_verified_with_another_user_until_he_accepts_a_verification_request()
     {
         $sender = User::factory()->create();
@@ -98,7 +99,7 @@ class VerificationsTest extends TestCase
         $this->assertFalse($sender->isVerifiedWith($recipient));
     }
 
-    /** @test */
+    #[Test]
     public function user_has_verification_request_from_another_user_if_he_received_a_verification_request()
     {
         $sender = User::factory()->create();
@@ -110,7 +111,7 @@ class VerificationsTest extends TestCase
         $this->assertFalse($sender->hasVerificationRequestFrom($recipient));
     }
 
-    /** @test */
+    #[Test]
     public function user_has_sent_verification_request_to_this_user_if_he_already_sent_request()
     {
         $sender = User::factory()->create();
@@ -122,7 +123,7 @@ class VerificationsTest extends TestCase
         $this->assertTrue($sender->hasSentVerificationRequestTo($recipient));
     }
 
-    /** @test */
+    #[Test]
     public function user_has_not_verification_request_from_another_user_if_he_accepted_the_verification_request()
     {
         $sender = User::factory()->create();
@@ -136,7 +137,7 @@ class VerificationsTest extends TestCase
         $this->assertFalse($sender->hasVerificationRequestFrom($recipient));
     }
 
-    /** @test */
+    #[Test]
     public function user_cannot_accept_his_own_verification_request()
     {
         $sender = User::factory()->create();
@@ -149,7 +150,7 @@ class VerificationsTest extends TestCase
         $this->assertFalse($recipient->isVerifiedWith($sender));
     }
 
-    /** @test */
+    #[Test]
     public function user_can_deny_a_verification_request()
     {
         $sender = User::factory()->create();
@@ -165,7 +166,7 @@ class VerificationsTest extends TestCase
         $this->assertCount(1, $sender->getDeniedVerifications());
     }
 
-    /** @test */
+    #[Test]
     public function user_can_block_another_user()
     {
         $sender = User::factory()->create();
@@ -183,7 +184,7 @@ class VerificationsTest extends TestCase
         $this->assertTrue($sender->getBlockedVerifications()->contains($verification));
     }
 
-    /** @test */
+    #[Test]
     public function user_can_unblock_a_blocked_user()
     {
         $sender = User::factory()->create();
@@ -200,7 +201,7 @@ class VerificationsTest extends TestCase
         $this->assertCount(0, $sender->getBlockedVerifications());
     }
 
-    /** @test */
+    #[Test]
     public function user_block_is_permanent_unless_blocker_decides_to_unblock()
     {
         $sender = User::factory()->create();
@@ -233,7 +234,7 @@ class VerificationsTest extends TestCase
         $this->assertCount(0, $recipient->getBlockedVerifications());
     }
 
-    /** @test */
+    #[Test]
     public function user_cannot_send_verification_request_after_verification_block()
     {
         $sender = User::factory()->create();
@@ -259,7 +260,7 @@ class VerificationsTest extends TestCase
         $this->assertCount(0, $recipient->getVerificationRequests());
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_all_user_verifications()
     {
         $sender = User::factory()->create();
@@ -275,7 +276,7 @@ class VerificationsTest extends TestCase
         $this->assertCount(3, $sender->getAllVerifications());
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_accepted_user_verifications_number()
     {
         $sender = User::factory()->create();
@@ -291,7 +292,7 @@ class VerificationsTest extends TestCase
         $this->assertEquals(2, $sender->getVerifiersCount());
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_accepted_user_verifications()
     {
         $sender = User::factory()->create();
@@ -307,7 +308,7 @@ class VerificationsTest extends TestCase
         $this->assertCount(2, $sender->getAcceptedVerifications());
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_only_accepted_user_verifications()
     {
         $sender = User::factory()->create();
@@ -328,7 +329,7 @@ class VerificationsTest extends TestCase
         $this->assertCount(0, $recipients[3]->getAcceptedVerifications());
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_pending_user_verifications()
     {
         $sender = User::factory()->create();
@@ -342,7 +343,7 @@ class VerificationsTest extends TestCase
         $this->assertCount(2, $sender->getPendingVerifications());
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_denied_user_verifications()
     {
         $sender = User::factory()->create();
@@ -358,7 +359,7 @@ class VerificationsTest extends TestCase
         $this->assertCount(1, $sender->getDeniedVerifications());
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_blocked_user_verifications()
     {
         $sender = User::factory()->create();
@@ -374,7 +375,7 @@ class VerificationsTest extends TestCase
         $this->assertCount(1, $sender->getBlockedVerifications());
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_user_verifiers()
     {
         $sender = User::factory()->create();
@@ -396,7 +397,7 @@ class VerificationsTest extends TestCase
         $this->assertContainsOnlyInstancesOf(User::class, $sender->getVerifiers());
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_user_verifiers_per_page()
     {
         $sender = User::factory()->create();
@@ -423,7 +424,7 @@ class VerificationsTest extends TestCase
         $this->assertContainsOnlyInstancesOf(User::class, $sender->getVerifiers());
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_user_verifiers_of_verifiers()
     {
         $sender = User::factory()->create();
@@ -450,7 +451,7 @@ class VerificationsTest extends TestCase
         $this->assertContainsOnlyInstancesOf(User::class, $sender->getVerifiersOfVerifiers());
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_user_mutual_verifiers()
     {
         $sender = User::factory()->create();
@@ -479,7 +480,7 @@ class VerificationsTest extends TestCase
         $this->assertContainsOnlyInstancesOf(User::class, $sender->getMutualVerifiers($recipients[0]));
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_user_mutual_verifiers_per_page()
     {
         $sender = User::factory()->create();
@@ -511,7 +512,7 @@ class VerificationsTest extends TestCase
         $this->assertContainsOnlyInstancesOf(User::class, $sender->getMutualVerifiers($recipients[0], 2));
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_user_mutual_verifiers_number()
     {
         $sender = User::factory()->create();

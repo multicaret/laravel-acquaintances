@@ -1,8 +1,9 @@
 <?php
 
-
 namespace Multicaret\Acquaintances\Traits;
 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Facades\Event;
 use Multicaret\Acquaintances\Interaction;
 
@@ -12,16 +13,14 @@ use Multicaret\Acquaintances\Interaction;
 trait CanFollow
 {
     /**
-     * Interaction an item or items.
+     * Follow an item or items.
      *
-     * @param  int|array|\Illuminate\Database\Eloquent\Model  $targets
+     * @param  int|array|Model  $targets
      * @param  string  $class
-     *
-     * @return array
      *
      * @throws \Exception
      */
-    public function follow($targets, $class = __CLASS__)
+    public function follow($targets, $class = __CLASS__): array
     {
         Event::dispatch('acq.followships.follow', [$this, $targets]);
 
@@ -31,12 +30,10 @@ trait CanFollow
     /**
      * Unfollow an item or items.
      *
-     * @param  int|array|\Illuminate\Database\Eloquent\Model  $targets
+     * @param  int|array|Model  $targets
      * @param  string  $class
-     *
-     * @return array
      */
-    public function unfollow($targets, $class = __CLASS__)
+    public function unfollow($targets, $class = __CLASS__): array
     {
         Event::dispatch('acq.followships.unfollow', [$this, $targets]);
 
@@ -46,14 +43,12 @@ trait CanFollow
     /**
      * Toggle follow an item or items.
      *
-     * @param  int|array|\Illuminate\Database\Eloquent\Model  $targets
+     * @param  int|array|Model  $targets
      * @param  string  $class
-     *
-     * @return array
      *
      * @throws \Exception
      */
-    public function toggleFollow($targets, $class = __CLASS__)
+    public function toggleFollow($targets, $class = __CLASS__): array
     {
         return Interaction::toggleRelations($this, 'followings', $targets, $class);
     }
@@ -61,12 +56,10 @@ trait CanFollow
     /**
      * Check if a model is following given model.
      *
-     * @param  int|array|\Illuminate\Database\Eloquent\Model  $target
+     * @param  int|array|Model  $target
      * @param  string  $class
-     *
-     * @return bool
      */
-    public function isFollowing($target, $class = __CLASS__)
+    public function isFollowing($target, $class = __CLASS__): bool
     {
         return Interaction::isRelationExists($this, 'followings', $target, $class);
     }
@@ -75,50 +68,40 @@ trait CanFollow
      * Return item followings.
      *
      * @param  string  $class
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function followings($class = __CLASS__)
+    public function followings($class = __CLASS__): MorphToMany
     {
         return $this->morphedByMany(
             $class,
             'subject',
             config('acquaintances.tables.interactions')
         )
-                    ->wherePivot('relation', '=', Interaction::RELATION_FOLLOW)
-                    ->withPivot(...Interaction::$pivotColumns)
-                    ->using(Interaction::getInteractionRelationModelName())
-                    ->withTimestamps();
+            ->wherePivot('relation', '=', Interaction::RELATION_FOLLOW)
+            ->withPivot(...Interaction::$pivotColumns)
+            ->using(Interaction::getInteractionRelationModelName())
+            ->withTimestamps();
     }
 
     /**
      * Return following count.
-     *
-     * @return int
      */
-    public function followingCount()
+    public function followingCount(): int
     {
         return $this->followings()->count();
     }
 
     /**
-     * Get followingCount attribute
-     *
-     * @return int
+     * Get followingCount attribute.
      */
-    public function getFollowingCountAttribute()
+    public function getFollowingCountAttribute(): int
     {
         return $this->followingCount();
     }
 
     /**
      * Return followingCount in a readable format.
-     *
-     * @param  integer  $precision
-     * @param  string|null  $divisors
-     * @return int|float|string
      */
-    public function followingCountReadable(int $precision = 1, ?string $divisors = null)
+    public function followingCountReadable(int $precision = 1, ?string $divisors = null): string
     {
         return Interaction::numberToReadable($this->followingCount(), $precision, $divisors);
     }

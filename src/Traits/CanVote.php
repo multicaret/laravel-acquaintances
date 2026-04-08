@@ -1,8 +1,9 @@
 <?php
 
-
 namespace Multicaret\Acquaintances\Traits;
 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 use Multicaret\Acquaintances\Interaction;
@@ -15,15 +16,13 @@ trait CanVote
     /**
      * Vote an item or items.
      *
-     * @param  int|array|\Illuminate\Database\Eloquent\Model  $targets
+     * @param  int|array|Model  $targets
      * @param  string  $type
      * @param  string  $class
      *
-     * @return array
-     *
      * @throws \Exception
      */
-    public function vote($targets, $type = 'upvote', $class = __CLASS__)
+    public function vote($targets, $type = 'upvote', $class = __CLASS__): array
     {
         $this->cancelVote($targets);
 
@@ -33,14 +32,12 @@ trait CanVote
     /**
      * Upvote an item or items.
      *
-     * @param  int|array|\Illuminate\Database\Eloquent\Model  $targets
+     * @param  int|array|Model  $targets
      * @param  string  $class
-     *
-     * @return array
      *
      * @throws \Exception
      */
-    public function upvote($targets, $class = __CLASS__)
+    public function upvote($targets, $class = __CLASS__): array
     {
         Event::dispatch('acq.vote.up', [$this, $targets]);
 
@@ -50,14 +47,12 @@ trait CanVote
     /**
      * Downvote an item or items.
      *
-     * @param  int|array|\Illuminate\Database\Eloquent\Model  $targets
+     * @param  int|array|Model  $targets
      * @param  string  $class
-     *
-     * @return array
      *
      * @throws \Exception
      */
-    public function downvote($targets, $class = __CLASS__)
+    public function downvote($targets, $class = __CLASS__): array
     {
         Event::dispatch('acq.vote.down', [$this, $targets]);
 
@@ -67,12 +62,10 @@ trait CanVote
     /**
      * Cancel vote for an item or items.
      *
-     * @param  int|array|\Illuminate\Database\Eloquent\Model  $targets
+     * @param  int|array|Model  $targets
      * @param  string  $class
-     *
-     * @return Multicaret\Acquaintances\Traits\CanVote
      */
-    public function cancelVote($targets, $class = __CLASS__)
+    public function cancelVote($targets, $class = __CLASS__): static
     {
         Interaction::detachRelations($this, 'upvotes', $targets, $class);
         Interaction::detachRelations($this, 'downvotes', $targets, $class);
@@ -82,27 +75,23 @@ trait CanVote
     }
 
     /**
-     * Check if a model is upvoted a given model.
+     * Check if a model has upvoted a given model.
      *
-     * @param  int|array|\Illuminate\Database\Eloquent\Model  $target
+     * @param  int|array|Model  $target
      * @param  string  $class
-     *
-     * @return bool
      */
-    public function hasUpvoted($target, $class = __CLASS__)
+    public function hasUpvoted($target, $class = __CLASS__): bool
     {
         return Interaction::isRelationExists($this, 'upvotes', $target, $class);
     }
 
     /**
-     * Check if user is downvoted given item.
+     * Check if user has downvoted given item.
      *
-     * @param  int|array|\Illuminate\Database\Eloquent\Model  $target
+     * @param  int|array|Model  $target
      * @param  string  $class
-     *
-     * @return bool
      */
-    public function hasDownvoted($target, $class = __CLASS__)
+    public function hasDownvoted($target, $class = __CLASS__): bool
     {
         return Interaction::isRelationExists($this, 'downvotes', $target, $class);
     }
@@ -111,50 +100,44 @@ trait CanVote
      * Return item votes.
      *
      * @param  string  $class
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function votes($class = __CLASS__)
+    public function votes($class = __CLASS__): MorphToMany
     {
         return $this->morphedByMany($class, 'subject',
             config('acquaintances.tables.interactions'))
-                    ->wherePivotIn('relation', [Interaction::RELATION_UPVOTE, Interaction::RELATION_DOWNVOTE])
-                    ->withPivot(...Interaction::$pivotColumns)
-                    ->using(Interaction::getInteractionRelationModelName())
-                    ->withTimestamps();
+            ->wherePivotIn('relation', [Interaction::RELATION_UPVOTE, Interaction::RELATION_DOWNVOTE])
+            ->withPivot(...Interaction::$pivotColumns)
+            ->using(Interaction::getInteractionRelationModelName())
+            ->withTimestamps();
     }
 
     /**
      * Return item upvotes.
      *
      * @param  string  $class
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function upvotes($class = __CLASS__)
+    public function upvotes($class = __CLASS__): MorphToMany
     {
         return $this->morphedByMany($class, 'subject',
             config('acquaintances.tables.interactions'))
-                    ->wherePivot('relation', '=', Interaction::RELATION_UPVOTE)
-                    ->withPivot(...Interaction::$pivotColumns)
-                    ->using(Interaction::getInteractionRelationModelName())
-                    ->withTimestamps();
+            ->wherePivot('relation', '=', Interaction::RELATION_UPVOTE)
+            ->withPivot(...Interaction::$pivotColumns)
+            ->using(Interaction::getInteractionRelationModelName())
+            ->withTimestamps();
     }
 
     /**
      * Return item downvotes.
      *
      * @param  string  $class
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function downvotes($class = __CLASS__)
+    public function downvotes($class = __CLASS__): MorphToMany
     {
         return $this->morphedByMany($class, 'subject',
             config('acquaintances.tables.interactions'))
-                    ->wherePivot('relation', '=', Interaction::RELATION_DOWNVOTE)
-                    ->withPivot(...Interaction::$pivotColumns)
-                    ->using(Interaction::getInteractionRelationModelName())
-                    ->withTimestamps();
+            ->wherePivot('relation', '=', Interaction::RELATION_DOWNVOTE)
+            ->withPivot(...Interaction::$pivotColumns)
+            ->using(Interaction::getInteractionRelationModelName())
+            ->withTimestamps();
     }
 }

@@ -52,21 +52,46 @@ return [
          */
         'interactions_user_id_fk_column_type' => 'unsignedBigInteger',
         /*
+         * Morph type for the interactions table subject columns.
+         * Options: 'morphs', 'uuidMorphs', 'ulidMorphs'
+         */
+        'interactions_morph_type' => 'morphs',
+        /*
          * Table name of friendships relations.
          */
         'friendships' => 'friendships',
+        /*
+         * Morph type for the friendships table sender/recipient columns.
+         * Options: 'morphs', 'uuidMorphs', 'ulidMorphs'
+         */
+        'friendships_morph_type' => 'morphs',
         /*
          * Table name of friendship Groups relations.
          */
         'friendship_groups' => 'friendship_groups',
         /*
+         * Morph type for the friendship groups table friend columns.
+         * Options: 'morphs', 'uuidMorphs', 'ulidMorphs'
+         */
+        'friendship_groups_morph_type' => 'morphs',
+        /*
          * Table name of verifications relations.
          */
         'verifications' => 'verifications',
         /*
+         * Morph type for the verifications table sender/recipient columns.
+         * Options: 'morphs', 'uuidMorphs', 'ulidMorphs'
+         */
+        'verifications_morph_type' => 'morphs',
+        /*
          * Table name of verification Groups relations.
          */
         'verification_groups' => 'verification_groups',
+        /*
+         * Morph type for the verification groups table verifier columns.
+         * Options: 'morphs', 'uuidMorphs', 'ulidMorphs'
+         */
+        'verification_groups_morph_type' => 'morphs',
     ],
 
     'rating' => [
@@ -105,7 +130,33 @@ return [
         'phone' => 1,
         'cam' => 2,
         'personally' => 3,
-        'intimately' => 4
+        'intimately' => 4,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Caching Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Enable caching for interaction checks (isLikedBy, isFollowing, etc.)
+    | to reduce database queries. Uses cache tags when supported by the driver.
+    |
+    */
+    'cache' => [
+        /*
+         * Enable or disable the caching layer.
+         */
+        'enabled' => false,
+
+        /*
+         * Cache store to use (null = default store).
+         */
+        'store' => null,
+
+        /*
+         * Time-to-live in seconds for cached interaction checks.
+         */
+        'ttl' => 3600,
     ],
 
 ];

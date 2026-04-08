@@ -1,68 +1,75 @@
 {
-  "name": "multicaret/laravel-acquaintances",
-  "description": "This light package, with no dependencies, gives Eloquent models the ability to manage friendships (with groups), verifications, and interactions such as: Likes, favorites, votes, subscribe, follow, ..etc. And it includes advanced rating system.",
-  "type": "library",
-  "keywords": [
-    "laravel",
-    "friendships",
-    "verifications",
-    "followships",
-    "interactions",
-    "wish-list",
-    "like",
-    "rate",
-    "rating",
-    "social-media",
-    "friend-system",
-    "friends",
-    "followers",
-    "eloquent"
-  ],
-  "require": {
-    "php": ">=8.0",
-    "illuminate/support": "^9.0|^10.0|^11.0|^12.0",
-    "illuminate/database": "^9.0|^10.0|^11.0|^12.0",
-    "illuminate/events": "^9.0|^10.0|^11.0|^12.0",
-    "illuminate/filesystem": "^9.0|^10.0|^11.0|^12.0"
-  },
-  "require-dev": {
-    "orchestra/testbench": "^7.0|^8.0|^9.0|^10.0",
-    "phpunit/phpunit": "^9.6 || ^10.5 || ^11.0",
-    "mockery/mockery": "^1.4",
-    "fakerphp/faker": "^1.21",
-    "doctrine/dbal": "^2.5"
-  },
-  "license": "MIT",
-  "authors": [
-    {
-      "name": "Mohamed Kawsara",
-      "email": "mkwsra@gmail.com"
-    }
-  ],
-  "autoload": {
-    "psr-4": {
-      "Multicaret\\Acquaintances\\": "src/"
-    }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "Tests\\": "tests/"
+    "name": "multicaret/laravel-acquaintances",
+    "description": "This light package, with no dependencies, gives Eloquent models the ability to manage friendships (with groups), verifications, and interactions such as: Likes, favorites, votes, subscribe, follow, ..etc. And it includes advanced rating system.",
+    "type": "library",
+    "keywords": [
+        "laravel",
+        "friendships",
+        "verifications",
+        "followships",
+        "interactions",
+        "wish-list",
+        "like",
+        "rate",
+        "rating",
+        "social-media",
+        "friend-system",
+        "friends",
+        "followers",
+        "eloquent"
+    ],
+    "require": {
+        "php": "^8.1 || ^8.2 || ^8.3 || ^8.4",
+        "illuminate/support": "^9.0 || ^10.0 || ^11.0 || ^12.0 || ^13.0",
+        "illuminate/database": "^9.0 || ^10.0 || ^11.0 || ^12.0 || ^13.0",
+        "illuminate/events": "^9.0 || ^10.0 || ^11.0 || ^12.0 || ^13.0",
+        "illuminate/filesystem": "^9.0 || ^10.0 || ^11.0 || ^12.0 || ^13.0"
     },
-    "files": [
-      "tests/helpers.php"
-    ]
-  },
-  "extra": {
-    "laravel": {
-      "providers": [
-        "Multicaret\\Acquaintances\\AcquaintancesServiceProvider"
-      ]
+    "require-dev": {
+        "doctrine/dbal": "^3.0 || ^4.0",
+        "fakerphp/faker": "^1.23",
+        "mockery/mockery": "^1.6",
+        "orchestra/testbench": "^7.0 || ^8.0 || ^9.0 || ^10.0 || ^11.0",
+        "phpunit/phpunit": "^10.5 || ^11.0 || ^12.0"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Mohamed Kawsara",
+            "email": "mkwsra@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Multicaret\\Acquaintances\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        },
+        "classmap": [
+            "tests/Stub_User.php"
+        ],
+        "files": [
+            "tests/helpers.php"
+        ]
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Multicaret\\Acquaintances\\AcquaintancesServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "config": {
+        "sort-packages": true,
+        "optimize-autoloader": true
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
     }
-  },
-  "minimum-stability": "stable",
-  "config": {
-    "allow-plugins": {
-      "kylekatarnls/update-helper": true
-    }
-  }
 }

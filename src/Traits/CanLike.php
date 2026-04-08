@@ -1,8 +1,9 @@
 <?php
 
-
 namespace Multicaret\Acquaintances\Traits;
 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Facades\Event;
 use Multicaret\Acquaintances\Interaction;
 
@@ -14,14 +15,12 @@ trait CanLike
     /**
      * Like an item or items.
      *
-     * @param  int|array|\Illuminate\Database\Eloquent\Model  $targets
+     * @param  int|array|Model  $targets
      * @param  string  $class
-     *
-     * @return array
      *
      * @throws \Exception
      */
-    public function like($targets, $class = __CLASS__)
+    public function like($targets, $class = __CLASS__): array
     {
         Event::dispatch('acq.likes.like', [$this, $targets]);
 
@@ -31,12 +30,10 @@ trait CanLike
     /**
      * Unlike an item or items.
      *
-     * @param  int|array|\Illuminate\Database\Eloquent\Model  $targets
+     * @param  int|array|Model  $targets
      * @param  string  $class
-     *
-     * @return array
      */
-    public function unlike($targets, $class = __CLASS__)
+    public function unlike($targets, $class = __CLASS__): array
     {
         Event::dispatch('acq.likes.unlike', [$this, $targets]);
 
@@ -46,14 +43,12 @@ trait CanLike
     /**
      * Toggle like an item or items.
      *
-     * @param  int|array|\Illuminate\Database\Eloquent\Model  $targets
+     * @param  int|array|Model  $targets
      * @param  string  $class
-     *
-     * @return array
      *
      * @throws \Exception
      */
-    public function toggleLike($targets, $class = __CLASS__)
+    public function toggleLike($targets, $class = __CLASS__): array
     {
         return Interaction::toggleRelations($this, 'likes', $targets, $class);
     }
@@ -61,12 +56,10 @@ trait CanLike
     /**
      * Check if a model is liked by a given model.
      *
-     * @param  int|array|\Illuminate\Database\Eloquent\Model  $target
+     * @param  int|array|Model  $target
      * @param  string  $class
-     *
-     * @return bool
      */
-    public function hasLiked($target, $class = __CLASS__)
+    public function hasLiked($target, $class = __CLASS__): bool
     {
         return Interaction::isRelationExists($this, 'likes', $target, $class);
     }
@@ -75,16 +68,14 @@ trait CanLike
      * Return item likes.
      *
      * @param  string  $class
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function likes($class = __CLASS__)
+    public function likes($class = __CLASS__): MorphToMany
     {
         return $this->morphedByMany($class, 'subject',
             config('acquaintances.tables.interactions'))
-                    ->wherePivot('relation', '=', Interaction::RELATION_LIKE)
-                    ->withPivot(...Interaction::$pivotColumns)
-                    ->using(Interaction::getInteractionRelationModelName())
-                    ->withTimestamps();
+            ->wherePivot('relation', '=', Interaction::RELATION_LIKE)
+            ->withPivot(...Interaction::$pivotColumns)
+            ->using(Interaction::getInteractionRelationModelName())
+            ->withTimestamps();
     }
 }

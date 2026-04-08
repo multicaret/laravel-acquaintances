@@ -1,8 +1,9 @@
 <?php
 
-
 namespace Multicaret\Acquaintances\Traits;
 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Facades\Event;
 use Multicaret\Acquaintances\Interaction;
 
@@ -14,12 +15,10 @@ trait CanFavorite
     /**
      * Favorite an item or items.
      *
-     * @param  int|array|\Illuminate\Database\Eloquent\Model  $targets
+     * @param  int|array|Model  $targets
      * @param  string  $class
-     *
-     * @return array
      */
-    public function favorite($targets, $class = __CLASS__)
+    public function favorite($targets, $class = __CLASS__): array
     {
         Event::dispatch('acq.favorites.favorite', [$this, $targets]);
 
@@ -29,12 +28,10 @@ trait CanFavorite
     /**
      * Unfavorite an item or items.
      *
-     * @param  int|array|\Illuminate\Database\Eloquent\Model  $targets
+     * @param  int|array|Model  $targets
      * @param  string  $class
-     *
-     * @return array
      */
-    public function unfavorite($targets, $class = __CLASS__)
+    public function unfavorite($targets, $class = __CLASS__): array
     {
         Event::dispatch('acq.favorites.unfavorite', [$this, $targets]);
 
@@ -44,12 +41,10 @@ trait CanFavorite
     /**
      * Toggle favorite an item or items.
      *
-     * @param  int|array|\Illuminate\Database\Eloquent\Model  $targets
+     * @param  int|array|Model  $targets
      * @param  string  $class
-     *
-     * @return array
      */
-    public function toggleFavorite($targets, $class = __CLASS__)
+    public function toggleFavorite($targets, $class = __CLASS__): array
     {
         return Interaction::toggleRelations($this, 'favorites', $targets, $class);
     }
@@ -57,12 +52,10 @@ trait CanFavorite
     /**
      * Check if a model is favorited given model.
      *
-     * @param  int|array|\Illuminate\Database\Eloquent\Model  $target
+     * @param  int|array|Model  $target
      * @param  string  $class
-     *
-     * @return bool
      */
-    public function hasFavorited($target, $class = __CLASS__)
+    public function hasFavorited($target, $class = __CLASS__): bool
     {
         return Interaction::isRelationExists($this, 'favorites', $target, $class);
     }
@@ -71,16 +64,14 @@ trait CanFavorite
      * Return item favorites.
      *
      * @param  string  $class
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function favorites($class = __CLASS__)
+    public function favorites($class = __CLASS__): MorphToMany
     {
         return $this->morphedByMany($class, 'subject',
             config('acquaintances.tables.interactions'))
-                    ->wherePivot('relation', '=', Interaction::RELATION_FAVORITE)
-                    ->withPivot(...Interaction::$pivotColumns)
-                    ->using(Interaction::getInteractionRelationModelName())
-                    ->withTimestamps();
+            ->wherePivot('relation', '=', Interaction::RELATION_FAVORITE)
+            ->withPivot(...Interaction::$pivotColumns)
+            ->using(Interaction::getInteractionRelationModelName())
+            ->withTimestamps();
     }
 }

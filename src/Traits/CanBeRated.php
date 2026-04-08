@@ -1,8 +1,10 @@
 <?php
 
-
 namespace Multicaret\Acquaintances\Traits;
 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Multicaret\Acquaintances\Interaction;
 
 /**
@@ -12,31 +14,25 @@ trait CanBeRated
 {
     private static $ratedType = null;
 
-
-    public static function bootCanBeRated()
+    public static function bootCanBeRated(): void
     {
         self::$ratedType = config('acquaintances.rating.defaults.type');
     }
 
-    public function setRatedType(string $ratingType)
+    public function setRatedType(string $ratingType): static
     {
         self::$ratedType = $ratingType;
 
         return $this;
     }
 
-    private function ratedType($type = null)
+    private function ratedType($type = null): string
     {
         if (empty($type) && empty(self::$ratedType)) {
             $this->setRatedType(config('acquaintances.rating.defaults.type'));
-        } elseif ( ! empty($type)) {
+        } elseif (! empty($type)) {
             $this->setRatedType($type);
         }
-
-        /*
-         * Todo: [minor feature] Check if the passed type exists in types array
-         *  config('acquaintances.rating.types')
-         */
 
         return self::$ratedType;
     }
@@ -44,30 +40,25 @@ trait CanBeRated
     /**
      * Check if a model is isRatedBy by given user.
      *
-     * @param  int|array|\Illuminate\Database\Eloquent\Model  $user
-     *
-     * @return bool
+     * @param  int|array|Model  $user
      */
-    public function isRatedBy($user)
+    public function isRatedBy($user): bool
     {
         return Interaction::isRelationExists($this, 'raters', $user);
     }
 
     /**
      * Return Raters.
-     *
-     * @param  bool  $isAllTypes
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function raters($isAllTypes = false)
+    public function raters($isAllTypes = false): MorphToMany
     {
         $relation = $this->morphToMany(Interaction::getUserModelName(), 'subject',
             config('acquaintances.tables.interactions'))
-                         ->wherePivot('relation', '=', Interaction::RELATION_RATE)
-                         ->using(Interaction::getInteractionRelationModelName())
-                         ->withTimestamps();
+            ->wherePivot('relation', '=', Interaction::RELATION_RATE)
+            ->using(Interaction::getInteractionRelationModelName())
+            ->withTimestamps();
 
-        if ( ! $isAllTypes) {
+        if (! $isAllTypes) {
             $relation = $relation->wherePivot('relation_type', '=', $this->ratedType());
         }
 
@@ -75,106 +66,93 @@ trait CanBeRated
     }
 
     /**
-     * Return ratings as interaction items with lazy loading `user` relation
-     * for a specific type or for the default type.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * Return ratings as interaction items with lazy loading `user` relation.
      */
-    public function ratings()
+    public function ratings(): HasMany
     {
         return $this->hasMany(Interaction::getInteractionRelationModelName(), 'subject_id')->with('user');
     }
 
     /**
-     * Return ratings as interaction items without lazy loading `user` relation
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * Return ratings as interaction items without lazy loading `user` relation.
      */
-    public function ratingsPure()
+    public function ratingsPure(): HasMany
     {
         return $this->hasMany(Interaction::getInteractionRelationModelName(), 'subject_id');
     }
 
-    public function averageRating($ratingType = null)
+    public function averageRating($ratingType = null): mixed
     {
         $this->ratedType($ratingType);
 
         return $this->raters()->avg('relation_value');
     }
 
-    public function averageRatingAllTypes()
+    public function averageRatingAllTypes(): mixed
     {
         return $this->raters(true)->avg('relation_value');
     }
 
-    public function sumRating($ratingType = null)
+    public function sumRating($ratingType = null): mixed
     {
         $this->ratedType($ratingType);
 
         return $this->raters()->sum('relation_value');
     }
 
-    public function sumRatingAllTypes()
+    public function sumRatingAllTypes(): mixed
     {
         return $this->raters(true)->sum('relation_value');
     }
 
-    public function sumRatingReadable($ratingType = null, $precision = 1, $divisors = null)
+    public function sumRatingReadable($ratingType = null, $precision = 1, $divisors = null): string
     {
         return Interaction::numberToReadable($this->sumRating($ratingType), $precision, $divisors);
     }
 
-    public function sumRatingAllTypesReadable($precision = 1, $divisors = null)
+    public function sumRatingAllTypesReadable($precision = 1, $divisors = null): string
     {
         return Interaction::numberToReadable($this->sumRatingAllTypes(), $precision, $divisors);
     }
 
-    public function userAverageRating($ratingType = null)
+    public function userAverageRating($ratingType = null): mixed
     {
         $this->ratedType($ratingType);
 
         return $this->raters()->where('user_id', \Auth::id())->avg('relation_value');
     }
 
-    public function userAverageRatingAllTypes()
+    public function userAverageRatingAllTypes(): mixed
     {
         return $this->raters(true)->where('user_id', \Auth::id())->avg('relation_value');
     }
 
-    public function userSumRating($ratingType = null)
+    public function userSumRating($ratingType = null): mixed
     {
         $this->ratedType($ratingType);
 
         return $this->raters()->where('user_id', \Auth::id())->sum('relation_value');
     }
 
-    public function userSumRatingAllTypes()
+    public function userSumRatingAllTypes(): mixed
     {
         return $this->raters(true)->where('user_id', \Auth::id())->sum('relation_value');
     }
 
-    public function userSumRatingReadable($ratingType = null, $precision = 1, $divisors = null)
+    public function userSumRatingReadable($ratingType = null, $precision = 1, $divisors = null): string
     {
         return Interaction::numberToReadable($this->userSumRating($ratingType), $precision, $divisors);
     }
 
-
-    public function userSumRatingAllTypesReadable($precision = 1, $divisors = null)
+    public function userSumRatingAllTypesReadable($precision = 1, $divisors = null): string
     {
         return Interaction::numberToReadable($this->userSumRatingAllTypes(), $precision, $divisors);
     }
 
     /**
-     * Calculating the percentage based on the passed coefficient
-     * Taking the default value of $max from within the config file
-     *
-     * @param  null  $max
-     *
-     * @param  null  $ratingType
-     *
-     * @return float|int
+     * Calculating the percentage based on the passed coefficient.
      */
-    public function ratingPercent($max = null, $ratingType = null)
+    public function ratingPercent($max = null, $ratingType = null): float|int
     {
         $this->ratedType($ratingType);
         if (empty($max)) {
@@ -187,15 +165,9 @@ trait CanBeRated
     }
 
     /**
-     * Calculating the percentage based on the passed coefficient
-     * Taking the default value of $max from within the config file
-     *
-     * @param  null  $max
-     *
-     *
-     * @return float|int
+     * Calculating the percentage based on the passed coefficient for all types.
      */
-    public function ratingPercentAllTypes($max = null)
+    public function ratingPercentAllTypes($max = null): float|int
     {
         if (empty($max)) {
             $max = config('acquaintances.rating.defaults.amount');
@@ -206,44 +178,43 @@ trait CanBeRated
         return ($quantity * $max) > 0 ? $total / (($quantity * $max) / 100) : 0;
     }
 
-    public function getAverageRatingAttribute()
+    public function getAverageRatingAttribute(): mixed
     {
         return $this->averageRating();
     }
 
-    public function getAverageRatingAllTypesAttribute()
+    public function getAverageRatingAllTypesAttribute(): mixed
     {
         return $this->averageRatingAllTypes();
     }
 
-    public function getSumRatingAttribute()
+    public function getSumRatingAttribute(): mixed
     {
         return $this->sumRating();
     }
 
-    public function getSumRatingAllTypesAttribute()
+    public function getSumRatingAllTypesAttribute(): mixed
     {
         return $this->sumRatingAllTypes();
     }
 
-    public function getUserAverageRatingAttribute()
+    public function getUserAverageRatingAttribute(): mixed
     {
         return $this->userAverageRating();
     }
 
-    public function getUserAverageRatingAllTypesAttribute()
+    public function getUserAverageRatingAllTypesAttribute(): mixed
     {
         return $this->userAverageRatingAllTypes();
     }
 
-    public function getUserSumRatingAttribute()
+    public function getUserSumRatingAttribute(): mixed
     {
         return $this->userSumRating();
     }
 
-    public function getUserSumRatingAllTypesAttribute()
+    public function getUserSumRatingAllTypesAttribute(): mixed
     {
         return $this->userSumRatingAllTypes();
     }
-
 }

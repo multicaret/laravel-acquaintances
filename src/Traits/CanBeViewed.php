@@ -1,8 +1,9 @@
 <?php
 
-
 namespace Multicaret\Acquaintances\Traits;
 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Multicaret\Acquaintances\Interaction;
 
 /**
@@ -13,41 +14,37 @@ trait CanBeViewed
     /**
      * Check if a model has been viewed by given model.
      *
-     * @param  int|array|\Illuminate\Database\Eloquent\Model  $user
-     *
-     * @return bool
+     * @param  int|array|Model  $user
      */
-    public function isViewedBy($user)
+    public function isViewedBy($user): bool
     {
         return Interaction::isRelationExists($this, 'viewers', $user);
     }
 
     /**
      * Return viewers.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function viewers()
+    public function viewers(): MorphToMany
     {
         return $this->morphToMany(Interaction::getUserModelName(), 'subject',
             config('acquaintances.tables.interactions'))
-                    ->wherePivot('relation', '=', Interaction::RELATION_VIEW)
-                    ->withPivot(...Interaction::$pivotColumns)
-                    ->using(Interaction::getInteractionRelationModelName())
-                    ->withTimestamps();
+            ->wherePivot('relation', '=', Interaction::RELATION_VIEW)
+            ->withPivot(...Interaction::$pivotColumns)
+            ->using(Interaction::getInteractionRelationModelName())
+            ->withTimestamps();
     }
 
-    public function viewersCount()
+    public function viewersCount(): int
     {
         return $this->viewers()->count();
     }
 
-    public function getViewersCountAttribute()
+    public function getViewersCountAttribute(): int
     {
         return $this->viewersCount();
     }
 
-    public function viewersCountFormatted($precision = 1, $divisors = null)
+    public function viewersCountFormatted($precision = 1, $divisors = null): string
     {
         return Interaction::numberToReadable($this->viewersCount(), $precision, $divisors);
     }
@@ -57,15 +54,13 @@ trait CanBeViewed
      *
      * @param  int  $precision
      * @param  null  $divisors
-     *
-     * @return string
      */
-    public function viewersCountReadable($precision = 1, $divisors = null)
+    public function viewersCountReadable($precision = 1, $divisors = null): string
     {
         return $this->viewersCountFormatted($precision, $divisors);
     }
 
-    public function getViewersCountReadableAttribute()
+    public function getViewersCountReadableAttribute(): int
     {
         return $this->viewersCount();
     }

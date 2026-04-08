@@ -1,8 +1,9 @@
 <?php
 
-
 namespace Multicaret\Acquaintances\Traits;
 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Facades\Event;
 use Multicaret\Acquaintances\Interaction;
 
@@ -14,12 +15,10 @@ trait CanReport
     /**
      * Report an item or items.
      *
-     * @param  int|array|\Illuminate\Database\Eloquent\Model  $targets
+     * @param  int|array|Model  $targets
      * @param  string  $class
-     *
-     * @return array
      */
-    public function report($targets, $class = __CLASS__)
+    public function report($targets, $class = __CLASS__): array
     {
         Event::dispatch('acq.reports.report', [$this, $targets]);
 
@@ -29,12 +28,10 @@ trait CanReport
     /**
      * Unreport an item or items.
      *
-     * @param  int|array|\Illuminate\Database\Eloquent\Model  $targets
+     * @param  int|array|Model  $targets
      * @param  string  $class
-     *
-     * @return array
      */
-    public function unreport($targets, $class = __CLASS__)
+    public function unreport($targets, $class = __CLASS__): array
     {
         Event::dispatch('acq.reports.unreport', [$this, $targets]);
 
@@ -44,25 +41,21 @@ trait CanReport
     /**
      * Toggle report an item or items.
      *
-     * @param  int|array|\Illuminate\Database\Eloquent\Model  $targets
+     * @param  int|array|Model  $targets
      * @param  string  $class
-     *
-     * @return array
      */
-    public function toggleReport($targets, $class = __CLASS__)
+    public function toggleReport($targets, $class = __CLASS__): array
     {
         return Interaction::toggleRelations($this, 'reports', $targets, $class);
     }
 
     /**
-     * Check if a model is reported given model.
+     * Check if a model has reported given model.
      *
-     * @param  int|array|\Illuminate\Database\Eloquent\Model  $target
+     * @param  int|array|Model  $target
      * @param  string  $class
-     *
-     * @return bool
      */
-    public function hasReported($target, $class = __CLASS__)
+    public function hasReported($target, $class = __CLASS__): bool
     {
         return Interaction::isRelationExists($this, 'reports', $target, $class);
     }
@@ -71,19 +64,17 @@ trait CanReport
      * Return item reports.
      *
      * @param  string  $class
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function reports($class = __CLASS__)
+    public function reports($class = __CLASS__): MorphToMany
     {
         return $this->morphedByMany(
             $class,
             'subject',
             config('acquaintances.tables.interactions')
         )
-                    ->wherePivot('relation', '=', Interaction::RELATION_REPORT)
-                    ->withPivot(...Interaction::$pivotColumns)
-                    ->using(Interaction::getInteractionRelationModelName())
-                    ->withTimestamps();
+            ->wherePivot('relation', '=', Interaction::RELATION_REPORT)
+            ->withPivot(...Interaction::$pivotColumns)
+            ->using(Interaction::getInteractionRelationModelName())
+            ->withTimestamps();
     }
 }

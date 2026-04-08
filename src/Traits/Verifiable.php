@@ -1,9 +1,12 @@
 <?php
 
-
 namespace Multicaret\Acquaintances\Traits;
 
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Multicaret\Acquaintances\Interaction;
 use Multicaret\Acquaintances\Models\Verification;
@@ -11,15 +14,11 @@ use Multicaret\Acquaintances\Status;
 
 /**
  * Class Verifiable
- * @package Multicaret\Acquaintances\Traits
  */
 trait Verifiable
 {
     /**
-     * @param  Model  $recipient
-     * @param  string|null  $verificationMessage
-     *
-     * @return \Multicaret\Acquaintances\Models\Verification|false
+     * @return Verification|false
      */
     public function verify(Model $recipient, ?string $verificationMessage = null)
     {
@@ -31,7 +30,7 @@ trait Verifiable
         $verifierModelName = Interaction::getVerificationModelName();
         $verifier = (new $verifierModelName)->fillRecipient($recipient)->fill([
             'status' => Status::PENDING,
-            'message' => $verificationMessage
+            'message' => $verificationMessage,
         ]);
 
         $this->verifications()->save($verifier);
@@ -41,10 +40,7 @@ trait Verifiable
         return $verifier;
     }
 
-
     /**
-     * @param  Model  $recipient
-     *
      * @return bool
      */
     public function unverify(Model $recipient)
@@ -55,8 +51,6 @@ trait Verifiable
     }
 
     /**
-     * @param  Model  $recipient
-     *
      * @return bool
      */
     public function hasVerificationRequestFrom(Model $recipient)
@@ -65,8 +59,6 @@ trait Verifiable
     }
 
     /**
-     * @param  Model  $recipient
-     *
      * @return bool
      */
     public function hasSentVerificationRequestTo(Model $recipient)
@@ -77,8 +69,6 @@ trait Verifiable
     }
 
     /**
-     * @param  Model  $recipient
-     *
      * @return bool
      */
     public function isVerifiedWith(Model $recipient)
@@ -87,8 +77,6 @@ trait Verifiable
     }
 
     /**
-     * @param  Model  $recipient
-     *
      * @return bool|int
      */
     public function acceptVerificationRequest(Model $recipient)
@@ -101,8 +89,6 @@ trait Verifiable
     }
 
     /**
-     * @param  Model  $recipient
-     *
      * @return bool|int
      */
     public function denyVerificationRequest(Model $recipient)
@@ -114,11 +100,8 @@ trait Verifiable
         ]);
     }
 
-
     /**
-     * @param  Model  $verifier
-     * @param  string $groupSlug
-     *
+     * @param  string  $groupSlug
      * @return bool
      */
     public function groupVerification(Model $verifier, $groupSlug)
@@ -141,9 +124,6 @@ trait Verifiable
     }
 
     /**
-     * @param  Model  $verifier
-     * @param       $groupSlug
-     *
      * @return bool
      */
     public function ungroupVerification(Model $verifier, $groupSlug = '')
@@ -161,7 +141,7 @@ trait Verifiable
             'verifier_type' => $verifier->getMorphClass(),
         ];
 
-        if ('' !== $groupSlug && isset($groupsAvailable[$groupSlug])) {
+        if ($groupSlug !== '' && isset($groupsAvailable[$groupSlug])) {
             $where['group_id'] = $groupsAvailable[$groupSlug];
         }
 
@@ -171,31 +151,27 @@ trait Verifiable
     }
 
     /**
-     * @param  Model  $recipient
-     *
-     * @return \Multicaret\Acquaintances\Models\Verification
+     * @return Verification
      */
-    public function blockVerification(Model $recipient)
+    public function blockVerification(Model $recipient): Verification|Model
     {
-        // if there is a verification between the two users and the sender is not blocked
-        // by the recipient user then delete the verification
-        if (! $this->isBlockedBy($recipient)) {
-            $this->findVerification($recipient)->delete();
-        }
+        return DB::transaction(function () use ($recipient) {
+            if (! $this->isBlockedBy($recipient)) {
+                $this->findVerification($recipient)->delete();
+            }
 
-        $verificationModelName = Interaction::getVerificationModelName();
-        $verification = (new $verificationModelName)->fillRecipient($recipient)->fill([
-            'status' => Status::BLOCKED,
-        ]);
+            $verificationModelName = Interaction::getVerificationModelName();
+            $verification = (new $verificationModelName)->fillRecipient($recipient)->fill([
+                'status' => Status::BLOCKED,
+            ]);
 
-        Event::dispatch('acq.verifications.blocked', [$this, $recipient]);
+            Event::dispatch('acq.verifications.blocked', [$this, $recipient]);
 
-        return $this->verifications()->save($verification);
+            return $this->verifications()->save($verification);
+        });
     }
 
     /**
-     * @param  Model  $recipient
-     *
      * @return mixed
      */
     public function unblockVerification(Model $recipient)
@@ -206,9 +182,7 @@ trait Verifiable
     }
 
     /**
-     * @param  Model  $recipient
-     *
-     * @return \Multicaret\Acquaintances\Models\Verification
+     * @return Verification
      */
     public function getVerification(Model $recipient)
     {
@@ -216,12 +190,8 @@ trait Verifiable
     }
 
     /**
-     * @param  string  $groupSlug
      * @param  int  $perPage  Number
-     * @param  array  $fields
-     * @param  string  $type
-     *
-     * @return \Illuminate\Database\Eloquent\Collection|Verification[]
+     * @return Collection|Verification[]
      */
     public function getAllVerifications(
         string $groupSlug = '',
@@ -233,12 +203,8 @@ trait Verifiable
     }
 
     /**
-     * @param  string  $groupSlug
      * @param  int  $perPage  Number
-     * @param  array  $fields
-     * @param  string  $type
-     *
-     * @return \Illuminate\Database\Eloquent\Collection|Verification[]
+     * @return Collection|Verification[]
      */
     public function getPendingVerifications(
         string $groupSlug = '',
@@ -250,12 +216,8 @@ trait Verifiable
     }
 
     /**
-     * @param  string  $groupSlug
      * @param  int  $perPage  Number
-     * @param  array  $fields
-     * @param  string  $type
-     *
-     * @return \Illuminate\Database\Eloquent\Collection|Verification[]
+     * @return Collection|Verification[]
      */
     public function getAcceptedVerifications(
         string $groupSlug = '',
@@ -268,9 +230,7 @@ trait Verifiable
 
     /**
      * @param  int  $perPage  Number
-     * @param  array  $fields
-     *
-     * @return \Illuminate\Database\Eloquent\Collection|Verification[]
+     * @return Collection|Verification[]
      */
     public function getDeniedVerifications(int $perPage = 0, array $fields = ['*'])
     {
@@ -279,9 +239,7 @@ trait Verifiable
 
     /**
      * @param  int  $perPage  Number
-     * @param  array  $fields
-     *
-     * @return \Illuminate\Database\Eloquent\Collection|Verification[]
+     * @return Collection|Verification[]
      */
     public function getBlockedVerifications(int $perPage = 0, array $fields = ['*'])
     {
@@ -299,7 +257,7 @@ trait Verifiable
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Collection|Verification[]
+     * @return Collection|Verification[]
      */
     public function getVerificationRequests()
     {
@@ -314,10 +272,7 @@ trait Verifiable
      *
      * @param  int  $perPage  Number
      * @param  string  $groupSlug
-     *
-     * @param  array  $fields
-     *
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return Collection
      */
     public function getVerifiers($perPage = 0, $groupSlug = '', array $fields = ['*'], bool $cursor = false)
     {
@@ -328,12 +283,8 @@ trait Verifiable
      * This method will not return Verification models
      * It will return the 'verifiers' models. ex: App\User
      *
-     * @param  Model  $other
      * @param  int  $perPage  Number
-     *
-     * @param  array  $fields
-     *
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return Collection
      */
     public function getMutualVerifiers(Model $other, $perPage = 0, array $fields = ['*'])
     {
@@ -343,7 +294,7 @@ trait Verifiable
     /**
      * Get the number of verifiers
      *
-     * @return integer
+     * @return int
      */
     public function getMutualVerifiersCount($other)
     {
@@ -353,7 +304,7 @@ trait Verifiable
     /**
      * Get the number of pending verifiers requests
      *
-     * @return integer
+     * @return int
      */
     public function getPendingVerificationsCount()
     {
@@ -365,10 +316,7 @@ trait Verifiable
      * It will return the 'verifiers' models. ex: App\User
      *
      * @param  int  $perPage  Number
-     *
-     * @param  array  $fields
-     *
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return Collection
      */
     public function getVerifiersOfVerifiers($perPage = 0, array $fields = ['*'])
     {
@@ -380,8 +328,7 @@ trait Verifiable
      *
      * @param  string  $groupSlug
      * @param  string  $type
-     *
-     * @return integer
+     * @return int
      */
     public function getVerifiersCount($groupSlug = '', $type = 'all')
     {
@@ -392,7 +339,6 @@ trait Verifiable
 
     /**
      * @param  Model  $recipient
-     *
      * @return bool
      */
     public function canVerify($recipient)
@@ -416,11 +362,8 @@ trait Verifiable
         return true;
     }
 
-
     /**
-     * @param  Model  $recipient
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return Builder
      */
     private function findVerification(Model $recipient)
     {
@@ -430,11 +373,7 @@ trait Verifiable
     }
 
     /**
-     * @param         $status
-     * @param  string $groupSlug
-     * @param  string $type
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return Builder
      */
     public function findVerifications($status = null, string $groupSlug = '', string $type = 'all')
     {
@@ -461,7 +400,7 @@ trait Verifiable
                     break;
             }
         })->whereGroup($this, $groupSlug)
-            ->orderByRaw("FIELD(status, '" . implode("','", Status::getOrderedStatuses()) . "')");
+            ->orderByRaw("FIELD(status, '".implode("','", Status::getOrderedStatuses())."')");
 
         if (! is_null($status)) {
             $query->where('status', $status);
@@ -474,8 +413,7 @@ trait Verifiable
      * Get the query builder of the 'verifier' model
      *
      * @param  string  $groupSlug
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return Builder
      */
     public function getVerifiersQueryBuilder($groupSlug = '')
     {
@@ -490,7 +428,7 @@ trait Verifiable
     /**
      * Get the query builder of the 'verifier' model
      *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return Builder
      */
     public function getMutualVerifiersQueryBuilder(Model $other)
     {
@@ -517,8 +455,7 @@ trait Verifiable
      * Get the query builder for verifiersOfVerifiers ('verifier' model)
      *
      * @param  string  $groupSlug
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return Builder
      */
     public function getVerifiersOfVerifiersQueryBuilder($groupSlug = '')
     {
@@ -547,20 +484,14 @@ trait Verifiable
         return $this->whereIn('id', $fofIds)->whereNotIn('id', $verifierIds);
     }
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
-     */
-    public function verifications()
+    public function verifications(): MorphMany
     {
         $verificationModelName = Interaction::getVerificationModelName();
 
         return $this->morphMany($verificationModelName, 'sender');
     }
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
-     */
-    public function verificationGroups()
+    public function verificationGroups(): MorphMany
     {
         $verificationGroupsModelName = Interaction::getVerificationGroupsModelName();
 
