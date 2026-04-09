@@ -1,21 +1,17 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests;
 
+use App\User;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
-use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class VerificationsGroupsTest extends TestCase
 {
-    use RefreshDatabase;
-
     #[Test]
     public function user_can_add_a_verified_user_to_a_group()
     {
-        $sender = User::factory()->create();
-        $recipient = User::factory()->create();
+        $sender = createUser();
+        $recipient = createUser();
 
         $sender->verify($recipient, 'Test verification message');
         $recipient->acceptVerificationRequest($sender);
@@ -37,8 +33,8 @@ class VerificationsGroupsTest extends TestCase
     #[Test]
     public function user_cannot_add_a_non_verified_user_to_a_group()
     {
-        $sender = User::factory()->create();
-        $stranger = User::factory()->create();
+        $sender = createUser();
+        $stranger = createUser();
 
         $this->assertFalse((bool) $sender->groupVerification($stranger, 'phone'));
         $this->assertCount(0, $sender->getVerifiers(0, 'phone'));
@@ -47,8 +43,8 @@ class VerificationsGroupsTest extends TestCase
     #[Test]
     public function user_can_remove_a_verifier_from_group()
     {
-        $sender = User::factory()->create();
-        $recipient = User::factory()->create();
+        $sender = createUser();
+        $recipient = createUser();
 
         $sender->verify($recipient, 'Test verification message');
         $recipient->acceptVerificationRequest($sender);
@@ -66,9 +62,9 @@ class VerificationsGroupsTest extends TestCase
     #[Test]
     public function user_cannot_remove_a_non_existing_verifier_from_group()
     {
-        $sender = User::factory()->create();
-        $recipient = User::factory()->create();
-        $recipient2 = User::factory()->create();
+        $sender = createUser();
+        $recipient = createUser();
+        $recipient2 = createUser();
 
         $sender->verify($recipient, 'Test verification message');
 
@@ -79,8 +75,8 @@ class VerificationsGroupsTest extends TestCase
     #[Test]
     public function user_can_remove_a_verifier_from_all_groups()
     {
-        $sender = User::factory()->create();
-        $recipient = User::factory()->create();
+        $sender = createUser();
+        $recipient = createUser();
 
         $sender->verify($recipient, 'Test verification message');
         $recipient->acceptVerificationRequest($sender);
@@ -97,8 +93,8 @@ class VerificationsGroupsTest extends TestCase
     #[Test]
     public function it_returns_verifiers_of_a_group()
     {
-        $sender = User::factory()->create();
-        $recipients = User::factory()->count(10)->create();
+        $sender = createUser();
+        $recipients = createUser([], 10);
 
         foreach ($recipients as $key => $recipient) {
             $sender->verify($recipient, 'Test verification message');
@@ -116,8 +112,8 @@ class VerificationsGroupsTest extends TestCase
     #[Test]
     public function it_returns_all_user_verifications_by_group()
     {
-        $sender = User::factory()->create();
-        $recipients = User::factory()->count(5)->create();
+        $sender = createUser();
+        $recipients = createUser([], 5);
 
         foreach ($recipients as $key => $recipient) {
             $sender->verify($recipient, 'Test verification message');
@@ -134,7 +130,7 @@ class VerificationsGroupsTest extends TestCase
             }
         }
 
-        //Assertions
+        // Assertions
         $this->assertCount(3, $sender->getAllVerifications('text'));
         $this->assertCount(1, $sender->getAllVerifications('phone'));
         $this->assertCount(0, $sender->getAllVerifications('cam'));
@@ -144,8 +140,8 @@ class VerificationsGroupsTest extends TestCase
     #[Test]
     public function it_returns_accepted_user_verifications_by_group()
     {
-        $sender = User::factory()->create();
-        $recipients = User::factory()->count(4)->create();
+        $sender = createUser();
+        $recipients = createUser([], 4);
 
         foreach ($recipients as $recipient) {
             $sender->verify($recipient, 'Test verification message');
@@ -164,8 +160,8 @@ class VerificationsGroupsTest extends TestCase
     #[Test]
     public function it_returns_accepted_user_verifications_number_by_group()
     {
-        $sender = User::factory()->create();
-        $recipients = User::factory()->count(5)->create();
+        $sender = createUser();
+        $recipients = createUser([], 5);
 
         foreach ($recipients as $recipient) {
             $sender->verify($recipient, 'Test verification message');
@@ -173,7 +169,7 @@ class VerificationsGroupsTest extends TestCase
             $sender->groupVerification($recipient, 'text');
         }
 
-        //Assertions
+        // Assertions
         $this->assertEquals(5, $sender->getVerifiersCount('text'));
         $this->assertEquals(0, $sender->getVerifiersCount('phone'));
         $this->assertEquals(0, $recipients[0]->getVerifiersCount('text'));
@@ -183,8 +179,8 @@ class VerificationsGroupsTest extends TestCase
     #[Test]
     public function it_returns_user_verifiers_by_group_per_page()
     {
-        $sender = User::factory()->create();
-        $recipients = User::factory()->count(6)->create();
+        $sender = createUser();
+        $recipients = createUser([], 6);
 
         foreach ($recipients as $recipient) {
             $sender->verify($recipient, 'Test verification message');
@@ -206,7 +202,7 @@ class VerificationsGroupsTest extends TestCase
 
         $sender->groupVerification($recipients[4], 'phone');
 
-        //Assertions
+        // Assertions
         $this->assertCount(2, $sender->getVerifiers(2, 'text'));
         $this->assertCount(4, $sender->getVerifiers(0, 'text'));
         $this->assertCount(4, $sender->getVerifiers(10, 'text'));

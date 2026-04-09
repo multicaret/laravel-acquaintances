@@ -31,7 +31,7 @@ trait CanFavorite
      * @param  int|array|Model  $targets
      * @param  string  $class
      */
-    public function unfavorite($targets, $class = __CLASS__): array
+    public function unfavorite($targets, $class = __CLASS__): int
     {
         Event::dispatch('acq.favorites.unfavorite', [$this, $targets]);
 

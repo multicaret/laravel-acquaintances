@@ -26,11 +26,9 @@ use Multicaret\Acquaintances\Traits\CanSubscribe;
 use Multicaret\Acquaintances\Traits\CanView;
 use Multicaret\Acquaintances\Traits\CanVote;
 use Multicaret\Acquaintances\Traits\Friendable;
+use Multicaret\Acquaintances\Traits\Verifiable;
 
-class User extends Model implements
-    AuthenticatableContract,
-    AuthorizableContract,
-    CanResetPasswordContract
+class User extends Model implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract
 {
     use Authenticatable;
     use Authorizable;
@@ -52,6 +50,7 @@ class User extends Model implements
     use CanView;
     use CanVote;
     use Friendable;
+    use Verifiable;
 
     protected $table = 'users';
 

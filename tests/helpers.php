@@ -1,12 +1,14 @@
 <?php
 
+use App\User;
+use Illuminate\Database\Eloquent\Collection;
+
 /**
  * Create a user
  *
  * @param  array  $overrides
  * @param  int  $amount
- *
- * @return \Illuminate\Database\Eloquent\Collection|\App\User[]|\App\User
+ * @return Collection|User[]|User
  */
 if (! function_exists('createUser')) {
     function createUser($overrides = [], $amount = 1)
@@ -14,9 +16,9 @@ if (! function_exists('createUser')) {
         $users = collect();
 
         for ($i = 0; $i < $amount; $i++) {
-            $users->push(\App\User::create(array_merge([
-                'name' => 'User ' . uniqid(),
-                'email' => uniqid() . '@example.com',
+            $users->push(User::create(array_merge([
+                'name' => 'User '.uniqid(),
+                'email' => uniqid().'@example.com',
                 'password' => bcrypt('password'),
             ], $overrides)));
         }

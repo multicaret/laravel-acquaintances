@@ -33,7 +33,7 @@ trait CanView
      * @param  int|array|Model  $targets
      * @param  string  $class
      */
-    public function unview($targets, $class = __CLASS__): array
+    public function unview($targets, $class = __CLASS__): int
     {
         Event::dispatch('acq.views.unview', [$this, $targets]);
 

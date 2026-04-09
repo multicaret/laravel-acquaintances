@@ -33,7 +33,7 @@ trait CanLike
      * @param  int|array|Model  $targets
      * @param  string  $class
      */
-    public function unlike($targets, $class = __CLASS__): array
+    public function unlike($targets, $class = __CLASS__): int
     {
         Event::dispatch('acq.likes.unlike', [$this, $targets]);
 

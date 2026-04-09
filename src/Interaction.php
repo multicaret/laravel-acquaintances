@@ -6,11 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
+use Multicaret\Acquaintances\Models\FriendFriendshipGroups;
 use Multicaret\Acquaintances\Models\Friendship;
-use Multicaret\Acquaintances\Models\FriendshipGroups;
 use Multicaret\Acquaintances\Models\InteractionRelation;
 use Multicaret\Acquaintances\Models\Verification;
 use Multicaret\Acquaintances\Models\VerificationGroups;
+use Multicaret\Acquaintances\Traits\HasAcquaintanceCounters;
 use stdClass;
 
 /**
@@ -121,6 +122,7 @@ class Interaction
         $result = $model->{$relation}($targets->classname)->sync($targets->targets, false);
 
         self::invalidateRelationCache($model, $relation, $targets->classname, $targets->ids);
+        self::updateCounters($model, $relation, $targets, 'increment');
 
         return $result;
     }
@@ -137,6 +139,7 @@ class Interaction
         $result = $model->{$relation}($targets->classname)->detach($targets->ids);
 
         self::invalidateRelationCache($model, $relation, $targets->classname, $targets->ids);
+        self::updateCounters($model, $relation, $targets, 'decrement');
 
         return $result;
     }
@@ -263,11 +266,14 @@ class Interaction
 
     public static function getUserModelName()
     {
+        $className = config('acquaintances.user_model_class_name');
+
+        if (! empty($className)) {
+            return $className;
+        }
+
         return Interaction::getFullModelName(
-            config(
-                'acquaintances.user_model_class_name',
-                config('acquaintances.models.user', 'User')
-            )
+            config('acquaintances.models.user', 'User')
         );
     }
 
@@ -296,7 +302,7 @@ class Interaction
         return Interaction::getFullModelName(
             config(
                 'acquaintances.models.friendship_groups',
-                FriendshipGroups::class
+                FriendFriendshipGroups::class
             )
         );
     }
@@ -305,7 +311,7 @@ class Interaction
     {
         return Interaction::getFullModelName(
             config(
-                'acquaintances.models.verifcation',
+                'acquaintances.models.verification',
                 Verification::class
             )
         );
@@ -374,5 +380,27 @@ class Interaction
     public static function flushRequestCache(): void
     {
         self::$requestCache = [];
+    }
+
+    /**
+     * Update counter cache columns on target models if they use HasAcquaintanceCounters.
+     */
+    protected static function updateCounters(Model $model, string $relation, stdClass $targets, string $direction): void
+    {
+        $relationType = self::$relationMap[$relation] ?? null;
+        if (! $relationType) {
+            return;
+        }
+
+        foreach ($targets->ids as $targetId) {
+            $targetModel = (new $targets->classname)->find($targetId);
+            if ($targetModel && in_array(HasAcquaintanceCounters::class, class_uses_recursive($targetModel))) {
+                if ($direction === 'increment') {
+                    $targetModel->incrementAcquaintanceCounter($relationType);
+                } else {
+                    $targetModel->decrementAcquaintanceCounter($relationType);
+                }
+            }
+        }
     }
 }

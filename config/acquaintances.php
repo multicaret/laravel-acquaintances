@@ -1,5 +1,11 @@
 <?php
 
+use Multicaret\Acquaintances\Models\FriendFriendshipGroups;
+use Multicaret\Acquaintances\Models\Friendship;
+use Multicaret\Acquaintances\Models\InteractionRelation;
+use Multicaret\Acquaintances\Models\Verification;
+use Multicaret\Acquaintances\Models\VerificationGroups;
+
 return [
     /**
      * Load migrations from package migrations,
@@ -8,34 +14,81 @@ return [
     'migrations' => false,
 
     /*
+    |--------------------------------------------------------------------------
+    | Features
+    |--------------------------------------------------------------------------
+    |
+    | Control which features of the package are enabled. When a feature is
+    | disabled, its migrations will not be loaded or published, keeping your
+    | database lean. By default all features are enabled.
+    |
+    | Available features: 'interactions', 'friendships', 'verifications'
+    |
+    */
+    'features' => [
+        'interactions' => true,
+        'friendships' => true,
+        'verifications' => true,
+    ],
+
+    /*
      * Models Related.
      */
+
+    /*
+     * The fully qualified class name of the User model.
+     * Set this if your User model lives in a custom namespace
+     * (e.g., 'App\Models\Core\User').
+     * When null, the package resolves the model using
+     * model_namespace + models.user (e.g., 'App\Models' + 'User').
+     */
+    'user_model_class_name' => null,
+
     'model_namespace' => (int) app()->version() <= 7 ? 'App' : 'App\Models',
     'models' => [
         /*
-         * Model name of User model
+         * Short class name of User model (used when user_model_class_name is null).
+         * You may also set a fully qualified class name here.
          */
         'user' => 'User',
         /*
          * Model name of Interaction Relation model
          */
-        'interaction_relation' => \Multicaret\Acquaintances\Models\InteractionRelation::class,
+        'interaction_relation' => InteractionRelation::class,
         /*
          * Model name of Interaction Relation model
          */
-        'friendship' => \Multicaret\Acquaintances\Models\Friendship::class,
+        'friendship' => Friendship::class,
         /*
          * Model name of Interaction Relation model
          */
-        'friendship_groups' => \Multicaret\Acquaintances\Models\FriendFriendshipGroups::class,
+        'friendship_groups' => FriendFriendshipGroups::class,
         /*
          * Model name of Interaction Relation model
          */
-        'verification' => \Multicaret\Acquaintances\Models\Verification::class,
+        'verification' => Verification::class,
         /*
          * Model name of Interaction Relation model
          */
-        'verification_groups' => \Multicaret\Acquaintances\Models\VerificationGroups::class,
+        'verification_groups' => VerificationGroups::class,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Morph Map Enforcement
+    |--------------------------------------------------------------------------
+    |
+    | When enabled, the package will call Relation::enforceMorphMap() during boot.
+    | This prevents fully qualified class names from being stored in *_type columns,
+    | reducing storage and avoiding issues when namespaces change.
+    | Define your morph map in the 'morph_map' array below.
+    |
+    */
+    'enforce_morph_map' => false,
+
+    'morph_map' => [
+        // 'user' => \App\Models\User::class,
+        // 'post' => \App\Models\Post::class,
     ],
 
     'tables' => [
@@ -116,13 +169,13 @@ return [
             'quality',
             'communication',
             'commitment',
-        ]
+        ],
     ],
 
     'friendships_groups' => [
         'acquaintances' => 0,
         'close_friends' => 1,
-        'family' => 2
+        'family' => 2,
     ],
 
     'verifications_groups' => [

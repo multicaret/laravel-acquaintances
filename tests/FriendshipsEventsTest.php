@@ -3,14 +3,15 @@
 namespace Tests;
 
 use Illuminate\Support\Facades\Event;
-use Mockery;
 use PHPUnit\Framework\Attributes\Test;
 
 class FriendshipsEventsTest extends TestCase
 {
-    // use DatabaseTransactions;
+    protected $sender;
 
-    public function setUp(): void
+    protected $recipient;
+
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -18,65 +19,77 @@ class FriendshipsEventsTest extends TestCase
         $this->recipient = createUser();
     }
 
-    public function tearDown(): void
+    #[Test]
+    public function friend_request_is_sent(): void
     {
-        Mockery::close();
+        Event::fake();
+
+        $this->sender->befriend($this->recipient);
+
+        Event::assertDispatched('acq.friendships.sent');
     }
 
     #[Test]
-    public function friend_request_is_sent()
-    {
-        Event::shouldReceive('dispatch')->once()->withArgs(['friendships.sent', Mockery::any()]);
-
-        $this->sender->befriend($this->recipient);
-    }
-
-    #[Test]
-    public function friend_request_is_accepted()
+    public function friend_request_is_accepted(): void
     {
         $this->sender->befriend($this->recipient);
-        Event::shouldReceive('dispatch')->once()->withArgs(['friendships.accepted', Mockery::any()]);
+
+        Event::fake();
 
         $this->recipient->acceptFriendRequest($this->sender);
+
+        Event::assertDispatched('acq.friendships.accepted');
     }
 
     #[Test]
-    public function friend_request_is_denied()
+    public function friend_request_is_denied(): void
     {
         $this->sender->befriend($this->recipient);
-        Event::shouldReceive('dispatch')->once()->withArgs(['friendships.denied', Mockery::any()]);
+
+        Event::fake();
 
         $this->recipient->denyFriendRequest($this->sender);
+
+        Event::assertDispatched('acq.friendships.denied');
     }
 
     #[Test]
-    public function friend_is_blocked()
+    public function friend_is_blocked(): void
     {
         $this->sender->befriend($this->recipient);
         $this->recipient->acceptFriendRequest($this->sender);
-        Event::shouldReceive('dispatch')->once()->withArgs(['friendships.blocked', Mockery::any()]);
+
+        Event::fake();
 
         $this->recipient->blockFriend($this->sender);
+
+        Event::assertDispatched('acq.friendships.blocked');
     }
 
     #[Test]
-    public function friend_is_unblocked()
+    public function friend_is_unblocked(): void
     {
         $this->sender->befriend($this->recipient);
         $this->recipient->acceptFriendRequest($this->sender);
         $this->recipient->blockFriend($this->sender);
-        Event::shouldReceive('dispatch')->once()->withArgs(['friendships.unblocked', Mockery::any()]);
+
+        Event::fake();
 
         $this->recipient->unblockFriend($this->sender);
+
+        Event::assertDispatched('acq.friendships.unblocked');
     }
 
     #[Test]
-    public function friendship_is_cancelled()
+    public function friendship_is_cancelled(): void
     {
         $this->sender->befriend($this->recipient);
         $this->recipient->acceptFriendRequest($this->sender);
-        Event::shouldReceive('dispatch')->once()->withArgs(['friendships.cancelled', Mockery::any()]);
+
+        Event::fake();
 
         $this->recipient->unfriend($this->sender);
+
+        Event::assertDispatched('acq.friendships.cancelled');
     }
 }

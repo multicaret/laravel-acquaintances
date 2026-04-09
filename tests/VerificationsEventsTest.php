@@ -1,89 +1,95 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests;
 
-use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
-use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
-use Mockery;
+use PHPUnit\Framework\Attributes\Test;
 
 class VerificationsEventsTest extends TestCase
 {
-	use RefreshDatabase;
+    protected $sender;
 
-	protected $sender;
-	protected $recipient;
+    protected $recipient;
 
-	public function setUp(): void
-	{
-		parent::setUp();
+    protected function setUp(): void
+    {
+        parent::setUp();
 
-		$this->sender = User::factory()->create();
-		$this->recipient = User::factory()->create();
-	}
+        $this->sender = createUser();
+        $this->recipient = createUser();
+    }
 
-	public function tearDown(): void
-	{
-		Mockery::close();
-		parent::tearDown();
-	}
+    #[Test]
+    public function verification_request_is_sent(): void
+    {
+        Event::fake();
 
-	/** @test */
-	public function verification_request_is_sent()
-	{
-		Event::shouldReceive('dispatch')->once()->withArgs(['acq.verifications.sent', Mockery::any()]);
+        $this->sender->verify($this->recipient, 'Test verification message');
 
-		$this->sender->verify($this->recipient, 'Test verification message');
-	}
+        Event::assertDispatched('acq.verifications.sent');
+    }
 
-	/** @test */
-	public function verification_request_is_accepted()
-	{
-		$this->sender->verify($this->recipient, 'Test verification message');
-		Event::shouldReceive('dispatch')->once()->withArgs(['acq.verifications.accepted', Mockery::any()]);
+    #[Test]
+    public function verification_request_is_accepted(): void
+    {
+        $this->sender->verify($this->recipient, 'Test verification message');
 
-		$this->recipient->acceptVerificationRequest($this->sender);
-	}
+        Event::fake();
 
-	/** @test */
-	public function verification_request_is_denied()
-	{
-		$this->sender->verify($this->recipient, 'Test verification message');
-		Event::shouldReceive('dispatch')->once()->withArgs(['acq.verifications.denied', Mockery::any()]);
+        $this->recipient->acceptVerificationRequest($this->sender);
 
-		$this->recipient->denyVerificationRequest($this->sender);
-	}
+        Event::assertDispatched('acq.verifications.accepted');
+    }
 
-	/** @test */
-	public function verifier_is_blocked()
-	{
-		$this->sender->verify($this->recipient, 'Test verification message');
-		$this->recipient->acceptVerificationRequest($this->sender);
-		Event::shouldReceive('dispatch')->once()->withArgs(['acq.verifications.blocked', Mockery::any()]);
+    #[Test]
+    public function verification_request_is_denied(): void
+    {
+        $this->sender->verify($this->recipient, 'Test verification message');
 
-		$this->recipient->blockVerification($this->sender);
-	}
+        Event::fake();
 
-	/** @test */
-	public function verifier_is_unblocked()
-	{
-		$this->sender->verify($this->recipient, 'Test verification message');
-		$this->recipient->acceptVerificationRequest($this->sender);
-		$this->recipient->blockVerification($this->sender);
-		Event::shouldReceive('dispatch')->once()->withArgs(['acq.verifications.unblocked', Mockery::any()]);
+        $this->recipient->denyVerificationRequest($this->sender);
 
-		$this->recipient->unblockVerification($this->sender);
-	}
+        Event::assertDispatched('acq.verifications.denied');
+    }
 
-	/** @test */
-	public function verification_is_cancelled()
-	{
-		$this->sender->verify($this->recipient, 'Test verification message');
-		$this->recipient->acceptVerificationRequest($this->sender);
-		Event::shouldReceive('dispatch')->once()->withArgs(['acq.verifications.cancelled', Mockery::any()]);
+    #[Test]
+    public function verifier_is_blocked(): void
+    {
+        $this->sender->verify($this->recipient, 'Test verification message');
+        $this->recipient->acceptVerificationRequest($this->sender);
 
-		$this->recipient->unverify($this->sender);
-	}
+        Event::fake();
+
+        $this->recipient->blockVerification($this->sender);
+
+        Event::assertDispatched('acq.verifications.blocked');
+    }
+
+    #[Test]
+    public function verifier_is_unblocked(): void
+    {
+        $this->sender->verify($this->recipient, 'Test verification message');
+        $this->recipient->acceptVerificationRequest($this->sender);
+        $this->recipient->blockVerification($this->sender);
+
+        Event::fake();
+
+        $this->recipient->unblockVerification($this->sender);
+
+        Event::assertDispatched('acq.verifications.unblocked');
+    }
+
+    #[Test]
+    public function verification_is_cancelled(): void
+    {
+        $this->sender->verify($this->recipient, 'Test verification message');
+        $this->recipient->acceptVerificationRequest($this->sender);
+
+        Event::fake();
+
+        $this->recipient->unverify($this->sender);
+
+        Event::assertDispatched('acq.verifications.cancelled');
+    }
 }

@@ -8,9 +8,24 @@
 
 Clean, modular social features for Eloquent models: Friendships, Verifications, Interactions (Follow/Like/Favorite/Report/Subscribe/Vote/View), and multi-type Ratings.
 
-- PHP >= 8.0
-- Illuminate components ^9.0 | ^10.0 | ^11.0 | ^12.0 (Laravel 9–12)
+- PHP >= 8.1
+- Illuminate components ^9.0 | ^10.0 | ^11.0 | ^12.0 | ^13.0 (Laravel 9–13)
 - Laravel News: https://laravel-news.com/manage-friendships-likes-and-more-with-the-acquaintances-laravel-package
+
+## What's New in v4
+
+- **UUID / ULID morph support** — configurable per table via `morphs`, `uuidMorphs`, or `ulidMorphs`.
+- **Caching layer** — in-memory request cache + optional persistent cache for interaction checks with automatic invalidation.
+- **`withAcquaintanceCounts()` macro** — eager-load interaction counts in a single query.
+- **`HasAcquaintanceCounters` trait** — auto-increment/decrement counter columns on your model's table.
+- **`AcquaintancesCleanupJob`** — queued mass deletion of acquaintance data for deleted models.
+- **Database indexes** — composite and unique indexes on all tables for faster lookups.
+- **Morph map registration** — automatic morph map for all package models.
+- **Strict return types** on all traits and models.
+- **DB transactions** for `blockFriend()` and `blockVerification()`.
+- **Interactions-only mode** — disable friendships and/or verifications via `features` config to skip their migrations entirely. Granular per-feature publish tags available.
+
+See [CHANGELOG.md](CHANGELOG.md) for the full list and [Upgrade Notes](docs/12.upgrade.md) for migration steps.
 
 ## TL;DR
 
@@ -65,6 +80,43 @@ php artisan vendor:publish --provider="Multicaret\\Acquaintances\\AcquaintancesS
 php artisan migrate
 ```
 
+### Interactions-Only Mode
+
+If you only need interactions (Follow, Like, Favorite, Subscribe, Vote, View, Report, Rate) and don't need Friendships or Verifications, disable them in `config/acquaintances.php`:
+
+```php
+'features' => [
+    'interactions' => true,
+    'friendships' => false,
+    'verifications' => false,
+],
+```
+
+This prevents friendship and verification migrations from being loaded or published, keeping your database lean.
+
+You can also publish migrations for specific features using granular tags:
+
+```bash
+# Only interaction migrations
+php artisan vendor:publish --tag=acquaintances-migrations-interactions
+
+# Only friendship migrations
+php artisan vendor:publish --tag=acquaintances-migrations-friendships
+
+# Only verification migrations
+php artisan vendor:publish --tag=acquaintances-migrations-verifications
+```
+
+### Custom User Model Location
+
+If your `User` model lives in a non-standard namespace (e.g., `App\Models\Core\User`), set `user_model_class_name` in `config/acquaintances.php`:
+
+```php
+'user_model_class_name' => \App\Models\Core\User::class,
+```
+
+When `null` (default), the package resolves the user model from `model_namespace` + `models.user` (i.e., `App\Models\User`).
+
 3) Add traits to your models
 
 ```php
@@ -89,10 +141,12 @@ Explore the feature guides linked above for full APIs and examples.
 
 ## Compatibility
 
-- Laravel 9–12 (Illuminate components only; no laravel/framework hard dependency)
-- PHP >= 8.0
+| Version | PHP       | Laravel       |
+|---------|-----------|---------------|
+| v4      | >= 8.1    | 9, 10, 11, 12, 13 |
+| v3.x    | >= 8.0    | 9, 10, 11, 12 |
 
 ## Contributing / Changelog
 
 - Contributing: see CONTRIBUTING.md
-- Changes: see CHANGELOG.md
+- Changes: see [CHANGELOG.md](CHANGELOG.md)

@@ -33,7 +33,7 @@ trait CanFollow
      * @param  int|array|Model  $targets
      * @param  string  $class
      */
-    public function unfollow($targets, $class = __CLASS__): array
+    public function unfollow($targets, $class = __CLASS__): int
     {
         Event::dispatch('acq.followships.unfollow', [$this, $targets]);
 

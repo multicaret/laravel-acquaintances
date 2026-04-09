@@ -23,7 +23,7 @@ abstract class TestCase extends OrchestraTestCase
             'driver' => 'mysql',
             'host' => '127.0.0.1',
             'port' => '3306',
-            'database' => 'swan',
+            'database' => 'acquaintances_test',
             'username' => 'root',
             'password' => 'secret',
             'charset' => 'utf8mb4',

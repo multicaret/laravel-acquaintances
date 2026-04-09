@@ -65,7 +65,7 @@ trait CanRate
      *
      * @throws \Exception
      */
-    public function unrate($targets, $ratingType = null, $class = __CLASS__): array
+    public function unrate($targets, $ratingType = null, $class = __CLASS__): int
     {
         Event::dispatch('acq.ratings.unrate', [$this, $targets]);
 

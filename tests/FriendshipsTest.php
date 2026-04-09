@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use App\User;
 use PHPUnit\Framework\Attributes\Test;
 
 class FriendshipsTest extends TestCase
@@ -30,7 +31,6 @@ class FriendshipsTest extends TestCase
 
         $this->assertCount(1, $recipient->getFriendRequests());
     }
-
 
     #[Test]
     public function user_can_send_a_friend_request_if_frienship_is_denied()
@@ -74,14 +74,14 @@ class FriendshipsTest extends TestCase
     {
         $sender = createUser();
         $recipient = createUser();
-        //send fr
+        // send fr
         $sender->befriend($recipient);
-        //accept fr
+        // accept fr
         $recipient->acceptFriendRequest($sender);
 
         $this->assertTrue($recipient->isFriendWith($sender));
         $this->assertTrue($sender->isFriendWith($recipient));
-        //fr has been delete
+        // fr has been delete
         $this->assertCount(0, $recipient->getFriendRequests());
     }
 
@@ -90,7 +90,7 @@ class FriendshipsTest extends TestCase
     {
         $sender = createUser();
         $recipient = createUser();
-        //send fr
+        // send fr
         $sender->befriend($recipient);
 
         $this->assertFalse($recipient->isFriendWith($sender));
@@ -102,7 +102,7 @@ class FriendshipsTest extends TestCase
     {
         $sender = createUser();
         $recipient = createUser();
-        //send fr
+        // send fr
         $sender->befriend($recipient);
 
         $this->assertTrue($recipient->hasFriendRequestFrom($sender));
@@ -114,7 +114,7 @@ class FriendshipsTest extends TestCase
     {
         $sender = createUser();
         $recipient = createUser();
-        //send fr
+        // send fr
         $sender->befriend($recipient);
 
         $this->assertFalse($recipient->hasSentFriendRequestTo($sender));
@@ -126,9 +126,9 @@ class FriendshipsTest extends TestCase
     {
         $sender = createUser();
         $recipient = createUser();
-        //send fr
+        // send fr
         $sender->befriend($recipient);
-        //accept fr
+        // accept fr
         $recipient->acceptFriendRequest($sender);
 
         $this->assertFalse($recipient->hasFriendRequestFrom($sender));
@@ -141,7 +141,7 @@ class FriendshipsTest extends TestCase
         $sender = createUser();
         $recipient = createUser();
 
-        //send fr
+        // send fr
         $sender->befriend($recipient);
 
         $sender->acceptFriendRequest($recipient);
@@ -159,7 +159,7 @@ class FriendshipsTest extends TestCase
 
         $this->assertFalse($recipient->isFriendWith($sender));
 
-        //fr has been delete
+        // fr has been delete
         $this->assertCount(0, $recipient->getFriendRequests());
         $this->assertCount(1, $sender->getDeniedFriendships());
     }
@@ -174,7 +174,7 @@ class FriendshipsTest extends TestCase
 
         $this->assertTrue($recipient->isBlockedBy($sender));
         $this->assertTrue($sender->hasBlocked($recipient));
-        //sender is not blocked by receipient
+        // sender is not blocked by receipient
         $this->assertFalse($sender->isBlockedBy($recipient));
         $this->assertFalse($recipient->hasBlocked($sender));
     }
@@ -365,7 +365,7 @@ class FriendshipsTest extends TestCase
         $this->assertCount(0, $recipients[2]->getFriends());
         $this->assertCount(0, $recipients[3]->getFriends());
 
-        $this->containsOnlyInstancesOf(\App\User::class, $sender->getFriends());
+        $this->containsOnlyInstancesOf(User::class, $sender->getFriends());
     }
 
     #[Test]
@@ -384,7 +384,6 @@ class FriendshipsTest extends TestCase
         $recipients[3]->acceptFriendRequest($sender);
         $recipients[4]->acceptFriendRequest($sender);
 
-
         $this->assertCount(2, $sender->getFriends(2));
         $this->assertCount(4, $sender->getFriends(0));
         $this->assertCount(4, $sender->getFriends(10));
@@ -392,7 +391,7 @@ class FriendshipsTest extends TestCase
         $this->assertCount(0, $recipients[2]->getFriends());
         $this->assertCount(0, $recipients[5]->getFriends(2));
 
-        $this->containsOnlyInstancesOf(\App\User::class, $sender->getFriends());
+        $this->containsOnlyInstancesOf(User::class, $sender->getFriends());
     }
 
     #[Test]
@@ -406,7 +405,7 @@ class FriendshipsTest extends TestCase
             $sender->befriend($recipient);
             $recipient->acceptFriendRequest($sender);
 
-            //add some friends to each recipient too
+            // add some friends to each recipient too
             foreach ($fofs->shift() as $fof) {
                 $recipient->befriend($fof);
                 $fof->acceptFriendRequest($recipient);
@@ -419,7 +418,7 @@ class FriendshipsTest extends TestCase
 
         $this->assertCount(5, $sender->getFriendsOfFriends());
 
-        $this->containsOnlyInstancesOf(\App\User::class, $sender->getFriendsOfFriends());
+        $this->containsOnlyInstancesOf(User::class, $sender->getFriendsOfFriends());
     }
 
     #[Test]
@@ -433,7 +432,7 @@ class FriendshipsTest extends TestCase
             $sender->befriend($recipient);
             $recipient->acceptFriendRequest($sender);
 
-            //add some friends to each recipient too
+            // add some friends to each recipient too
             foreach ($fofs->shift() as $fof) {
                 $recipient->befriend($fof);
                 $fof->acceptFriendRequest($recipient);
@@ -448,7 +447,7 @@ class FriendshipsTest extends TestCase
         $this->assertCount(2, $sender->getMutualFriends($recipients[1]));
         $this->assertCount(2, $recipients[1]->getMutualFriends($sender));
 
-        $this->containsOnlyInstancesOf(\App\User::class, $sender->getMutualFriends($recipients[0]));
+        $this->containsOnlyInstancesOf(User::class, $sender->getMutualFriends($recipients[0]));
     }
 
     #[Test]
@@ -462,7 +461,7 @@ class FriendshipsTest extends TestCase
             $sender->befriend($recipient);
             $recipient->acceptFriendRequest($sender);
 
-            //add some friends to each recipient too
+            // add some friends to each recipient too
             foreach ($fofs->shift() as $fof) {
                 $recipient->befriend($fof);
                 $fof->acceptFriendRequest($recipient);
@@ -480,7 +479,7 @@ class FriendshipsTest extends TestCase
 
         $this->assertCount(1, $recipients[1]->getMutualFriends($recipients[0], 10));
 
-        $this->containsOnlyInstancesOf(\App\User::class, $sender->getMutualFriends($recipients[0], 2));
+        $this->containsOnlyInstancesOf(User::class, $sender->getMutualFriends($recipients[0], 2));
     }
 
     #[Test]
@@ -494,7 +493,7 @@ class FriendshipsTest extends TestCase
             $sender->befriend($recipient);
             $recipient->acceptFriendRequest($sender);
 
-            //add some friends to each recipient too
+            // add some friends to each recipient too
             foreach ($fofs->shift() as $fof) {
                 $recipient->befriend($fof);
                 $fof->acceptFriendRequest($recipient);

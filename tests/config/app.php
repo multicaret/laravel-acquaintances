@@ -1,6 +1,7 @@
 <?php
+
 return [
     'providers' => append_config([
-        'Multicaret\Acquaintances\AcquaintancesServiceProvider'
+        'Multicaret\Acquaintances\AcquaintancesServiceProvider',
     ]),
 ];

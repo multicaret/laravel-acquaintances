@@ -29,10 +29,10 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign($userIdFkColumnName)
-                  ->references($userModel->getKeyName())
-                  ->on($userModel->getTable())
-                  ->onUpdate('cascade')
-                  ->onDelete('cascade');
+                ->references($userModel->getKeyName())
+                ->on($userModel->getTable())
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
 
             $table->unique(
                 [$userIdFkColumnName, 'subject_id', 'subject_type', 'relation'],

@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use App\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Test;
 
@@ -13,7 +14,6 @@ class FriendshipsGroupsTest extends TestCase
 {
     use DatabaseTransactions;
 
-
     #[Test]
     public function user_can_add_a_friend_to_a_group()
     {
@@ -24,11 +24,11 @@ class FriendshipsGroupsTest extends TestCase
         $sender->befriend($recipient);
         $recipient->acceptFriendRequest($sender);
 
-        $this->assertTrue((boolean) $recipient->groupFriend($sender, 'acquaintances'));
-        $this->assertTrue((boolean) $sender->groupFriend($recipient, 'family'));
+        $this->assertTrue((bool) $recipient->groupFriend($sender, 'acquaintances'));
+        $this->assertTrue((bool) $sender->groupFriend($recipient, 'family'));
 
         // it only adds a friend to a group once
-        $this->assertFalse((boolean) $sender->groupFriend($recipient, 'family'));
+        $this->assertFalse((bool) $sender->groupFriend($recipient, 'family'));
 
         // expect that users have been attached to specified groups
         $this->assertCount(1, $sender->getFriends(0, 'family'));
@@ -45,7 +45,7 @@ class FriendshipsGroupsTest extends TestCase
         $sender = createUser();
         $stranger = createUser();
 
-        $this->assertFalse((boolean) $sender->groupFriend($stranger, 'family'));
+        $this->assertFalse((bool) $sender->groupFriend($stranger, 'family'));
         $this->assertCount(0, $sender->getFriends(0, 'family'));
     }
 
@@ -122,7 +122,6 @@ class FriendshipsGroupsTest extends TestCase
         $this->assertCount(10, $sender->getFriends());
     }
 
-
     #[Test]
     public function it_returns_all_user_friendships_by_group()
     {
@@ -148,14 +147,13 @@ class FriendshipsGroupsTest extends TestCase
 
         }
 
-        //Assertions
+        // Assertions
 
         $this->assertCount(3, $sender->getAllFriendships('acquaintances'));
         $this->assertCount(1, $sender->getAllFriendships('family'));
         $this->assertCount(0, $sender->getAllFriendships('close_friends'));
         $this->assertCount(5, $sender->getAllFriendships('whatever'));
     }
-
 
     #[Test]
     public function it_returns_accepted_user_friendships_by_group()
@@ -190,14 +188,13 @@ class FriendshipsGroupsTest extends TestCase
             $sender->groupFriend($recipient, 'acquaintances');
         }
 
-        //Assertions
+        // Assertions
 
         $this->assertEquals(5, $sender->getFriendsCount('acquaintances'));
         $this->assertEquals(0, $sender->getFriendsCount('family'));
         $this->assertEquals(0, $recipient->getFriendsCount('acquaintances'));
         $this->assertEquals(0, $recipient->getFriendsCount('family'));
     }
-
 
     #[Test]
     public function it_returns_user_friends_by_group_per_page()
@@ -227,7 +224,7 @@ class FriendshipsGroupsTest extends TestCase
 
         $sender->groupFriend($recipients[4], 'family');
 
-        //Assertions
+        // Assertions
 
         $this->assertCount(2, $sender->getFriends(2, 'acquaintances'));
         $this->assertCount(4, $sender->getFriends(0, 'acquaintances'));
@@ -238,8 +235,6 @@ class FriendshipsGroupsTest extends TestCase
 
         $this->assertCount(1, $sender->getFriends(0, 'family'));
 
-        $this->containsOnlyInstancesOf(\App\User::class, $sender->getFriends(0, 'acquaintances'));
+        $this->containsOnlyInstancesOf(User::class, $sender->getFriends(0, 'acquaintances'));
     }
-
-
 }

@@ -1,21 +1,18 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests;
 
+use App\User;
+use Multicaret\Acquaintances\Status;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
-use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class VerificationsTest extends TestCase
 {
-    use RefreshDatabase;
-
     #[Test]
     public function user_can_send_a_verification_request()
     {
-        $sender = User::factory()->create();
-        $recipient = User::factory()->create();
+        $sender = createUser();
+        $recipient = createUser();
 
         $sender->verify($recipient, 'This user is verified for their expertise');
 
@@ -25,8 +22,8 @@ class VerificationsTest extends TestCase
     #[Test]
     public function user_can_not_send_a_verification_request_if_verification_is_pending()
     {
-        $sender = User::factory()->create();
-        $recipient = User::factory()->create();
+        $sender = createUser();
+        $recipient = createUser();
         $sender->verify($recipient, 'Test verification message');
         $sender->verify($recipient, 'Second verification message');
         $sender->verify($recipient, 'Third verification message');
@@ -37,8 +34,8 @@ class VerificationsTest extends TestCase
     #[Test]
     public function user_can_send_a_verification_request_if_verification_is_denied()
     {
-        $sender = User::factory()->create();
-        $recipient = User::factory()->create();
+        $sender = createUser();
+        $recipient = createUser();
 
         $sender->verify($recipient, 'Initial verification message');
         $recipient->denyVerificationRequest($sender);
@@ -51,8 +48,8 @@ class VerificationsTest extends TestCase
     #[Test]
     public function user_can_remove_a_verification_request()
     {
-        $sender = User::factory()->create();
-        $recipient = User::factory()->create();
+        $sender = createUser();
+        $recipient = createUser();
 
         $sender->verify($recipient, 'Test verification message');
         $this->assertCount(1, $recipient->getVerificationRequests());
@@ -74,25 +71,25 @@ class VerificationsTest extends TestCase
     #[Test]
     public function user_is_verified_with_another_user_if_accepts_a_verification_request()
     {
-        $sender = User::factory()->create();
-        $recipient = User::factory()->create();
-        //send verification request
+        $sender = createUser();
+        $recipient = createUser();
+        // send verification request
         $sender->verify($recipient, 'Test verification message');
-        //accept verification request
+        // accept verification request
         $recipient->acceptVerificationRequest($sender);
 
         $this->assertTrue($recipient->isVerifiedWith($sender));
         $this->assertTrue($sender->isVerifiedWith($recipient));
-        //verification request has been deleted
+        // verification request has been deleted
         $this->assertCount(0, $recipient->getVerificationRequests());
     }
 
     #[Test]
     public function user_is_not_verified_with_another_user_until_he_accepts_a_verification_request()
     {
-        $sender = User::factory()->create();
-        $recipient = User::factory()->create();
-        //send verification request
+        $sender = createUser();
+        $recipient = createUser();
+        // send verification request
         $sender->verify($recipient, 'Test verification message');
 
         $this->assertFalse($recipient->isVerifiedWith($sender));
@@ -102,9 +99,9 @@ class VerificationsTest extends TestCase
     #[Test]
     public function user_has_verification_request_from_another_user_if_he_received_a_verification_request()
     {
-        $sender = User::factory()->create();
-        $recipient = User::factory()->create();
-        //send verification request
+        $sender = createUser();
+        $recipient = createUser();
+        // send verification request
         $sender->verify($recipient, 'Test verification message');
 
         $this->assertTrue($recipient->hasVerificationRequestFrom($sender));
@@ -114,9 +111,9 @@ class VerificationsTest extends TestCase
     #[Test]
     public function user_has_sent_verification_request_to_this_user_if_he_already_sent_request()
     {
-        $sender = User::factory()->create();
-        $recipient = User::factory()->create();
-        //send verification request
+        $sender = createUser();
+        $recipient = createUser();
+        // send verification request
         $sender->verify($recipient, 'Test verification message');
 
         $this->assertFalse($recipient->hasSentVerificationRequestTo($sender));
@@ -126,11 +123,11 @@ class VerificationsTest extends TestCase
     #[Test]
     public function user_has_not_verification_request_from_another_user_if_he_accepted_the_verification_request()
     {
-        $sender = User::factory()->create();
-        $recipient = User::factory()->create();
-        //send verification request
+        $sender = createUser();
+        $recipient = createUser();
+        // send verification request
         $sender->verify($recipient, 'Test verification message');
-        //accept verification request
+        // accept verification request
         $recipient->acceptVerificationRequest($sender);
 
         $this->assertFalse($recipient->hasVerificationRequestFrom($sender));
@@ -140,10 +137,10 @@ class VerificationsTest extends TestCase
     #[Test]
     public function user_cannot_accept_his_own_verification_request()
     {
-        $sender = User::factory()->create();
-        $recipient = User::factory()->create();
+        $sender = createUser();
+        $recipient = createUser();
 
-        //send verification request
+        // send verification request
         $sender->verify($recipient, 'Test verification message');
 
         $sender->acceptVerificationRequest($recipient);
@@ -153,15 +150,15 @@ class VerificationsTest extends TestCase
     #[Test]
     public function user_can_deny_a_verification_request()
     {
-        $sender = User::factory()->create();
-        $recipient = User::factory()->create();
+        $sender = createUser();
+        $recipient = createUser();
         $sender->verify($recipient, 'Test verification message');
 
         $recipient->denyVerificationRequest($sender);
 
         $this->assertFalse($recipient->isVerifiedWith($sender));
 
-        //verification request has been updated to denied status
+        // verification request has been updated to denied status
         $this->assertCount(0, $recipient->getVerificationRequests());
         $this->assertCount(1, $sender->getDeniedVerifications());
     }
@@ -169,15 +166,15 @@ class VerificationsTest extends TestCase
     #[Test]
     public function user_can_block_another_user()
     {
-        $sender = User::factory()->create();
-        $recipient = User::factory()->create();
+        $sender = createUser();
+        $recipient = createUser();
 
         $sender->blockVerification($recipient);
 
         // Verification blocking creates a verification record with BLOCKED status
         // But blocking checks are still done via friendship methods
         $verification = $sender->getVerification($recipient);
-        $this->assertEquals(\Multicaret\Acquaintances\Status::BLOCKED, $verification->status);
+        $this->assertEquals(Status::BLOCKED, $verification->status);
 
         // The actual blocking status is checked via friendship methods
         // since verification blocking depends on friendship blocking
@@ -187,12 +184,12 @@ class VerificationsTest extends TestCase
     #[Test]
     public function user_can_unblock_a_blocked_user()
     {
-        $sender = User::factory()->create();
-        $recipient = User::factory()->create();
+        $sender = createUser();
+        $recipient = createUser();
 
         $sender->blockVerification($recipient);
         $verification = $sender->getVerification($recipient);
-        $this->assertEquals(\Multicaret\Acquaintances\Status::BLOCKED, $verification->status);
+        $this->assertEquals(Status::BLOCKED, $verification->status);
 
         $sender->unblockVerification($recipient);
 
@@ -204,12 +201,12 @@ class VerificationsTest extends TestCase
     #[Test]
     public function user_block_is_permanent_unless_blocker_decides_to_unblock()
     {
-        $sender = User::factory()->create();
-        $recipient = User::factory()->create();
+        $sender = createUser();
+        $recipient = createUser();
 
         $sender->blockVerification($recipient);
         $senderVerification = $sender->getVerification($recipient);
-        $this->assertEquals(\Multicaret\Acquaintances\Status::BLOCKED, $senderVerification->status);
+        $this->assertEquals(Status::BLOCKED, $senderVerification->status);
 
         // Check that there's one blocked verification between the users
         $this->assertCount(1, $sender->getBlockedVerifications());
@@ -218,7 +215,7 @@ class VerificationsTest extends TestCase
         // This should replace the previous verification since there can only be one between two users
         $recipient->blockVerification($sender);
         $verificationFromRecipient = $recipient->getVerification($sender);
-        $this->assertEquals(\Multicaret\Acquaintances\Status::BLOCKED, $verificationFromRecipient->status);
+        $this->assertEquals(Status::BLOCKED, $verificationFromRecipient->status);
 
         // Now the recipient is the sender of the blocked verification
         // Sender should have 1 blocked verification (received from recipient)
@@ -237,8 +234,8 @@ class VerificationsTest extends TestCase
     #[Test]
     public function user_cannot_send_verification_request_after_verification_block()
     {
-        $sender = User::factory()->create();
-        $recipient = User::factory()->create();
+        $sender = createUser();
+        $recipient = createUser();
 
         // First send a verification request and have it accepted
         $sender->verify($recipient, 'Initial verification message');
@@ -248,7 +245,7 @@ class VerificationsTest extends TestCase
         // Now block the verification
         $sender->blockVerification($recipient);
         $verification = $sender->getVerification($recipient);
-        $this->assertEquals(\Multicaret\Acquaintances\Status::BLOCKED, $verification->status);
+        $this->assertEquals(Status::BLOCKED, $verification->status);
 
         // User should NOT be able to send new verification requests after blocking
         // The blocked verification prevents new ones until unblocked
@@ -263,8 +260,8 @@ class VerificationsTest extends TestCase
     #[Test]
     public function it_returns_all_user_verifications()
     {
-        $sender = User::factory()->create();
-        $recipients = User::factory()->count(3)->create();
+        $sender = createUser();
+        $recipients = createUser([], 3);
 
         foreach ($recipients as $recipient) {
             $sender->verify($recipient, 'Test verification message');
@@ -279,8 +276,8 @@ class VerificationsTest extends TestCase
     #[Test]
     public function it_returns_accepted_user_verifications_number()
     {
-        $sender = User::factory()->create();
-        $recipients = User::factory()->count(3)->create();
+        $sender = createUser();
+        $recipients = createUser([], 3);
 
         foreach ($recipients as $recipient) {
             $sender->verify($recipient, 'Test verification message');
@@ -295,8 +292,8 @@ class VerificationsTest extends TestCase
     #[Test]
     public function it_returns_accepted_user_verifications()
     {
-        $sender = User::factory()->create();
-        $recipients = User::factory()->count(3)->create();
+        $sender = createUser();
+        $recipients = createUser([], 3);
 
         foreach ($recipients as $recipient) {
             $sender->verify($recipient, 'Test verification message');
@@ -311,8 +308,8 @@ class VerificationsTest extends TestCase
     #[Test]
     public function it_returns_only_accepted_user_verifications()
     {
-        $sender = User::factory()->create();
-        $recipients = User::factory()->count(4)->create();
+        $sender = createUser();
+        $recipients = createUser([], 4);
 
         foreach ($recipients as $recipient) {
             $sender->verify($recipient, 'Test verification message');
@@ -332,8 +329,8 @@ class VerificationsTest extends TestCase
     #[Test]
     public function it_returns_pending_user_verifications()
     {
-        $sender = User::factory()->create();
-        $recipients = User::factory()->count(3)->create();
+        $sender = createUser();
+        $recipients = createUser([], 3);
 
         foreach ($recipients as $recipient) {
             $sender->verify($recipient, 'Test verification message');
@@ -346,8 +343,8 @@ class VerificationsTest extends TestCase
     #[Test]
     public function it_returns_denied_user_verifications()
     {
-        $sender = User::factory()->create();
-        $recipients = User::factory()->count(3)->create();
+        $sender = createUser();
+        $recipients = createUser([], 3);
 
         foreach ($recipients as $recipient) {
             $sender->verify($recipient, 'Test verification message');
@@ -362,8 +359,8 @@ class VerificationsTest extends TestCase
     #[Test]
     public function it_returns_blocked_user_verifications()
     {
-        $sender = User::factory()->create();
-        $recipients = User::factory()->count(3)->create();
+        $sender = createUser();
+        $recipients = createUser([], 3);
 
         foreach ($recipients as $recipient) {
             $sender->verify($recipient, 'Test verification message');
@@ -378,8 +375,8 @@ class VerificationsTest extends TestCase
     #[Test]
     public function it_returns_user_verifiers()
     {
-        $sender = User::factory()->create();
-        $recipients = User::factory()->count(4)->create();
+        $sender = createUser();
+        $recipients = createUser([], 4);
 
         foreach ($recipients as $recipient) {
             $sender->verify($recipient, 'Test verification message');
@@ -400,8 +397,8 @@ class VerificationsTest extends TestCase
     #[Test]
     public function it_returns_user_verifiers_per_page()
     {
-        $sender = User::factory()->create();
-        $recipients = User::factory()->count(6)->create();
+        $sender = createUser();
+        $recipients = createUser([], 6);
 
         foreach ($recipients as $recipient) {
             $sender->verify($recipient, 'Test verification message');
@@ -412,7 +409,6 @@ class VerificationsTest extends TestCase
         $recipients[2]->denyVerificationRequest($sender);
         $recipients[3]->acceptVerificationRequest($sender);
         $recipients[4]->acceptVerificationRequest($sender);
-
 
         $this->assertCount(2, $sender->getVerifiers(2));
         $this->assertCount(4, $sender->getVerifiers(0));
@@ -427,15 +423,15 @@ class VerificationsTest extends TestCase
     #[Test]
     public function it_returns_user_verifiers_of_verifiers()
     {
-        $sender = User::factory()->create();
-        $recipients = User::factory()->count(2)->create();
-        $vovs = User::factory()->count(5)->create()->chunk(3);
+        $sender = createUser();
+        $recipients = createUser([], 2);
+        $vovs = createUser([], 5)->chunk(3);
 
         foreach ($recipients as $index => $recipient) {
             $sender->verify($recipient, 'Test verification message');
             $recipient->acceptVerificationRequest($sender);
 
-            //add some verifiers to each recipient too
+            // add some verifiers to each recipient too
             foreach ($vovs[$index] as $vov) {
                 $recipient->verify($vov, 'Test verification message');
                 $vov->acceptVerificationRequest($recipient);
@@ -454,15 +450,15 @@ class VerificationsTest extends TestCase
     #[Test]
     public function it_returns_user_mutual_verifiers()
     {
-        $sender = User::factory()->create();
-        $recipients = User::factory()->count(2)->create();
-        $vovs = User::factory()->count(5)->create()->chunk(3);
+        $sender = createUser();
+        $recipients = createUser([], 2);
+        $vovs = createUser([], 5)->chunk(3);
 
         foreach ($recipients as $index => $recipient) {
             $sender->verify($recipient, 'Test verification message');
             $recipient->acceptVerificationRequest($sender);
 
-            //add some verifiers to each recipient too
+            // add some verifiers to each recipient too
             foreach ($vovs[$index] as $vov) {
                 $recipient->verify($vov, 'Test verification message');
                 $vov->acceptVerificationRequest($recipient);
@@ -483,15 +479,15 @@ class VerificationsTest extends TestCase
     #[Test]
     public function it_returns_user_mutual_verifiers_per_page()
     {
-        $sender = User::factory()->create();
-        $recipients = User::factory()->count(2)->create();
-        $vovs = User::factory()->count(8)->create()->chunk(5);
+        $sender = createUser();
+        $recipients = createUser([], 2);
+        $vovs = createUser([], 8)->chunk(5);
 
         foreach ($recipients as $index => $recipient) {
             $sender->verify($recipient, 'Test verification message');
             $recipient->acceptVerificationRequest($sender);
 
-            //add some verifiers to each recipient too
+            // add some verifiers to each recipient too
             foreach ($vovs[$index] as $vov) {
                 $recipient->verify($vov, 'Test verification message');
                 $vov->acceptVerificationRequest($recipient);
@@ -515,15 +511,15 @@ class VerificationsTest extends TestCase
     #[Test]
     public function it_returns_user_mutual_verifiers_number()
     {
-        $sender = User::factory()->create();
-        $recipients = User::factory()->count(2)->create();
-        $vovs = User::factory()->count(5)->create()->chunk(3);
+        $sender = createUser();
+        $recipients = createUser([], 2);
+        $vovs = createUser([], 5)->chunk(3);
 
         foreach ($recipients as $index => $recipient) {
             $sender->verify($recipient, 'Test verification message');
             $recipient->acceptVerificationRequest($sender);
 
-            //add some verifiers to each recipient too
+            // add some verifiers to each recipient too
             foreach ($vovs[$index] as $vov) {
                 $recipient->verify($vov, 'Test verification message');
                 $vov->acceptVerificationRequest($recipient);

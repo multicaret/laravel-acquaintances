@@ -31,7 +31,7 @@ trait CanReport
      * @param  int|array|Model  $targets
      * @param  string  $class
      */
-    public function unreport($targets, $class = __CLASS__): array
+    public function unreport($targets, $class = __CLASS__): int
     {
         Event::dispatch('acq.reports.unreport', [$this, $targets]);
 

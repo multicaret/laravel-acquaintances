@@ -33,7 +33,7 @@ trait CanSubscribe
      * @param  int|array|Model  $targets
      * @param  string  $class
      */
-    public function unsubscribe($targets, $class = __CLASS__): array
+    public function unsubscribe($targets, $class = __CLASS__): int
     {
         Event::dispatch('acq.subscriptions.unsubscribe', [$this, $targets]);
 

@@ -1,3 +1,30 @@
+## v4
+
+### Breaking Changes
+
+* **PHP >= 8.1 required** — dropped PHP 8.0 support.
+* **Strict return types** — all trait and model methods now declare explicit return types. If you override any method from the package traits, update your signatures accordingly.
+* **`un*()` methods return `int`** — `unlike()`, `unfollow()`, `unfavorite()`, `unsubscribe()`, `unview()`, `unreport()`, and `unrate()` now return `int` (detached count) instead of `array`.
+
+### New Features
+
+* feat: **UUID / ULID morph support** — configurable `morph_type` per table (`morphs`, `uuidMorphs`, `ulidMorphs`) via the `interactions_morph_type`, `friendships_morph_type`, `verifications_morph_type`, and related config keys.
+* feat: **Caching layer** — new `cache` config section with `enabled`, `store`, and `ttl` options. `Interaction::isRelationExists()` now uses an in-memory request cache and an optional persistent cache (`Cache::remember`) with automatic invalidation on attach/detach/toggle.
+* feat: **`withAcquaintanceCounts()` Eloquent Builder macro** — new `AcquaintanceScopes` class registers a macro to eager-load interaction counts (likers, followers, subscribers, etc.) in a single query.
+* feat: **`HasAcquaintanceCounters` trait** — auto-increment/decrement cached counter columns (e.g. `likes_count`, `followers_count`) on the model's table when interactions change.
+* feat: **`AcquaintancesCleanupJob`** — queued job to clean up all acquaintance data for a deleted model without blocking the request.
+* feat: **Morph map registration** — the service provider now registers morph maps for `Friendship`, `FriendshipGroups`, `Verification`, `VerificationGroups`, and `InteractionRelation` models automatically, with `Relation::enforceMorphMap()` support.
+* feat: **Interactions-only mode** — new `features` config section (`interactions`, `friendships`, `verifications`) to selectively enable/disable features. Disabled features skip migration loading and publishing. Granular publish tags added: `acquaintances-migrations-interactions`, `acquaintances-migrations-friendships`, `acquaintances-migrations-verifications`.
+* feat: **Custom User model support** — new `user_model_class_name` config key allows specifying a fully qualified User model class (e.g., `App\Models\Core\User`) for projects with non-standard model locations.
+
+### Improvements
+
+* perf: **Database indexes** — added composite and unique indexes on interactions, friendships, and verifications tables for faster lookups.
+* refactor: **Migrations converted to anonymous classes** — following Laravel 9+ conventions.
+* refactor: **`DB::transaction()` wrappers** — `blockFriend()` and `blockVerification()` now run inside database transactions for atomicity.
+* refactor: **Laravel 13 support** — added `^13.0` to Illuminate component constraints.
+* test: **MySQL test infrastructure** — all tests now run against MySQL via Orchestra Testbench; event tests modernized from Mockery to `Event::fake()`.
+
 ## v3.7.3
 
 * fix: PHP 8.4 compatibility: Add explicit nullable type declaration for followingCountReadable
