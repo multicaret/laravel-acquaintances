@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Multicaret\Acquaintances\Interaction;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -23,9 +22,9 @@ return new class extends Migration
 
             $table->{$userIdFkType}($userIdFkColumnName)->index();
             $table->{$morphType}('subject');
-            $table->string('relation')->default('follow')->comment('follow/like/subscribe/favorite/upvote/downvote');
+            $table->string('relation', 50)->default('follow')->comment('follow/like/subscribe/favorite/upvote/downvote');
             $table->double('relation_value')->nullable();
-            $table->string('relation_type')->nullable();
+            $table->string('relation_type', 50)->nullable();
             $table->timestamps();
 
             $table->foreign($userIdFkColumnName)
@@ -35,7 +34,7 @@ return new class extends Migration
                 ->onDelete('cascade');
 
             $table->unique(
-                [$userIdFkColumnName, 'subject_id', 'subject_type', 'relation'],
+                [$userIdFkColumnName, 'subject_id', 'subject_type', 'relation', 'relation_type'],
                 'interactions_unique_relation'
             );
 

@@ -4,6 +4,7 @@ namespace Multicaret\Acquaintances;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Support\Enumerable;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Multicaret\Acquaintances\Models\FriendFriendshipGroups;
@@ -189,7 +190,9 @@ class Interaction
         $result = new stdClass;
         $result->classname = $classname;
 
-        if (! is_array($targets)) {
+        if ($targets instanceof Enumerable) {
+            $targets = $targets->all();
+        } elseif (! is_array($targets)) {
             $targets = [$targets];
         }
 
